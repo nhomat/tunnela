@@ -1,6 +1,9 @@
 {
   "name": "Tunnela",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  "features": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  },
   "postCreateCommand": "npm install",
   "forwardPorts": [3000],
   "portsAttributes": {
@@ -25,6 +28,12 @@
         "typescript.tsdk": "node_modules/typescript/lib"
       }
     }
+  },
+  "mounts": [
+    "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume"
+  ],
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude"
   },
   "remoteUser": "node"
 }
