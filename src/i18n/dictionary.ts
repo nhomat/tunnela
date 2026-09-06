@@ -10,6 +10,7 @@ export const dictionary = {
       article: "L'article L.145-38-1",
       login: "Connexion",
       signup: "Essayer gratuitement",
+      menu: "Menu",
     },
     hero: {
       eyebrow: "Loi n° 2026-403 — article L.145-38-1 du Code de commerce",
@@ -363,6 +364,7 @@ export const dictionary = {
       article: "Article L.145-38-1",
       login: "Log in",
       signup: "Try for free",
+      menu: "Menu",
     },
     hero: {
       eyebrow: "French Law No. 2026-403 — Article L.145-38-1",

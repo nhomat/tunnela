@@ -59,7 +59,7 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
         })}
       </nav>
 
-      <div className="hidden px-6 py-6 md:block">
+      <div className="px-6 py-4 md:py-6">
         {isAdmin && plan && <AdminPlanSwitcher currentPlan={plan} />}
         {typeof conformityRatio === "number" && (
           <div className="mb-6">
