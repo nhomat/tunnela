@@ -49,7 +49,7 @@ export const PLANS: PlanDefinition[] = [
   {
     id: "coop",
     nom: "Coop",
-    prixMensuel: 250,
+    prixMensuel: 290,
     limiteBaux: null,
     priceEnvVar: "STRIPE_PRICE_COOP",
   },
