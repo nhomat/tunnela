@@ -255,7 +255,10 @@ begin
 end;
 $$;
 
-revoke execute on function public.handle_new_user() from anon, authenticated;
+-- Postgres accorde EXECUTE au pseudo-rôle PUBLIC par défaut à la création
+-- d'une fonction, et anon/authenticated en héritent implicitement : révoquer
+-- uniquement "from anon, authenticated" ne suffit pas, il faut viser PUBLIC.
+revoke all on function public.handle_new_user() from public;
 
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created

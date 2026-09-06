@@ -66,7 +66,6 @@ export default function BauxPage() {
   }, []);
 
   async function loadData() {
-    setLoading(true);
     const {
       data: { user },
     } = await supabase.auth.getUser();

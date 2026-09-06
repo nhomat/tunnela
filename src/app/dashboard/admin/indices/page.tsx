@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { useCurrentPlan } from "@/components/feature-gate";
@@ -11,7 +11,7 @@ import type { IndexType } from "@/lib/types";
 export default function AdminIndicesPage() {
   const { t } = useApp();
   const { isAdmin, loading: planLoading } = useCurrentPlan();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const [indices, setIndices] = useState<IndicePublie[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,16 +20,16 @@ export default function AdminIndicesPage() {
   const [valeur, setValeur] = useState("");
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    void load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   async function load() {
-    setLoading(true);
     setIndices(await listIndices(supabase));
     setLoading(false);
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

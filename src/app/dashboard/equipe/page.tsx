@@ -46,7 +46,6 @@ function Equipe() {
   }, [team?.equipeId]);
 
   async function load() {
-    setLoading(true);
     const {
       data: { user },
     } = await supabase.auth.getUser();

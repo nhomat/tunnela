@@ -14,6 +14,7 @@
   --accent: var(--color-laiton);
   --success: var(--color-vert);
   --danger: #b3543f;
+  --logo-primary: var(--color-encre);
 }
 
 [data-theme="dark"] {
@@ -24,6 +25,7 @@
   --accent: var(--color-laiton);
   --success: var(--color-vert);
   --danger: #d98b78;
+  --logo-primary: var(--color-vert);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -35,6 +37,7 @@
     --accent: var(--color-laiton);
     --success: var(--color-vert);
     --danger: #d98b78;
+    --logo-primary: var(--color-vert);
   }
 }
 
