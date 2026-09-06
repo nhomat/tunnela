@@ -94,6 +94,68 @@ Signature :                                Signature :
 `;
 }
 
+export interface NotificationRevisionParams {
+  bailleur: string;
+  preneur: string;
+  adresse: string;
+  ancienLoyer: number;
+  nouveauLoyer: number;
+  variationPct: number;
+  indice: "ILC" | "ILAT" | "ICC";
+  dateEffet: string; // format libre, ex "1er janvier 2027"
+  clauseTunnelAppliquee?: boolean;
+}
+
+function formatMontant(n: number): string {
+  return n.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+export function genererNotificationRevision(params: NotificationRevisionParams): string {
+  const {
+    bailleur,
+    preneur,
+    adresse,
+    ancienLoyer,
+    nouveauLoyer,
+    variationPct,
+    indice,
+    dateEffet,
+    clauseTunnelAppliquee,
+  } = params;
+
+  const mention = clauseTunnelAppliquee
+    ? " Cette variation résulte de l'application de la clause de variation encadrée (« clause tunnel ») prévue au bail, l'évolution brute de l'indice ayant excédé les bornes contractuelles."
+    : "";
+
+  return `NOTIFICATION DE RÉVISION DE LOYER
+
+${bailleur}
+
+À l'attention de : ${preneur}
+Objet : notification de révision du loyer commercial — ${adresse}
+
+Madame, Monsieur,
+
+Conformément aux stipulations du bail commercial portant sur les locaux
+sis ${adresse}, et en application de l'indice ${indice}, nous vous
+notifions par la présente la révision du loyer applicable à compter du
+${dateEffet}.
+
+Loyer annuel actuel : ${formatMontant(ancienLoyer)} €
+Nouveau loyer annuel : ${formatMontant(nouveauLoyer)} €
+Variation appliquée : ${variationPct >= 0 ? "+" : ""}${variationPct.toFixed(2)} %${mention}
+
+Cette révision s'inscrit dans le cadre de l'article L.145-38-1 du Code de
+commerce. Nous restons à votre disposition pour toute précision sur ce
+calcul.
+
+Nous vous prions d'agréer, Madame, Monsieur, l'expression de nos
+salutations distinguées.
+
+${bailleur}
+`;
+}
+
 export function genererAvenantICC(params: AvenantICCParams): string {
   const { bailleur, preneur, adresse, nouvelIndice, dateEffet } = params;
 

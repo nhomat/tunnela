@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 import { calculerStatutConformite } from "./types";
-import type { IndexType, StatutConformite } from "./types";
+import type { IndexType, Periodicite, StatutConformite } from "./types";
 
 export interface ImportedBail {
   preneur: string;
@@ -12,6 +12,9 @@ export interface ImportedBail {
   plafond_pct: number | null;
   date_prochaine_revision: string | null;
   statut: StatutConformite;
+  indice_reference: number | null;
+  periodicite: Periodicite;
+  preneur_email: string | null;
 }
 
 export interface ImportRowError {
@@ -33,6 +36,9 @@ const CSV_HEADERS = [
   "plancher_pct",
   "plafond_pct",
   "date_prochaine_revision",
+  "indice_reference",
+  "periodicite",
+  "preneur_email",
 ];
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -52,6 +58,9 @@ export function generateTemplateCsv(): string {
     "-1",
     "3",
     "2027-01-01",
+    "120",
+    "annuelle",
+    "contact@boulangerie-dupont.fr",
   ];
   return Papa.unparse([CSV_HEADERS, example]);
 }
@@ -94,6 +103,10 @@ export function parseLeasesCsv(text: string): ImportResult {
     const clause_tunnel = parseBoolean(row.clause_tunnel ?? "");
     const plancher_pct = row.plancher_pct?.trim() ? Number(row.plancher_pct.trim()) : null;
     const plafond_pct = row.plafond_pct?.trim() ? Number(row.plafond_pct.trim()) : null;
+    const indiceReferenceRaw = row.indice_reference?.trim() ? Number(row.indice_reference.trim()) : null;
+    const periodiciteRaw = (row.periodicite ?? "").trim().toLowerCase();
+    const periodicite: Periodicite = periodiciteRaw === "trimestrielle" ? "trimestrielle" : "annuelle";
+    const preneurEmailRaw = row.preneur_email?.trim() || null;
 
     valid.push({
       preneur,
@@ -104,6 +117,10 @@ export function parseLeasesCsv(text: string): ImportResult {
       plancher_pct: plancher_pct !== null && !Number.isNaN(plancher_pct) ? plancher_pct : null,
       plafond_pct: plafond_pct !== null && !Number.isNaN(plafond_pct) ? plafond_pct : null,
       date_prochaine_revision: dateRevision || null,
+      indice_reference:
+        indiceReferenceRaw !== null && !Number.isNaN(indiceReferenceRaw) ? indiceReferenceRaw : null,
+      periodicite,
+      preneur_email: preneurEmailRaw,
       statut: calculerStatutConformite({ indice: indice as IndexType, clause_tunnel }),
     });
   });

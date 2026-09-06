@@ -5,9 +5,10 @@ import Link from "next/link";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { calculerStatutConformite, hasFeature, limiteBaux } from "@/lib/types";
-import type { Bail, IndexType, Plan, StatutConformite } from "@/lib/types";
+import type { Bail, IndexType, Periodicite, Plan, StatutConformite } from "@/lib/types";
 import { generateTemplateCsv, parseLeasesCsv } from "@/lib/csv-import";
 import type { ImportResult } from "@/lib/csv-import";
+import { RevisionPanel } from "@/components/revision-panel";
 
 type FormState = {
   preneur: string;
@@ -18,6 +19,9 @@ type FormState = {
   plancher_pct: string;
   plafond_pct: string;
   date_prochaine_revision: string;
+  indice_reference: string;
+  periodicite: Periodicite;
+  preneur_email: string;
 };
 
 const emptyForm: FormState = {
@@ -29,6 +33,9 @@ const emptyForm: FormState = {
   plancher_pct: "",
   plafond_pct: "",
   date_prochaine_revision: "",
+  indice_reference: "",
+  periodicite: "annuelle",
+  preneur_email: "",
 };
 
 export default function BauxPage() {
@@ -46,6 +53,7 @@ export default function BauxPage() {
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatutConformite | "all">("all");
+  const [revisingId, setRevisingId] = useState<string | null>(null);
 
   useEffect(() => {
     void loadData();
@@ -76,6 +84,7 @@ export default function BauxPage() {
   const limitReached = limit !== null && baux.length >= limit;
   const canSearch = hasFeature(plan, "search");
   const canImport = hasFeature(plan, "csvImport");
+  const canRevise = hasFeature(plan, "revisionWorkflow");
 
   const visibleBaux = useMemo(() => {
     return baux.filter((bail) => {
@@ -109,6 +118,9 @@ export default function BauxPage() {
       plancher_pct: bail.plancher_pct?.toString() ?? "",
       plafond_pct: bail.plafond_pct?.toString() ?? "",
       date_prochaine_revision: bail.date_prochaine_revision ?? "",
+      indice_reference: bail.indice_reference?.toString() ?? "",
+      periodicite: bail.periodicite,
+      preneur_email: bail.preneur_email ?? "",
     });
     setErrors({});
     setShowForm(true);
@@ -149,6 +161,9 @@ export default function BauxPage() {
       plancher_pct: form.plancher_pct ? Number(form.plancher_pct) : null,
       plafond_pct: form.plafond_pct ? Number(form.plafond_pct) : null,
       date_prochaine_revision: form.date_prochaine_revision || null,
+      indice_reference: form.indice_reference ? Number(form.indice_reference) : null,
+      periodicite: form.periodicite,
+      preneur_email: form.preneur_email.trim() || null,
       statut,
     };
 
@@ -225,6 +240,20 @@ export default function BauxPage() {
         />
       )}
 
+      {revisingId &&
+        (() => {
+          const revisingBail = baux.find((b) => b.id === revisingId);
+          if (!revisingBail) return null;
+          return (
+            <RevisionPanel
+              bail={revisingBail}
+              plan={plan}
+              onUpdated={() => void loadData()}
+              onClose={() => setRevisingId(null)}
+            />
+          );
+        })()}
+
       {canSearch && baux.length > 0 && (
         <div className="mb-4 flex flex-wrap gap-3">
           <input
@@ -282,6 +311,15 @@ export default function BauxPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
+                      {canRevise && (
+                        <button
+                          type="button"
+                          onClick={() => setRevisingId(bail.id)}
+                          className="transition-base text-[var(--accent)] hover:underline"
+                        >
+                          {t.baux.reviser}
+                        </button>
+                      )}
                       <button
                         type="button"
                         onClick={() => openEditForm(bail)}
@@ -495,6 +533,33 @@ function BailForm({
           className="input transition-base"
           value={form.date_prochaine_revision}
           onChange={(e) => setForm({ ...form, date_prochaine_revision: e.target.value })}
+        />
+      </Field>
+      <Field label={t.baux.indiceReference}>
+        <input
+          type="number"
+          step="0.01"
+          className="input transition-base"
+          value={form.indice_reference}
+          onChange={(e) => setForm({ ...form, indice_reference: e.target.value })}
+        />
+      </Field>
+      <Field label={t.baux.periodicite}>
+        <select
+          className="input transition-base"
+          value={form.periodicite}
+          onChange={(e) => setForm({ ...form, periodicite: e.target.value as Periodicite })}
+        >
+          <option value="annuelle">{t.clause.annuelle}</option>
+          <option value="trimestrielle">{t.clause.trimestrielle}</option>
+        </select>
+      </Field>
+      <Field label={t.baux.preneurEmail}>
+        <input
+          type="email"
+          className="input transition-base"
+          value={form.preneur_email}
+          onChange={(e) => setForm({ ...form, preneur_email: e.target.value })}
         />
       </Field>
       <label className="flex items-center gap-2 self-end pb-2 text-sm">

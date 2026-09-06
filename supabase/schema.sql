@@ -11,6 +11,9 @@ create table if not exists baux (
   date_prochaine_revision date,
   statut text not null default 'a_verifier' check (statut in ('conforme', 'a_verifier', 'non_conforme')),
   derniere_alerte_envoyee_le date,
+  indice_reference numeric,
+  periodicite text not null default 'annuelle' check (periodicite in ('annuelle', 'trimestrielle')),
+  preneur_email text,
   created_at timestamptz not null default now()
 );
 
@@ -38,8 +41,18 @@ create policy "Les utilisateurs voient leur propre abonnement"
   on abonnements for select using (auth.uid() = user_id);
 
 -- Écriture réservée au service_role (webhook Stripe côté serveur uniquement,
--- jamais depuis le client) : aucune policy insert/update/delete pour les
--- utilisateurs authentifiés sur cette table.
+-- jamais depuis le client) pour tous les comptes normaux : aucune policy
+-- insert/update/delete pour les utilisateurs authentifiés sur cette table,
+-- à l'exception du cas ci-dessous.
+
+-- Un compte marqué is_admin peut changer son propre plan sans passer par
+-- Stripe (sélecteur "vue client" du tableau de bord), pour tester chaque
+-- offre en conditions réelles. Un utilisateur normal (is_admin = false)
+-- ne peut jamais écrire sur cette table par ce biais.
+create policy "Les administrateurs changent leur propre plan"
+  on abonnements for update
+  using (auth.uid() = user_id and is_admin)
+  with check (auth.uid() = user_id and is_admin);
 
 create index if not exists baux_user_id_idx on baux (user_id);
 create index if not exists baux_date_prochaine_revision_idx on baux (date_prochaine_revision);

@@ -4,6 +4,8 @@ export type StatutConformite = "conforme" | "a_verifier" | "non_conforme";
 
 export type Plan = "decouverte" | "cabinet" | "portefeuille" | "fonciere";
 
+export type Periodicite = "annuelle" | "trimestrielle";
+
 export interface Bail {
   id: string;
   user_id?: string;
@@ -17,7 +19,20 @@ export interface Bail {
   date_prochaine_revision: string | null;
   statut: StatutConformite;
   derniere_alerte_envoyee_le?: string | null;
+  indice_reference: number | null;
+  periodicite: Periodicite;
+  preneur_email: string | null;
   created_at?: string;
+}
+
+export function prochaineDateApres(dateActuelle: string | null, periodicite: Periodicite): string {
+  const base = dateActuelle ? new Date(dateActuelle) : new Date();
+  if (periodicite === "annuelle") {
+    base.setFullYear(base.getFullYear() + 1);
+  } else {
+    base.setMonth(base.getMonth() + 3);
+  }
+  return base.toISOString().slice(0, 10);
 }
 
 export interface Abonnement {
@@ -45,9 +60,11 @@ export type Feature =
   | "generator"
   | "pdfExport"
   | "alerts"
+  | "revisionWorkflow"
   | "search"
   | "csvImport"
   | "echeancier"
+  | "notifyEmail"
   | "prioritySupport"
   | "dedicatedContact"
   | "autoIndex";
@@ -58,9 +75,11 @@ const FEATURE_MIN_PLAN: Record<Feature, Plan> = {
   generator: "cabinet",
   pdfExport: "cabinet",
   alerts: "cabinet",
+  revisionWorkflow: "cabinet",
   search: "portefeuille",
   csvImport: "portefeuille",
   echeancier: "portefeuille",
+  notifyEmail: "portefeuille",
   prioritySupport: "portefeuille",
   dedicatedContact: "fonciere",
   autoIndex: "fonciere",
