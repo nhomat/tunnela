@@ -339,6 +339,10 @@ export const dictionary = {
       statutInvited: "Invité — en attente de connexion",
       noMembers: "Aucun membre invité pour l'instant.",
       removeConfirm: "Retirer ce membre de l'équipe ?",
+      messagesTitle: "Messagerie d'équipe",
+      noMessages: "Aucun message pour l'instant. Lancez la conversation.",
+      messagePlaceholder: "Écrire un message à l'équipe…",
+      sendMessage: "Envoyer",
     },
     admin: {
       indicesTitle: "Indices publiés (INSEE)",
@@ -685,6 +689,10 @@ export const dictionary = {
       statutInvited: "Invited — awaiting sign-in",
       noMembers: "No member invited yet.",
       removeConfirm: "Remove this member from the team?",
+      messagesTitle: "Team messaging",
+      noMessages: "No messages yet. Start the conversation.",
+      messagePlaceholder: "Write a message to the team…",
+      sendMessage: "Send",
     },
     admin: {
       indicesTitle: "Published indices (INSEE)",

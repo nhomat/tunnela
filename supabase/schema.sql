@@ -163,9 +163,50 @@ create policy "Seuls les admins gerent les indices publies"
   using (exists (select 1 from abonnements a where a.user_id = auth.uid() and a.is_admin))
   with check (exists (select 1 from abonnements a where a.user_id = auth.uid() and a.is_admin));
 
+-- Messagerie sécurisée par équipe (plan Coop). can_access_equipe() couvre à
+-- la fois le propriétaire (absent de membres_equipe) et les membres actifs.
+create or replace function public.can_access_equipe(target_equipe_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (select 1 from equipes where id = target_equipe_id and proprietaire_user_id = auth.uid())
+    or exists (select 1 from membres_equipe where equipe_id = target_equipe_id and user_id = auth.uid() and statut = 'actif');
+$$;
+
+revoke all on function public.can_access_equipe(uuid) from public, anon;
+grant execute on function public.can_access_equipe(uuid) to authenticated;
+
+create table if not exists messages_equipe (
+  id uuid primary key default gen_random_uuid(),
+  equipe_id uuid not null references equipes(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  contenu text not null check (char_length(contenu) between 1 and 2000),
+  created_at timestamptz not null default now()
+);
+
+alter table messages_equipe enable row level security;
+
+create policy "Les membres de l'equipe lisent les messages"
+  on messages_equipe for select
+  using (can_access_equipe(equipe_id));
+
+create policy "Les membres de l'equipe envoient des messages"
+  on messages_equipe for insert
+  with check (can_access_equipe(equipe_id) and user_id = auth.uid());
+
+create policy "Un auteur supprime son propre message"
+  on messages_equipe for delete
+  using (user_id = auth.uid());
+
 create index if not exists baux_user_id_idx on baux (user_id);
 create index if not exists baux_date_prochaine_revision_idx on baux (date_prochaine_revision);
 create index if not exists indices_publies_indice_periode_idx on indices_publies (indice, periode desc);
+create index if not exists messages_equipe_equipe_id_idx on messages_equipe (equipe_id, created_at);
+
+alter publication supabase_realtime add table messages_equipe;
 
 -- Un utilisateur nouvellement inscrit reçoit automatiquement un abonnement
 -- "découverte" par défaut. S'il avait été invité dans une équipe Coop avec

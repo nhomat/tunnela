@@ -12,6 +12,7 @@ export interface TeamContext {
 
 export interface TeamMember {
   id: string;
+  user_id: string | null;
   email: string;
   role: "proprietaire" | "membre";
   statut: "invite" | "actif";
@@ -79,8 +80,28 @@ export async function listTeamMembers(
 ): Promise<TeamMember[]> {
   const { data } = await supabase
     .from("membres_equipe")
-    .select("id, email, role, statut, invited_at")
+    .select("id, user_id, email, role, statut, invited_at")
     .eq("equipe_id", equipeId)
     .order("invited_at", { ascending: true });
   return (data as TeamMember[]) ?? [];
+}
+
+export interface TeamMessage {
+  id: string;
+  user_id: string;
+  contenu: string;
+  created_at: string;
+}
+
+export async function listTeamMessages(
+  supabase: SupabaseClient,
+  equipeId: string
+): Promise<TeamMessage[]> {
+  const { data } = await supabase
+    .from("messages_equipe")
+    .select("id, user_id, contenu, created_at")
+    .eq("equipe_id", equipeId)
+    .order("created_at", { ascending: true })
+    .limit(200);
+  return (data as TeamMessage[]) ?? [];
 }
