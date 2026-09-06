@@ -100,7 +100,7 @@ function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="mx-auto max-w-3xl px-6 py-20">
+    <section id="faq" className="mx-auto max-w-3xl px-6 py-20">
       <h2 className="mb-10 text-center font-serif text-3xl font-medium">{t.faq.title}</h2>
       <div className="flex flex-col gap-3">
         {t.faq.items.map((item, i) => {

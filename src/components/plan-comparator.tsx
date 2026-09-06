@@ -44,7 +44,7 @@ export function PlanComparator() {
   const recommended = useMemo(() => recommendPlan(nbBaux), [nbBaux]);
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
+    <section id="comparateur" className="mx-auto max-w-6xl px-6 py-20">
       <div className="mb-12 text-center">
         <h2 className="font-serif text-3xl font-medium">{t.pricing.compareTitle}</h2>
         <p className="mt-2 text-[var(--foreground)]/70">{t.pricing.compareSubtitle}</p>
