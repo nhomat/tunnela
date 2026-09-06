@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { Navbar } from "@/components/navbar";
@@ -15,9 +16,12 @@ export default function LoginPage() {
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const { t } = useApp();
+  const router = useRouter();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [invalid, setInvalid] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const isSignup = mode === "signup";
 
@@ -31,8 +35,21 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     setInvalid(false);
     setStatus("sending");
 
+    const supabase = createClient();
+
+    if (!isSignup && password) {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        setErrorMessage(t.auth.invalidCredentials);
+        setStatus("error");
+        return;
+      }
+      router.push("/dashboard/baux");
+      router.refresh();
+      return;
+    }
+
     try {
-      const supabase = createClient();
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -42,6 +59,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       if (error) throw error;
       setStatus("sent");
     } catch {
+      setErrorMessage(t.auth.error);
       setStatus("error");
     }
   }
@@ -79,16 +97,35 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 {invalid && (
                   <p className="mt-1 text-xs text-[var(--danger)]">{t.auth.invalidEmail}</p>
                 )}
-                {status === "error" && (
-                  <p className="mt-1 text-xs text-[var(--danger)]">{t.auth.error}</p>
-                )}
               </div>
+
+              {!isSignup && (
+                <div>
+                  <label htmlFor="password" className="mb-1 block text-sm font-medium">
+                    {t.auth.passwordLabel}
+                  </label>
+                  <input
+                    id="password"
+                    type="password"
+                    className="input transition-base"
+                    placeholder={t.auth.passwordOptional}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="current-password"
+                  />
+                </div>
+              )}
+
+              {status === "error" && (
+                <p className="text-xs text-[var(--danger)]">{errorMessage}</p>
+              )}
+
               <button
                 type="submit"
                 disabled={status === "sending"}
                 className="btn-primary transition-base disabled:opacity-60"
               >
-                {t.auth.sendLink}
+                {!isSignup && password ? t.auth.signIn : t.auth.sendLink}
               </button>
             </form>
           )}
