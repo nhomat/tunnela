@@ -18,6 +18,12 @@ export const metadata: Metadata = {
   title: "Tunnela — Copilote des révisions de baux commerciaux",
   description:
     "Calculez les révisions de loyer ILC/ILAT, sécurisez vos clauses tunnel et générez vos avenants ICC → ILC, conformément à l'article L.145-38-1 du Code de commerce.",
+  icons: {
+    icon: [
+      { url: "/icon-light.svg", media: "(prefers-color-scheme: light)" },
+      { url: "/icon-dark.svg", media: "(prefers-color-scheme: dark)" },
+    ],
+  },
 };
 
 const themeInitScript = `

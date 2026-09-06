@@ -7,22 +7,21 @@ export function Logo({ className = "h-8 w-8" }: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <rect width="100" height="100" rx="22" fill="#33475b" />
       <path
         d="M28 62 L50 32 L72 55"
-        stroke="#faf9f5"
+        stroke="var(--foreground)"
         strokeWidth="9"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M42 50 L58 36 L74 52"
-        stroke="#a98a57"
+        stroke="var(--color-laiton)"
         strokeWidth="8"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path d="M58 55 L82 82" stroke="#faf9f5" strokeWidth="9" strokeLinecap="round" />
+      <path d="M58 55 L82 82" stroke="var(--foreground)" strokeWidth="9" strokeLinecap="round" />
     </svg>
   );
 }
