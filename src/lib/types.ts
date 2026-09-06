@@ -23,6 +23,7 @@ export interface Bail {
 export interface Abonnement {
   user_id: string;
   plan: Plan;
+  is_admin: boolean;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   statut: string;
@@ -35,6 +36,10 @@ export const PLAN_LIMITS: Record<Plan, number | null> = {
   portefeuille: 100,
   fonciere: null,
 };
+
+export function limiteBaux(plan: Plan, isAdmin: boolean): number | null {
+  return isAdmin ? null : PLAN_LIMITS[plan];
+}
 
 export function calculerStatutConformite(
   bail: Pick<Bail, "indice" | "clause_tunnel">

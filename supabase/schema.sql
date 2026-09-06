@@ -25,6 +25,7 @@ create policy "Les utilisateurs gèrent leurs propres baux"
 create table if not exists abonnements (
   user_id uuid primary key references auth.users(id) on delete cascade,
   plan text not null default 'decouverte' check (plan in ('decouverte', 'cabinet', 'portefeuille', 'fonciere')),
+  is_admin boolean not null default false,
   stripe_customer_id text,
   stripe_subscription_id text,
   statut text not null default 'actif',

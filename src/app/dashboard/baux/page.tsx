@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
-import { calculerStatutConformite, PLAN_LIMITS } from "@/lib/types";
+import { calculerStatutConformite, limiteBaux } from "@/lib/types";
 import type { Bail, IndexType, Plan } from "@/lib/types";
 
 type FormState = {
@@ -35,6 +35,7 @@ export default function BauxPage() {
 
   const [baux, setBaux] = useState<Bail[]>([]);
   const [plan, setPlan] = useState<Plan>("decouverte");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -59,15 +60,18 @@ export default function BauxPage() {
 
     const [bauxRes, abonnementRes] = await Promise.all([
       supabase.from("baux").select("*").order("created_at", { ascending: false }),
-      supabase.from("abonnements").select("plan").eq("user_id", user.id).maybeSingle(),
+      supabase.from("abonnements").select("plan, is_admin").eq("user_id", user.id).maybeSingle(),
     ]);
 
     if (bauxRes.data) setBaux(bauxRes.data as Bail[]);
-    if (abonnementRes.data) setPlan(abonnementRes.data.plan as Plan);
+    if (abonnementRes.data) {
+      setPlan(abonnementRes.data.plan as Plan);
+      setIsAdmin(Boolean(abonnementRes.data.is_admin));
+    }
     setLoading(false);
   }
 
-  const limit = PLAN_LIMITS[plan];
+  const limit = limiteBaux(plan, isAdmin);
   const limitReached = limit !== null && baux.length >= limit;
 
   function openCreateForm() {
