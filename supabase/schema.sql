@@ -28,14 +28,29 @@ create table if not exists membres_equipe (
 alter table membres_equipe enable row level security;
 
 -- Un membre actif peut voir la fiche de son équipe (nom, propriétaire).
+-- is_active_member_of_equipe() est SECURITY DEFINER : elle contourne le RLS
+-- en interne pour éviter la récursion infinie qui se produit quand une policy
+-- sur membres_equipe (ou une policy en chaîne sur equipes/abonnements) se
+-- réévalue elle-même via une sous-requête directe sur membres_equipe.
+create or replace function public.is_active_member_of_equipe(target_equipe_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from membres_equipe
+    where equipe_id = target_equipe_id and user_id = auth.uid() and statut = 'actif'
+  );
+$$;
+
+revoke all on function public.is_active_member_of_equipe(uuid) from public, anon;
+grant execute on function public.is_active_member_of_equipe(uuid) to authenticated;
+
 create policy "Les membres voient leur equipe"
   on equipes for select
-  using (
-    exists (
-      select 1 from membres_equipe me
-      where me.equipe_id = equipes.id and me.user_id = auth.uid() and me.statut = 'actif'
-    )
-  );
+  using (is_active_member_of_equipe(equipes.id));
 
 create policy "Le proprietaire gere les membres"
   on membres_equipe for all
@@ -44,13 +59,7 @@ create policy "Le proprietaire gere les membres"
 
 create policy "Un membre voit les lignes de sa propre equipe"
   on membres_equipe for select
-  using (
-    user_id = auth.uid()
-    or exists (
-      select 1 from membres_equipe moi
-      where moi.equipe_id = membres_equipe.equipe_id and moi.user_id = auth.uid() and moi.statut = 'actif'
-    )
-  );
+  using (user_id = auth.uid() or is_active_member_of_equipe(equipe_id));
 
 create table if not exists baux (
   id uuid primary key default gen_random_uuid(),
@@ -85,14 +94,7 @@ create policy "Les utilisateurs gèrent leurs propres baux"
 -- collègue a explicitement marqués comme partagés (visible_equipe = true).
 create policy "Les membres actifs voient les baux partages de leur equipe"
   on baux for select
-  using (
-    visible_equipe = true
-    and equipe_id is not null
-    and exists (
-      select 1 from membres_equipe me
-      where me.equipe_id = baux.equipe_id and me.user_id = auth.uid() and me.statut = 'actif'
-    )
-  );
+  using (visible_equipe = true and equipe_id is not null and is_active_member_of_equipe(equipe_id));
 
 create table if not exists abonnements (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -130,9 +132,8 @@ create policy "Les membres voient le plan du proprietaire de leur equipe"
   on abonnements for select
   using (
     exists (
-      select 1 from membres_equipe me
-      join equipes e on e.id = me.equipe_id
-      where me.user_id = auth.uid() and me.statut = 'actif' and e.proprietaire_user_id = abonnements.user_id
+      select 1 from equipes e
+      where e.proprietaire_user_id = abonnements.user_id and is_active_member_of_equipe(e.id)
     )
   );
 
