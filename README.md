@@ -46,13 +46,26 @@ vers `/login`.
    - Renseigner `RESEND_API_KEY` et `ALERT_FROM_EMAIL`.
    - La route `/api/cron/alertes` est appelée automatiquement chaque jour
      par Vercel Cron (voir `vercel.json`), protégée par `CRON_SECRET`.
+   - Tant qu'aucun domaine d'envoi n'est vérifié dans Resend, les emails ne
+     partent que vers l'adresse du compte Resend lui-même (limitation
+     Resend, pas du code) — utiliser `onboarding@resend.dev` comme
+     expéditeur temporaire jusqu'à la vérification de `tunnela.fr`.
 
-4. **Déploiement**
-   - Connecter le dépôt GitHub sur [Vercel](https://vercel.com/new).
-   - Renseigner toutes les variables d'environnement ci-dessus dans les
-     réglages du projet Vercel.
-   - Une fois déployé, mettre à jour l'URL du webhook Stripe avec le
-     domaine de production, puis connecter le domaine `tunnela.fr`.
+4. **Domaine `tunnela.fr`**
+   - Le `.fr` n'est pas un TLD supporté par le registrar intégré de Vercel
+     (règles AFNIC) : l'acheter chez un registrar externe (OVH, Gandi,
+     IONOS…), puis l'ajouter dans Vercel → Project → Domains et suivre les
+     enregistrements DNS fournis.
+   - Une fois vérifié, ajouter le même domaine comme expéditeur dans Resend
+     pour lever la limitation ci-dessus.
+
+5. **Déploiement**
+   - Connecté sur [Vercel](https://vercel.com/new) au dépôt GitHub,
+     déploiement automatique à chaque push sur la branche de production.
+   - Toutes les variables d'environnement ci-dessus sont à renseigner dans
+     les réglages du projet Vercel.
+   - Penser à mettre à jour l'URL du webhook Stripe si le domaine de
+     production change.
 
 Voir `.env.example` pour la liste complète des variables.
 
