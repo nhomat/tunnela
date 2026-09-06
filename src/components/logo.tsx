@@ -1,15 +1,28 @@
 export function Logo({ className = "h-8 w-8" }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 40 40"
+      viewBox="0 0 100 100"
       className={className}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <circle cx="20" cy="20" r="17" stroke="var(--foreground)" strokeWidth="2.5" />
-      <circle cx="20" cy="20" r="11.5" stroke="var(--foreground)" strokeWidth="2" opacity="0.45" />
-      <circle cx="20" cy="20" r="6" fill="var(--color-laiton)" />
+      <rect width="100" height="100" rx="22" fill="#33475b" />
+      <path
+        d="M28 62 L50 32 L72 55"
+        stroke="#faf9f5"
+        strokeWidth="9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M42 50 L58 36 L74 52"
+        stroke="#a98a57"
+        strokeWidth="8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M58 55 L82 82" stroke="#faf9f5" strokeWidth="9" strokeLinecap="round" />
     </svg>
   );
 }
