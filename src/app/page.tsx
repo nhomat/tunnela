@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/components/providers";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Pricing } from "@/components/pricing";
+import { PlanComparator } from "@/components/plan-comparator";
 
 export default function Home() {
   const { t } = useApp();
@@ -54,9 +56,75 @@ export default function Home() {
           </div>
         </section>
 
+        <HowItWorks />
+
         <Pricing />
+
+        <PlanComparator />
+
+        <Faq />
       </main>
       <Footer />
     </>
+  );
+}
+
+function HowItWorks() {
+  const { t } = useApp();
+
+  return (
+    <section className="border-y border-[var(--border-color)] bg-[var(--foreground)]/[0.02] py-20">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mb-12 text-center">
+          <h2 className="font-serif text-3xl font-medium">{t.howItWorks.title}</h2>
+          <p className="mt-2 text-[var(--foreground)]/70">{t.howItWorks.subtitle}</p>
+        </div>
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {t.howItWorks.steps.map((step, i) => (
+            <div key={step.title} className="tunnel-enter">
+              <div className="btn-primary mb-3 h-9 w-9 rounded-full p-0 font-serif text-sm">
+                {i + 1}
+              </div>
+              <h3 className="font-serif text-lg">{step.title}</h3>
+              <p className="mt-2 text-sm text-[var(--foreground)]/70">{step.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Faq() {
+  const { t } = useApp();
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  return (
+    <section className="mx-auto max-w-3xl px-6 py-20">
+      <h2 className="mb-10 text-center font-serif text-3xl font-medium">{t.faq.title}</h2>
+      <div className="flex flex-col gap-3">
+        {t.faq.items.map((item, i) => {
+          const open = openIndex === i;
+          return (
+            <div key={item.q} className="card">
+              <button
+                type="button"
+                onClick={() => setOpenIndex(open ? null : i)}
+                className="transition-base flex w-full items-center justify-between text-left"
+                aria-expanded={open}
+              >
+                <span className="font-medium">{item.q}</span>
+                <span aria-hidden="true" className="ml-4 text-[var(--accent)]">
+                  {open ? "−" : "+"}
+                </span>
+              </button>
+              {open && (
+                <p className="mt-3 text-sm text-[var(--foreground)]/75">{item.a}</p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }

@@ -27,12 +27,24 @@ export function Pricing({
               ? `${t.pricing.beyond} 100 ${t.pricing.leases}`
               : `${t.pricing.upTo} ${plan.limiteBaux} ${t.pricing.leases}`;
 
+          const features = t.pricing.planFeatures[plan.id];
+
           return (
             <div key={plan.id} className="card tunnel-enter flex flex-col gap-4">
               <div>
                 <h3 className="font-serif text-xl">{plan.nom}</h3>
                 <p className="mt-1 text-sm text-[var(--foreground)]/70">{limiteLabel}</p>
               </div>
+              <ul className="flex flex-col gap-2 text-sm text-[var(--foreground)]/80">
+                {features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2">
+                    <span aria-hidden="true" className="text-[var(--success)]">
+                      ✓
+                    </span>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
               <div className="mt-auto">
                 <p className="font-serif text-3xl">
                   {plan.prixMensuel === 0

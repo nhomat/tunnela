@@ -48,6 +48,95 @@ export const dictionary = {
       leases: "baux",
       cta: "Choisir ce plan",
       current: "Plan actuel",
+      planFeatures: {
+        decouverte: [
+          "Jusqu'à 3 baux",
+          "Calculateur d'indexation ILC / ILAT",
+          "Suivi de conformité du portefeuille",
+          "Support par email",
+        ],
+        cabinet: [
+          "Jusqu'à 20 baux",
+          "Calculateur d'indexation ILC / ILAT",
+          "Générateur de clause tunnel & avenant ICC → ILC",
+          "Alertes d'échéance par email",
+          "Support par email",
+        ],
+        portefeuille: [
+          "Jusqu'à 100 baux",
+          "Tout Cabinet, plus :",
+          "Suivi de conformité consolidé du portefeuille",
+          "Support prioritaire",
+        ],
+        fonciere: [
+          "Baux illimités",
+          "Tout Portefeuille, plus :",
+          "Accompagnement à la mise en place",
+          "Interlocuteur dédié",
+        ],
+      },
+      compareTitle: "Quel plan vous correspond ?",
+      compareSubtitle:
+        "Indiquez la taille de votre portefeuille pour voir le plan le plus adapté.",
+      compareLeasesLabel: "Nombre de baux à gérer",
+      compareRecommended: "Plan recommandé",
+      compareTableTitle: "Comparer les fonctionnalités",
+      compareFeatureCol: "Fonctionnalité",
+      compareFeatures: {
+        maxLeases: "Baux inclus",
+        calculator: "Calculateur ILC / ILAT",
+        generator: "Générateur de clause & avenant",
+        alerts: "Alertes d'échéance",
+        prioritySupport: "Support prioritaire",
+        dedicatedContact: "Interlocuteur dédié",
+      },
+    },
+    howItWorks: {
+      title: "Comment ça marche",
+      subtitle: "De l'ajout d'un bail à la clause signée, en quatre étapes.",
+      steps: [
+        {
+          title: "Ajoutez vos baux",
+          body: "Renseignez preneur, loyer, indice et date de révision — ou importez votre portefeuille existant.",
+        },
+        {
+          title: "Calculez la révision",
+          body: "Le calculateur applique l'indice ILC/ILAT et la clause tunnel, et affiche le nouveau loyer exact.",
+        },
+        {
+          title: "Générez le document",
+          body: "Clause tunnel ou avenant ICC → ILC : un texte juridique complet, prêt à signer.",
+        },
+        {
+          title: "Restez à jour",
+          body: "Une alerte vous prévient avant chaque échéance de révision, portefeuille entier compris.",
+        },
+      ],
+    },
+    faq: {
+      title: "Questions fréquentes",
+      items: [
+        {
+          q: "Qu'est-ce qu'une clause tunnel ?",
+          a: "C'est une clause de variation encadrée du loyer, introduite par l'article L.145-38-1 du Code de commerce, qui fixe un plancher et un plafond à la révision du loyer d'un bail commercial.",
+        },
+        {
+          q: "Puis-je changer de plan à tout moment ?",
+          a: "Oui, sans engagement. Vous pouvez passer à un plan supérieur ou inférieur depuis votre tableau de bord à tout moment.",
+        },
+        {
+          q: "Les textes générés sont-ils juridiquement valables ?",
+          a: "Les clauses et avenants générés citent explicitement l'article L.145-38-1 et suivent une structure juridique standard. Nous recommandons une relecture par votre conseil habituel avant signature pour les situations complexes.",
+        },
+        {
+          q: "Que se passe-t-il si je dépasse la limite de baux de mon plan ?",
+          a: "Vous ne pouvez plus ajouter de nouveau bail tant que vous n'avez pas supprimé un bail existant ou changé de plan — vos baux existants restent accessibles.",
+        },
+        {
+          q: "L'interface est-elle disponible en anglais ?",
+          a: "Oui, un sélecteur FR/EN traduit toute l'interface. Les textes juridiques générés (clause tunnel, avenant) restent toujours en français, quelle que soit la langue choisie.",
+        },
+      ],
     },
     footer: {
       rights: "Tous droits réservés.",
@@ -186,6 +275,94 @@ export const dictionary = {
       leases: "leases",
       cta: "Choose this plan",
       current: "Current plan",
+      planFeatures: {
+        decouverte: [
+          "Up to 3 leases",
+          "ILC / ILAT indexation calculator",
+          "Portfolio compliance tracking",
+          "Email support",
+        ],
+        cabinet: [
+          "Up to 20 leases",
+          "ILC / ILAT indexation calculator",
+          "Tunnel clause & ICC → ILC amendment generator",
+          "Email deadline alerts",
+          "Email support",
+        ],
+        portefeuille: [
+          "Up to 100 leases",
+          "Everything in Cabinet, plus:",
+          "Consolidated portfolio compliance tracking",
+          "Priority support",
+        ],
+        fonciere: [
+          "Unlimited leases",
+          "Everything in Portefeuille, plus:",
+          "Onboarding assistance",
+          "Dedicated contact",
+        ],
+      },
+      compareTitle: "Which plan fits you?",
+      compareSubtitle: "Tell us the size of your portfolio to see the best-fit plan.",
+      compareLeasesLabel: "Number of leases to manage",
+      compareRecommended: "Recommended plan",
+      compareTableTitle: "Compare features",
+      compareFeatureCol: "Feature",
+      compareFeatures: {
+        maxLeases: "Leases included",
+        calculator: "ILC / ILAT calculator",
+        generator: "Clause & amendment generator",
+        alerts: "Deadline alerts",
+        prioritySupport: "Priority support",
+        dedicatedContact: "Dedicated contact",
+      },
+    },
+    howItWorks: {
+      title: "How it works",
+      subtitle: "From adding a lease to a signed clause, in four steps.",
+      steps: [
+        {
+          title: "Add your leases",
+          body: "Enter tenant, rent, index and review date — or import your existing portfolio.",
+        },
+        {
+          title: "Calculate the review",
+          body: "The calculator applies the ILC/ILAT index and the tunnel clause, and shows the exact new rent.",
+        },
+        {
+          title: "Generate the document",
+          body: "Tunnel clause or ICC → ILC amendment: a complete, signature-ready legal text.",
+        },
+        {
+          title: "Stay on schedule",
+          body: "An alert warns you before every review date, across your whole portfolio.",
+        },
+      ],
+    },
+    faq: {
+      title: "Frequently asked questions",
+      items: [
+        {
+          q: "What is a tunnel clause?",
+          a: "It's a rent-collar clause, introduced by Article L.145-38-1 of the French Commercial Code, that sets a floor and a cap on a commercial lease's rent review.",
+        },
+        {
+          q: "Can I change plans at any time?",
+          a: "Yes, with no commitment. You can upgrade or downgrade from your dashboard at any time.",
+        },
+        {
+          q: "Are the generated documents legally valid?",
+          a: "Generated clauses and amendments explicitly cite Article L.145-38-1 and follow a standard legal structure. We recommend a review by your usual counsel before signing for complex situations.",
+        },
+        {
+          q: "What happens if I exceed my plan's lease limit?",
+          a: "You won't be able to add a new lease until you remove one or upgrade — your existing leases stay accessible.",
+        },
+        {
+          q: "Is the interface available in English?",
+          a: "Yes, an FR/EN switch translates the whole interface. Generated legal texts (tunnel clause, amendment) always stay in French, whatever language you choose.",
+        },
+      ],
     },
     footer: {
       rights: "All rights reserved.",

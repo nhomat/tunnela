@@ -13,7 +13,7 @@ export function ThemeLangToggle() {
         className="btn-secondary transition-base px-3 py-1.5 text-xs uppercase tracking-wide"
         aria-label="Changer de langue"
       >
-        {locale === "fr" ? "FR" : "EN"}
+        {locale === "fr" ? "EN" : "FR"}
       </button>
       <button
         type="button"
