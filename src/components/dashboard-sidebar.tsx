@@ -5,17 +5,21 @@ import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import { LogoMark } from "./logo";
 import { ThemeLangToggle } from "./theme-lang-toggle";
+import { AdminPlanSwitcher } from "./admin-plan-switcher";
+import { useCurrentPlan } from "./feature-gate";
 import { createClient } from "@/lib/supabase/client";
 
 export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number }) {
   const { t } = useApp();
   const pathname = usePathname();
   const router = useRouter();
+  const { plan, isAdmin } = useCurrentPlan();
 
   const links = [
     { href: "/dashboard/baux", label: t.dashboard.nav.baux },
     { href: "/dashboard/calculateur", label: t.dashboard.nav.calculateur },
     { href: "/dashboard/clause", label: t.dashboard.nav.clause },
+    { href: "/dashboard/echeancier", label: t.dashboard.nav.echeancier },
   ];
 
   async function handleLogout() {
@@ -54,6 +58,7 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
       </nav>
 
       <div className="hidden px-6 py-6 md:block">
+        {isAdmin && plan && <AdminPlanSwitcher currentPlan={plan} />}
         {typeof conformityRatio === "number" && (
           <div className="mb-6">
             <p className="mb-2 text-xs uppercase tracking-wide text-[var(--foreground)]/60">

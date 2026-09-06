@@ -3,9 +3,13 @@
 import { useState } from "react";
 import { useApp } from "@/components/providers";
 import { calculerRevisionLoyer, type IndexationResult } from "@/lib/indexation";
+import { useCurrentPlan } from "@/components/feature-gate";
+import { hasFeature } from "@/lib/types";
 
 export default function CalculateurPage() {
   const { t } = useApp();
+  const { plan } = useCurrentPlan();
+  const canAutoIndex = plan !== null && hasFeature(plan, "autoIndex");
 
   const [loyerBase, setLoyerBase] = useState("");
   const [indiceReference, setIndiceReference] = useState("");
@@ -16,6 +20,7 @@ export default function CalculateurPage() {
   const [plafond, setPlafond] = useState("");
   const [result, setResult] = useState<IndexationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showAutoIndexInfo, setShowAutoIndexInfo] = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -95,6 +100,23 @@ export default function CalculateurPage() {
               />
             </label>
           </div>
+
+          {canAutoIndex && (
+            <div>
+              <button
+                type="button"
+                onClick={() => setShowAutoIndexInfo(true)}
+                className="btn-secondary transition-base text-sm"
+              >
+                {t.calculateur.autoIndexButton}
+              </button>
+              {showAutoIndexInfo && (
+                <p className="mt-2 text-xs text-[var(--accent)]">
+                  {t.calculateur.autoIndexComingSoon}
+                </p>
+              )}
+            </div>
+          )}
 
           <label className="flex items-center gap-2 text-sm">
             <input

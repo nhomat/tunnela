@@ -37,8 +37,41 @@ export const PLAN_LIMITS: Record<Plan, number | null> = {
   fonciere: null,
 };
 
-export function limiteBaux(plan: Plan, isAdmin: boolean): number | null {
-  return isAdmin ? null : PLAN_LIMITS[plan];
+export function limiteBaux(plan: Plan): number | null {
+  return PLAN_LIMITS[plan];
+}
+
+export type Feature =
+  | "generator"
+  | "pdfExport"
+  | "alerts"
+  | "search"
+  | "csvImport"
+  | "echeancier"
+  | "prioritySupport"
+  | "dedicatedContact"
+  | "autoIndex";
+
+const PLAN_ORDER: Plan[] = ["decouverte", "cabinet", "portefeuille", "fonciere"];
+
+const FEATURE_MIN_PLAN: Record<Feature, Plan> = {
+  generator: "cabinet",
+  pdfExport: "cabinet",
+  alerts: "cabinet",
+  search: "portefeuille",
+  csvImport: "portefeuille",
+  echeancier: "portefeuille",
+  prioritySupport: "portefeuille",
+  dedicatedContact: "fonciere",
+  autoIndex: "fonciere",
+};
+
+export function hasFeature(plan: Plan, feature: Feature): boolean {
+  return PLAN_ORDER.indexOf(plan) >= PLAN_ORDER.indexOf(FEATURE_MIN_PLAN[feature]);
+}
+
+export function minPlanForFeature(feature: Feature): Plan {
+  return FEATURE_MIN_PLAN[feature];
 }
 
 export function calculerStatutConformite(

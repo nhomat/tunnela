@@ -3,10 +3,22 @@
 import { useState } from "react";
 import { useApp } from "@/components/providers";
 import { genererClauseTunnel, genererAvenantICC } from "@/lib/clause-generator";
+import { exportTextAsPdf } from "@/lib/pdf-export";
+import { FeatureGate, useCurrentPlan } from "@/components/feature-gate";
 
 type Mode = "tunnel" | "avenant";
 
 export default function ClausePage() {
+  const { plan } = useCurrentPlan();
+
+  return (
+    <FeatureGate feature="generator" plan={plan}>
+      <ClauseGenerator />
+    </FeatureGate>
+  );
+}
+
+function ClauseGenerator() {
   const { t } = useApp();
   const [mode, setMode] = useState<Mode>("tunnel");
 
@@ -56,6 +68,12 @@ export default function ClausePage() {
     await navigator.clipboard.writeText(texte);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  }
+
+  function handleExportPdf() {
+    const title = mode === "tunnel" ? t.clause.modeTunnel : t.clause.modeAvenant;
+    const filename = `${mode === "tunnel" ? "clause-tunnel" : "avenant-icc-ilc"}-${preneur || "document"}.pdf`;
+    exportTextAsPdf(title, texte, filename.toLowerCase().replace(/\s+/g, "-"));
   }
 
   return (
@@ -198,13 +216,22 @@ export default function ClausePage() {
               <pre className="max-h-[32rem] overflow-auto whitespace-pre-wrap font-sans text-sm">
                 {texte}
               </pre>
-              <button
-                type="button"
-                onClick={handleCopier}
-                className="btn-secondary transition-base mt-4"
-              >
-                {copied ? t.clause.copied : t.clause.copier}
-              </button>
+              <div className="mt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={handleCopier}
+                  className="btn-secondary transition-base"
+                >
+                  {copied ? t.clause.copied : t.clause.copier}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportPdf}
+                  className="btn-primary transition-base"
+                >
+                  {t.clause.exportPdf}
+                </button>
+              </div>
             </>
           ) : (
             <p className="text-sm text-[var(--foreground)]/60">—</p>

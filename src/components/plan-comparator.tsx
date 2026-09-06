@@ -3,14 +3,8 @@
 import { useMemo, useState } from "react";
 import { useApp } from "./providers";
 import { PLANS } from "@/lib/stripe";
-import type { Plan } from "@/lib/types";
-
-const FEATURE_MATRIX: Record<Plan, { generator: boolean; alerts: boolean; prioritySupport: boolean; dedicatedContact: boolean }> = {
-  decouverte: { generator: false, alerts: false, prioritySupport: false, dedicatedContact: false },
-  cabinet: { generator: true, alerts: true, prioritySupport: false, dedicatedContact: false },
-  portefeuille: { generator: true, alerts: true, prioritySupport: true, dedicatedContact: false },
-  fonciere: { generator: true, alerts: true, prioritySupport: true, dedicatedContact: true },
-};
+import { hasFeature } from "@/lib/types";
+import type { Feature, Plan } from "@/lib/types";
 
 function recommendPlan(nbBaux: number): Plan {
   if (nbBaux <= 3) return "decouverte";
@@ -30,6 +24,18 @@ function Check({ value }: { value: boolean }) {
     </span>
   );
 }
+
+const FEATURE_ROWS: Feature[] = [
+  "generator",
+  "pdfExport",
+  "alerts",
+  "search",
+  "csvImport",
+  "echeancier",
+  "prioritySupport",
+  "autoIndex",
+  "dedicatedContact",
+];
 
 export function PlanComparator() {
   const { t } = useApp();
@@ -106,46 +112,18 @@ export function PlanComparator() {
                 </td>
               ))}
             </tr>
-            <tr className="border-b border-[var(--border-color)]">
-              <td className="px-4 py-3 text-[var(--foreground)]/70">
-                {t.pricing.compareFeatures.generator}
-              </td>
-              {PLANS.map((plan) => (
-                <td key={plan.id} className="px-4 py-3 text-center">
-                  <Check value={FEATURE_MATRIX[plan.id].generator} />
+            {FEATURE_ROWS.map((feature) => (
+              <tr key={feature} className="border-b border-[var(--border-color)] last:border-0">
+                <td className="px-4 py-3 text-[var(--foreground)]/70">
+                  {t.pricing.compareFeatures[feature]}
                 </td>
-              ))}
-            </tr>
-            <tr className="border-b border-[var(--border-color)]">
-              <td className="px-4 py-3 text-[var(--foreground)]/70">
-                {t.pricing.compareFeatures.alerts}
-              </td>
-              {PLANS.map((plan) => (
-                <td key={plan.id} className="px-4 py-3 text-center">
-                  <Check value={FEATURE_MATRIX[plan.id].alerts} />
-                </td>
-              ))}
-            </tr>
-            <tr className="border-b border-[var(--border-color)]">
-              <td className="px-4 py-3 text-[var(--foreground)]/70">
-                {t.pricing.compareFeatures.prioritySupport}
-              </td>
-              {PLANS.map((plan) => (
-                <td key={plan.id} className="px-4 py-3 text-center">
-                  <Check value={FEATURE_MATRIX[plan.id].prioritySupport} />
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td className="px-4 py-3 text-[var(--foreground)]/70">
-                {t.pricing.compareFeatures.dedicatedContact}
-              </td>
-              {PLANS.map((plan) => (
-                <td key={plan.id} className="px-4 py-3 text-center">
-                  <Check value={FEATURE_MATRIX[plan.id].dedicatedContact} />
-                </td>
-              ))}
-            </tr>
+                {PLANS.map((plan) => (
+                  <td key={plan.id} className="px-4 py-3 text-center">
+                    <Check value={hasFeature(plan.id, feature)} />
+                  </td>
+                ))}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

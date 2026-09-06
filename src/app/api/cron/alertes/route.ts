@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { Bail } from "@/lib/types";
+import { hasFeature } from "@/lib/types";
+import type { Bail, Plan } from "@/lib/types";
 
 const ALERT_WINDOW_DAYS = 30;
 
@@ -31,9 +32,26 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const aEnvoyer = (baux ?? []).filter(
+  const dueForAlert = (baux ?? []).filter(
     (b) => b.derniere_alerte_envoyee_le !== b.date_prochaine_revision
   );
+
+  if (dueForAlert.length === 0) {
+    return NextResponse.json({ sent: 0 });
+  }
+
+  const userIds = [...new Set(dueForAlert.map((b) => b.user_id).filter(Boolean))] as string[];
+  const { data: abonnements } = await supabase
+    .from("abonnements")
+    .select("user_id, plan")
+    .in("user_id", userIds);
+
+  const planByUser = new Map((abonnements ?? []).map((a) => [a.user_id as string, a.plan as Plan]));
+
+  const aEnvoyer = dueForAlert.filter((b) => {
+    const plan = b.user_id ? planByUser.get(b.user_id) : undefined;
+    return plan ? hasFeature(plan, "alerts") : false;
+  });
 
   if (aEnvoyer.length === 0) {
     return NextResponse.json({ sent: 0 });

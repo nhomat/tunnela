@@ -4,8 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
-import { calculerStatutConformite, limiteBaux } from "@/lib/types";
-import type { Bail, IndexType, Plan } from "@/lib/types";
+import { calculerStatutConformite, hasFeature, limiteBaux } from "@/lib/types";
+import type { Bail, IndexType, Plan, StatutConformite } from "@/lib/types";
+import { generateTemplateCsv, parseLeasesCsv } from "@/lib/csv-import";
+import type { ImportResult } from "@/lib/csv-import";
 
 type FormState = {
   preneur: string;
@@ -35,13 +37,15 @@ export default function BauxPage() {
 
   const [baux, setBaux] = useState<Bail[]>([]);
   const [plan, setPlan] = useState<Plan>("decouverte");
-  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, boolean>>>({});
   const [saving, setSaving] = useState(false);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatutConformite | "all">("all");
 
   useEffect(() => {
     void loadData();
@@ -60,19 +64,32 @@ export default function BauxPage() {
 
     const [bauxRes, abonnementRes] = await Promise.all([
       supabase.from("baux").select("*").order("created_at", { ascending: false }),
-      supabase.from("abonnements").select("plan, is_admin").eq("user_id", user.id).maybeSingle(),
+      supabase.from("abonnements").select("plan").eq("user_id", user.id).maybeSingle(),
     ]);
 
     if (bauxRes.data) setBaux(bauxRes.data as Bail[]);
-    if (abonnementRes.data) {
-      setPlan(abonnementRes.data.plan as Plan);
-      setIsAdmin(Boolean(abonnementRes.data.is_admin));
-    }
+    if (abonnementRes.data) setPlan(abonnementRes.data.plan as Plan);
     setLoading(false);
   }
 
-  const limit = limiteBaux(plan, isAdmin);
+  const limit = limiteBaux(plan);
   const limitReached = limit !== null && baux.length >= limit;
+  const canSearch = hasFeature(plan, "search");
+  const canImport = hasFeature(plan, "csvImport");
+
+  const visibleBaux = useMemo(() => {
+    return baux.filter((bail) => {
+      if (statusFilter !== "all" && bail.statut !== statusFilter) return false;
+      if (canSearch && search.trim()) {
+        const q = search.trim().toLowerCase();
+        return (
+          bail.preneur.toLowerCase().includes(q) ||
+          (bail.adresse ?? "").toLowerCase().includes(q)
+        );
+      }
+      return true;
+    });
+  }, [baux, search, statusFilter, canSearch]);
 
   function openCreateForm() {
     setEditingId(null);
@@ -156,14 +173,25 @@ export default function BauxPage() {
     <div className="tunnel-enter">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <h1 className="font-serif text-2xl">{t.baux.title}</h1>
-        <button
-          type="button"
-          onClick={openCreateForm}
-          disabled={limitReached}
-          className="btn-primary transition-base disabled:opacity-50"
-        >
-          {t.baux.add}
-        </button>
+        <div className="flex flex-wrap gap-3">
+          {canImport && (
+            <button
+              type="button"
+              onClick={() => setShowImport((v) => !v)}
+              className="btn-secondary transition-base"
+            >
+              {t.baux.importCsv}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={openCreateForm}
+            disabled={limitReached}
+            className="btn-primary transition-base disabled:opacity-50"
+          >
+            {t.baux.add}
+          </button>
+        </div>
       </div>
 
       {limitReached && (
@@ -173,6 +201,17 @@ export default function BauxPage() {
             {t.baux.upgrade}
           </Link>
         </div>
+      )}
+
+      {showImport && canImport && (
+        <CsvImportPanel
+          remainingCapacity={limit === null ? null : Math.max(0, limit - baux.length)}
+          onImported={async () => {
+            setShowImport(false);
+            await loadData();
+          }}
+          onCancel={() => setShowImport(false)}
+        />
       )}
 
       {showForm && (
@@ -186,10 +225,34 @@ export default function BauxPage() {
         />
       )}
 
+      {canSearch && baux.length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-3">
+          <input
+            type="search"
+            placeholder={t.baux.searchPlaceholder}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="input transition-base max-w-xs"
+          />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as StatutConformite | "all")}
+            className="input transition-base w-auto"
+          >
+            <option value="all">{t.baux.filterAll}</option>
+            <option value="conforme">{t.baux.statuts.conforme}</option>
+            <option value="a_verifier">{t.baux.statuts.a_verifier}</option>
+            <option value="non_conforme">{t.baux.statuts.non_conforme}</option>
+          </select>
+        </div>
+      )}
+
       {loading ? (
         <p className="text-sm text-[var(--foreground)]/60">…</p>
       ) : baux.length === 0 ? (
         <p className="text-sm text-[var(--foreground)]/60">{t.baux.empty}</p>
+      ) : visibleBaux.length === 0 ? (
+        <p className="text-sm text-[var(--foreground)]/60">{t.baux.noResults}</p>
       ) : (
         <div className="card overflow-x-auto p-0">
           <table className="w-full min-w-[720px] text-left text-sm">
@@ -206,7 +269,7 @@ export default function BauxPage() {
               </tr>
             </thead>
             <tbody>
-              {baux.map((bail) => (
+              {visibleBaux.map((bail) => (
                 <tr key={bail.id} className="border-b border-[var(--border-color)] last:border-0">
                   <td className="px-4 py-3 font-medium">{bail.preneur}</td>
                   <td className="px-4 py-3 text-[var(--foreground)]/70">{bail.adresse ?? "—"}</td>
@@ -241,6 +304,115 @@ export default function BauxPage() {
           </table>
         </div>
       )}
+    </div>
+  );
+}
+
+function CsvImportPanel({
+  remainingCapacity,
+  onImported,
+  onCancel,
+}: {
+  remainingCapacity: number | null;
+  onImported: () => void;
+  onCancel: () => void;
+}) {
+  const { t } = useApp();
+  const [result, setResult] = useState<ImportResult | null>(null);
+  const [importing, setImporting] = useState(false);
+
+  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setResult(parseLeasesCsv(String(reader.result ?? "")));
+    };
+    reader.readAsText(file);
+  }
+
+  function downloadTemplate() {
+    const blob = new Blob([generateTemplateCsv()], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "tunnela-modele-baux.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function confirmImport() {
+    if (!result || result.valid.length === 0) return;
+    setImporting(true);
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      setImporting(false);
+      return;
+    }
+
+    const rows =
+      remainingCapacity === null ? result.valid : result.valid.slice(0, remainingCapacity);
+
+    if (rows.length > 0) {
+      await supabase.from("baux").insert(rows.map((row) => ({ ...row, user_id: user.id })));
+    }
+
+    setImporting(false);
+    onImported();
+  }
+
+  return (
+    <div className="card tunnel-enter mb-8">
+      <h2 className="font-serif text-lg">{t.baux.importTitle}</h2>
+      <p className="mt-2 text-sm text-[var(--foreground)]/70">{t.baux.importDropHint}</p>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <input type="file" accept=".csv,text/csv" onChange={handleFile} className="text-sm" />
+        <button type="button" onClick={downloadTemplate} className="btn-secondary transition-base text-sm">
+          {t.baux.downloadTemplate}
+        </button>
+      </div>
+
+      {result && (
+        <div className="mt-4 text-sm">
+          <p className="text-[var(--success)]">
+            {result.valid.length} {t.baux.importPreview}
+          </p>
+          {result.errors.length > 0 && (
+            <div className="mt-2 text-[var(--danger)]">
+              <p>
+                {result.errors.length} {t.baux.importRowErrors}
+              </p>
+              <ul className="mt-1 list-inside list-disc text-xs">
+                {result.errors.slice(0, 10).map((err) => (
+                  <li key={err.row}>
+                    Ligne {err.row} : {err.message}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {remainingCapacity !== null && result.valid.length > remainingCapacity && (
+            <p className="mt-2 text-[var(--accent)]">{t.baux.importLimitWarning}</p>
+          )}
+        </div>
+      )}
+
+      <div className="mt-4 flex gap-3">
+        <button
+          type="button"
+          onClick={confirmImport}
+          disabled={!result || result.valid.length === 0 || importing}
+          className="btn-primary transition-base disabled:opacity-50"
+        >
+          {t.baux.importConfirm}
+        </button>
+        <button type="button" onClick={onCancel} className="btn-secondary transition-base">
+          {t.baux.importCancel}
+        </button>
+      </div>
     </div>
   );
 }
