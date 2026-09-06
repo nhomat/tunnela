@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 import { calculerStatutConformite } from "./types";
-import type { IndexType, Periodicite, StatutConformite } from "./types";
+import type { Bail, IndexType, Periodicite, StatutConformite } from "./types";
 
 export interface ImportedBail {
   preneur: string;
@@ -46,6 +46,23 @@ const TRUE_VALUES = new Set(["oui", "yes", "true", "1", "vrai"]);
 
 function parseBoolean(value: string): boolean {
   return TRUE_VALUES.has(value.trim().toLowerCase());
+}
+
+export function exportBauxAsCsv(baux: Bail[]): string {
+  const rows = baux.map((b) => [
+    b.preneur,
+    b.adresse ?? "",
+    String(b.loyer_annuel),
+    b.indice,
+    b.clause_tunnel ? "oui" : "non",
+    b.plancher_pct?.toString() ?? "",
+    b.plafond_pct?.toString() ?? "",
+    b.date_prochaine_revision ?? "",
+    b.indice_reference?.toString() ?? "",
+    b.periodicite,
+    b.preneur_email ?? "",
+  ]);
+  return Papa.unparse([CSV_HEADERS, ...rows]);
 }
 
 export function generateTemplateCsv(): string {

@@ -7,18 +7,9 @@ export function Logo({ className = "h-8 w-8" }: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <path
-        d="M12 30C6 30 4 24 4 20C4 16 6 10 12 10"
-        stroke="var(--foreground)"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <path
-        d="M20 32C13 32 10 27 10 20C10 13 13 8 20 8"
-        stroke="var(--color-laiton)"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
+      <circle cx="20" cy="20" r="17" stroke="var(--foreground)" strokeWidth="2.5" />
+      <circle cx="20" cy="20" r="11.5" stroke="var(--foreground)" strokeWidth="2" opacity="0.45" />
+      <circle cx="20" cy="20" r="6" fill="var(--color-laiton)" />
     </svg>
   );
 }

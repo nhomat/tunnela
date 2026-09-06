@@ -21,6 +21,7 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
     { href: "/dashboard/clause", label: t.dashboard.nav.clause },
     { href: "/dashboard/echeancier", label: t.dashboard.nav.echeancier },
     { href: "/dashboard/equipe", label: t.dashboard.nav.equipe },
+    { href: "/dashboard/parametres", label: t.dashboard.nav.parametres },
     ...(isAdmin ? [{ href: "/dashboard/admin/indices", label: t.dashboard.nav.indices }] : []),
   ];
 

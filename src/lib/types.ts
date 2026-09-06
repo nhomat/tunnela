@@ -44,6 +44,8 @@ export interface Abonnement {
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   statut: string;
+  nom_bailleur_defaut: string | null;
+  alert_delai_jours: number;
   updated_at?: string;
 }
 

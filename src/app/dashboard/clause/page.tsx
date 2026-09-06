@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useApp } from "@/components/providers";
 import { genererClauseTunnel, genererAvenantICC } from "@/lib/clause-generator";
 import { exportTextAsPdf } from "@/lib/pdf-export";
 import { FeatureGate, useCurrentPlan } from "@/components/feature-gate";
+import { createClient } from "@/lib/supabase/client";
 
 type Mode = "tunnel" | "avenant";
 
@@ -23,6 +24,22 @@ function ClauseGenerator() {
   const [mode, setMode] = useState<Mode>("tunnel");
 
   const [bailleur, setBailleur] = useState("");
+
+  useEffect(() => {
+    const supabase = createClient();
+    void (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from("abonnements")
+        .select("nom_bailleur_defaut")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (data?.nom_bailleur_defaut) setBailleur(data.nom_bailleur_defaut);
+    })();
+  }, []);
   const [preneur, setPreneur] = useState("");
   const [adresse, setAdresse] = useState("");
   const [indice, setIndice] = useState<"ILC" | "ILAT">("ILC");

@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { hasFeature } from "@/lib/types";
 import type { Bail, Plan } from "@/lib/types";
 
-const ALERT_WINDOW_DAYS = 30;
+const MAX_ALERT_WINDOW_DAYS = 90; // borne haute de alert_delai_jours
 
 function isoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
   const supabase = createAdminClient();
   const today = new Date();
   const windowEnd = new Date(today);
-  windowEnd.setDate(windowEnd.getDate() + ALERT_WINDOW_DAYS);
+  windowEnd.setDate(windowEnd.getDate() + MAX_ALERT_WINDOW_DAYS);
 
   const { data: baux, error } = await supabase
     .from("baux")
@@ -43,14 +43,23 @@ export async function GET(request: Request) {
   const userIds = [...new Set(dueForAlert.map((b) => b.user_id).filter(Boolean))] as string[];
   const { data: abonnements } = await supabase
     .from("abonnements")
-    .select("user_id, plan")
+    .select("user_id, plan, alert_delai_jours")
     .in("user_id", userIds);
 
-  const planByUser = new Map((abonnements ?? []).map((a) => [a.user_id as string, a.plan as Plan]));
+  const settingsByUser = new Map(
+    (abonnements ?? []).map((a) => [
+      a.user_id as string,
+      { plan: a.plan as Plan, delaiJours: a.alert_delai_jours as number },
+    ])
+  );
 
   const aEnvoyer = dueForAlert.filter((b) => {
-    const plan = b.user_id ? planByUser.get(b.user_id) : undefined;
-    return plan ? hasFeature(plan, "alerts") : false;
+    const settings = b.user_id ? settingsByUser.get(b.user_id) : undefined;
+    if (!settings || !hasFeature(settings.plan, "alerts") || !b.date_prochaine_revision) return false;
+    const joursRestants = Math.ceil(
+      (new Date(b.date_prochaine_revision).getTime() - today.getTime()) / 86_400_000
+    );
+    return joursRestants <= settings.delaiJours;
   });
 
   if (aEnvoyer.length === 0) {

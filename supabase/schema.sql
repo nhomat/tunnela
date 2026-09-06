@@ -103,6 +103,8 @@ create table if not exists abonnements (
   stripe_customer_id text,
   stripe_subscription_id text,
   statut text not null default 'actif',
+  nom_bailleur_defaut text,
+  alert_delai_jours integer not null default 30 check (alert_delai_jours between 7 and 90),
   updated_at timestamptz not null default now()
 );
 
@@ -124,6 +126,30 @@ create policy "Les administrateurs changent leur propre plan"
   on abonnements for update
   using (auth.uid() = user_id and is_admin)
   with check (auth.uid() = user_id and is_admin);
+
+-- Permet à un utilisateur de modifier uniquement ses propres paramètres
+-- (nom du bailleur, délai d'alerte) sans lui ouvrir une policy UPDATE
+-- générale sur abonnements, qui laisserait sinon n'importe quel client
+-- modifier son propre "plan" ou "is_admin" via la même requête PostgREST.
+create or replace function public.update_my_parametres(p_nom_bailleur text, p_alert_delai_jours integer)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if p_alert_delai_jours < 7 or p_alert_delai_jours > 90 then
+    raise exception 'alert_delai_jours doit etre entre 7 et 90';
+  end if;
+  update abonnements
+  set nom_bailleur_defaut = nullif(trim(p_nom_bailleur), ''),
+      alert_delai_jours = p_alert_delai_jours
+  where user_id = auth.uid();
+end;
+$$;
+
+revoke all on function public.update_my_parametres(text, integer) from public, anon;
+grant execute on function public.update_my_parametres(text, integer) to authenticated;
 
 -- Un membre actif d'une équipe Coop voit le plan de son propriétaire, pour
 -- résoudre son "plan effectif" côté client (accès aux fonctionnalités Coop

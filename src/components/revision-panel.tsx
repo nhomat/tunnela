@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useApp } from "./providers";
 import { createClient } from "@/lib/supabase/client";
 import { calculerRevisionLoyer, type IndexationResult } from "@/lib/indexation";
@@ -33,6 +33,22 @@ export function RevisionPanel({
 
   const [bailleur, setBailleur] = useState("");
   const [dateEffet, setDateEffet] = useState("");
+
+  useEffect(() => {
+    const supabase = createClient();
+    void (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from("abonnements")
+        .select("nom_bailleur_defaut")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (data?.nom_bailleur_defaut) setBailleur(data.nom_bailleur_defaut);
+    })();
+  }, []);
   const [notificationText, setNotificationText] = useState("");
   const [sendStatus, setSendStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
