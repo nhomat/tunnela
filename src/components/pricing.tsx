@@ -19,7 +19,7 @@ export function Pricing({
         <h2 className="font-serif text-3xl font-medium">{t.pricing.title}</h2>
         <p className="mt-2 text-[var(--foreground)]/70">{t.pricing.subtitle}</p>
       </div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {PLANS.map((plan) => {
           const isCurrent = currentPlan === plan.id;
           const limiteLabel =

@@ -5,6 +5,8 @@ import { useApp } from "@/components/providers";
 import { calculerRevisionLoyer, type IndexationResult } from "@/lib/indexation";
 import { useCurrentPlan } from "@/components/feature-gate";
 import { hasFeature } from "@/lib/types";
+import { createClient } from "@/lib/supabase/client";
+import { getLatestIndice } from "@/lib/indices";
 
 export default function CalculateurPage() {
   const { t } = useApp();
@@ -20,7 +22,20 @@ export default function CalculateurPage() {
   const [plafond, setPlafond] = useState("");
   const [result, setResult] = useState<IndexationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [showAutoIndexInfo, setShowAutoIndexInfo] = useState(false);
+  const [autoIndexMessage, setAutoIndexMessage] = useState<string | null>(null);
+
+  async function handleAutoIndex() {
+    const supabase = createClient();
+    const latest = await getLatestIndice(supabase, type);
+    if (latest) {
+      setIndiceNouveau(String(latest.valeur));
+      setAutoIndexMessage(
+        `${t.calculateur.autoIndexFound} ${latest.valeur} (${type}, ${latest.periode}, ${t.calculateur.autoIndexSource} ${latest.source})`
+      );
+    } else {
+      setAutoIndexMessage(t.calculateur.autoIndexNone);
+    }
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -105,15 +120,13 @@ export default function CalculateurPage() {
             <div>
               <button
                 type="button"
-                onClick={() => setShowAutoIndexInfo(true)}
+                onClick={handleAutoIndex}
                 className="btn-secondary transition-base text-sm"
               >
                 {t.calculateur.autoIndexButton}
               </button>
-              {showAutoIndexInfo && (
-                <p className="mt-2 text-xs text-[var(--accent)]">
-                  {t.calculateur.autoIndexComingSoon}
-                </p>
+              {autoIndexMessage && (
+                <p className="mt-2 text-xs text-[var(--accent)]">{autoIndexMessage}</p>
               )}
             </div>
           )}

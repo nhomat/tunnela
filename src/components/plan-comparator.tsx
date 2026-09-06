@@ -37,6 +37,7 @@ const FEATURE_ROWS: Feature[] = [
   "prioritySupport",
   "autoIndex",
   "dedicatedContact",
+  "coopEquipe",
 ];
 
 export function PlanComparator() {

@@ -2,7 +2,7 @@ export type IndexType = "ILC" | "ILAT" | "ICC";
 
 export type StatutConformite = "conforme" | "a_verifier" | "non_conforme";
 
-export type Plan = "decouverte" | "cabinet" | "portefeuille" | "fonciere";
+export type Plan = "decouverte" | "cabinet" | "portefeuille" | "fonciere" | "coop";
 
 export type Periodicite = "annuelle" | "trimestrielle";
 
@@ -22,6 +22,8 @@ export interface Bail {
   indice_reference: number | null;
   periodicite: Periodicite;
   preneur_email: string | null;
+  equipe_id: string | null;
+  visible_equipe: boolean;
   created_at?: string;
 }
 
@@ -50,6 +52,7 @@ export const PLAN_LIMITS: Record<Plan, number | null> = {
   cabinet: 20,
   portefeuille: 100,
   fonciere: null,
+  coop: null,
 };
 
 export function limiteBaux(plan: Plan): number | null {
@@ -67,9 +70,10 @@ export type Feature =
   | "notifyEmail"
   | "prioritySupport"
   | "dedicatedContact"
-  | "autoIndex";
+  | "autoIndex"
+  | "coopEquipe";
 
-const PLAN_ORDER: Plan[] = ["decouverte", "cabinet", "portefeuille", "fonciere"];
+const PLAN_ORDER: Plan[] = ["decouverte", "cabinet", "portefeuille", "fonciere", "coop"];
 
 const FEATURE_MIN_PLAN: Record<Feature, Plan> = {
   generator: "cabinet",
@@ -83,6 +87,7 @@ const FEATURE_MIN_PLAN: Record<Feature, Plan> = {
   prioritySupport: "portefeuille",
   dedicatedContact: "fonciere",
   autoIndex: "fonciere",
+  coopEquipe: "coop",
 };
 
 export function hasFeature(plan: Plan, feature: Feature): boolean {

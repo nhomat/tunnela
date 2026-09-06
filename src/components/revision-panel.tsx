@@ -8,6 +8,7 @@ import { genererNotificationRevision } from "@/lib/clause-generator";
 import { exportTextAsPdf } from "@/lib/pdf-export";
 import { hasFeature, prochaineDateApres } from "@/lib/types";
 import type { Bail, Plan } from "@/lib/types";
+import { getLatestIndice } from "@/lib/indices";
 
 export function RevisionPanel({
   bail,
@@ -22,8 +23,10 @@ export function RevisionPanel({
 }) {
   const { t } = useApp();
   const canNotify = hasFeature(plan, "notifyEmail");
+  const canAutoIndex = hasFeature(plan, "autoIndex");
 
   const [indiceNouveau, setIndiceNouveau] = useState("");
+  const [autoIndexMessage, setAutoIndexMessage] = useState<string | null>(null);
   const [result, setResult] = useState<IndexationResult | null>(null);
   const [updating, setUpdating] = useState(false);
   const [updated, setUpdated] = useState(false);
@@ -32,6 +35,17 @@ export function RevisionPanel({
   const [dateEffet, setDateEffet] = useState("");
   const [notificationText, setNotificationText] = useState("");
   const [sendStatus, setSendStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  async function handleAutoIndex() {
+    const supabase = createClient();
+    const latest = await getLatestIndice(supabase, bail.indice === "ICC" ? "ICC" : bail.indice);
+    if (latest) {
+      setIndiceNouveau(String(latest.valeur));
+      setAutoIndexMessage(`${latest.valeur} (${latest.periode}, ${latest.source})`);
+    } else {
+      setAutoIndexMessage(t.revision.autoIndexNone);
+    }
+  }
 
   function handleCalculer(e: React.FormEvent) {
     e.preventDefault();
@@ -146,6 +160,15 @@ export function RevisionPanel({
                 value={indiceNouveau}
                 onChange={(e) => setIndiceNouveau(e.target.value)}
               />
+              {canAutoIndex && (
+                <button
+                  type="button"
+                  onClick={handleAutoIndex}
+                  className="mt-1 text-xs text-[var(--accent)] hover:underline"
+                >
+                  {t.revision.autoIndexButton}
+                </button>
+              )}
             </label>
             <div className="flex items-end">
               <button type="submit" className="btn-primary transition-base w-full">
@@ -153,6 +176,9 @@ export function RevisionPanel({
               </button>
             </div>
           </form>
+          {autoIndexMessage && (
+            <p className="mt-2 text-xs text-[var(--accent)]">{autoIndexMessage}</p>
+          )}
 
           {result && (
             <div className="mt-6 grid gap-6 lg:grid-cols-2">

@@ -7,10 +7,14 @@ import { createClient } from "@/lib/supabase/client";
 import { hasFeature, minPlanForFeature } from "@/lib/types";
 import type { Feature, Plan } from "@/lib/types";
 import { PLANS } from "@/lib/stripe";
+import { resolveTeamContext } from "@/lib/team";
+import type { TeamContext } from "@/lib/team";
 
 export function useCurrentPlan() {
   const [plan, setPlan] = useState<Plan | null>(null);
+  const [ownPlan, setOwnPlan] = useState<Plan | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [team, setTeam] = useState<TeamContext | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,14 +33,18 @@ export function useCurrentPlan() {
         .eq("user_id", user.id)
         .maybeSingle();
       if (data) {
-        setPlan(data.plan as Plan);
+        const rawPlan = data.plan as Plan;
+        setOwnPlan(rawPlan);
         setIsAdmin(Boolean(data.is_admin));
+        const context = await resolveTeamContext(supabase, user.id, rawPlan);
+        setTeam(context);
+        setPlan(context.effectivePlan);
       }
       setLoading(false);
     })();
   }, []);
 
-  return { plan, isAdmin, loading };
+  return { plan, ownPlan, isAdmin, team, loading };
 }
 
 export function FeatureGate({

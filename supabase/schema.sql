@@ -1,3 +1,57 @@
+create table if not exists equipes (
+  id uuid primary key default gen_random_uuid(),
+  proprietaire_user_id uuid not null references auth.users(id) on delete cascade,
+  nom text not null,
+  created_at timestamptz not null default now(),
+  unique (proprietaire_user_id)
+);
+
+alter table equipes enable row level security;
+
+create policy "Le proprietaire gere son equipe"
+  on equipes for all
+  using (auth.uid() = proprietaire_user_id)
+  with check (auth.uid() = proprietaire_user_id);
+
+create table if not exists membres_equipe (
+  id uuid primary key default gen_random_uuid(),
+  equipe_id uuid not null references equipes(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete cascade,
+  email text not null,
+  role text not null default 'membre' check (role in ('proprietaire', 'membre')),
+  statut text not null default 'invite' check (statut in ('invite', 'actif')),
+  invited_at timestamptz not null default now(),
+  joined_at timestamptz,
+  unique (equipe_id, email)
+);
+
+alter table membres_equipe enable row level security;
+
+-- Un membre actif peut voir la fiche de son équipe (nom, propriétaire).
+create policy "Les membres voient leur equipe"
+  on equipes for select
+  using (
+    exists (
+      select 1 from membres_equipe me
+      where me.equipe_id = equipes.id and me.user_id = auth.uid() and me.statut = 'actif'
+    )
+  );
+
+create policy "Le proprietaire gere les membres"
+  on membres_equipe for all
+  using (exists (select 1 from equipes e where e.id = membres_equipe.equipe_id and e.proprietaire_user_id = auth.uid()))
+  with check (exists (select 1 from equipes e where e.id = membres_equipe.equipe_id and e.proprietaire_user_id = auth.uid()));
+
+create policy "Un membre voit les lignes de sa propre equipe"
+  on membres_equipe for select
+  using (
+    user_id = auth.uid()
+    or exists (
+      select 1 from membres_equipe moi
+      where moi.equipe_id = membres_equipe.equipe_id and moi.user_id = auth.uid() and moi.statut = 'actif'
+    )
+  );
+
 create table if not exists baux (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -14,6 +68,8 @@ create table if not exists baux (
   indice_reference numeric,
   periodicite text not null default 'annuelle' check (periodicite in ('annuelle', 'trimestrielle')),
   preneur_email text,
+  equipe_id uuid references equipes(id) on delete set null,
+  visible_equipe boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -25,9 +81,22 @@ create policy "Les utilisateurs voient leurs propres baux"
 create policy "Les utilisateurs gèrent leurs propres baux"
   on baux for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+-- Abonnement "Coop" : un membre actif d'une équipe voit les baux qu'un
+-- collègue a explicitement marqués comme partagés (visible_equipe = true).
+create policy "Les membres actifs voient les baux partages de leur equipe"
+  on baux for select
+  using (
+    visible_equipe = true
+    and equipe_id is not null
+    and exists (
+      select 1 from membres_equipe me
+      where me.equipe_id = baux.equipe_id and me.user_id = auth.uid() and me.statut = 'actif'
+    )
+  );
+
 create table if not exists abonnements (
   user_id uuid primary key references auth.users(id) on delete cascade,
-  plan text not null default 'decouverte' check (plan in ('decouverte', 'cabinet', 'portefeuille', 'fonciere')),
+  plan text not null default 'decouverte' check (plan in ('decouverte', 'cabinet', 'portefeuille', 'fonciere', 'coop')),
   is_admin boolean not null default false,
   stripe_customer_id text,
   stripe_subscription_id text,
@@ -54,11 +123,52 @@ create policy "Les administrateurs changent leur propre plan"
   using (auth.uid() = user_id and is_admin)
   with check (auth.uid() = user_id and is_admin);
 
+-- Un membre actif d'une équipe Coop voit le plan de son propriétaire, pour
+-- résoudre son "plan effectif" côté client (accès aux fonctionnalités Coop
+-- même si son propre abonnement individuel est resté en Découverte).
+create policy "Les membres voient le plan du proprietaire de leur equipe"
+  on abonnements for select
+  using (
+    exists (
+      select 1 from membres_equipe me
+      join equipes e on e.id = me.equipe_id
+      where me.user_id = auth.uid() and me.statut = 'actif' and e.proprietaire_user_id = abonnements.user_id
+    )
+  );
+
+-- Table de référence des indices ILC/ILAT/ICC publiés par l'INSEE, tenue à
+-- jour manuellement par un administrateur Tunnela (feature "autoIndex" du
+-- plan Foncière/Coop) : évite à chaque client de ressaisir la valeur
+-- publiée pour calculer sa révision.
+create table if not exists indices_publies (
+  id uuid primary key default gen_random_uuid(),
+  indice text not null check (indice in ('ILC', 'ILAT', 'ICC')),
+  periode date not null,
+  valeur numeric not null,
+  source text not null default 'INSEE',
+  created_at timestamptz not null default now(),
+  unique (indice, periode)
+);
+
+alter table indices_publies enable row level security;
+
+create policy "Tout le monde authentifie lit les indices publies"
+  on indices_publies for select
+  to authenticated
+  using (true);
+
+create policy "Seuls les admins gerent les indices publies"
+  on indices_publies for all
+  using (exists (select 1 from abonnements a where a.user_id = auth.uid() and a.is_admin))
+  with check (exists (select 1 from abonnements a where a.user_id = auth.uid() and a.is_admin));
+
 create index if not exists baux_user_id_idx on baux (user_id);
 create index if not exists baux_date_prochaine_revision_idx on baux (date_prochaine_revision);
+create index if not exists indices_publies_indice_periode_idx on indices_publies (indice, periode desc);
 
 -- Un utilisateur nouvellement inscrit reçoit automatiquement un abonnement
--- "découverte" par défaut.
+-- "découverte" par défaut. S'il avait été invité dans une équipe Coop avec
+-- cette adresse email avant son inscription, on l'y rattache aussitôt.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -68,9 +178,16 @@ begin
   insert into public.abonnements (user_id, plan)
   values (new.id, 'decouverte')
   on conflict (user_id) do nothing;
+
+  update public.membres_equipe
+  set user_id = new.id, statut = 'actif', joined_at = now()
+  where email = new.email and user_id is null;
+
   return new;
 end;
 $$;
+
+revoke execute on function public.handle_new_user() from anon, authenticated;
 
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created

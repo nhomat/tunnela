@@ -46,6 +46,13 @@ export const PLANS: PlanDefinition[] = [
     limiteBaux: null,
     priceEnvVar: "STRIPE_PRICE_FONCIERE",
   },
+  {
+    id: "coop",
+    nom: "Coop",
+    prixMensuel: 490,
+    limiteBaux: null,
+    priceEnvVar: "STRIPE_PRICE_COOP",
+  },
 ];
 
 export function priceIdForPlan(plan: Plan): string | null {

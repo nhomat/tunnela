@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { calculerStatutConformite, hasFeature, limiteBaux } from "@/lib/types";
-import type { Bail, IndexType, Periodicite, Plan, StatutConformite } from "@/lib/types";
+import type { Bail, IndexType, Periodicite, StatutConformite } from "@/lib/types";
 import { generateTemplateCsv, parseLeasesCsv } from "@/lib/csv-import";
 import type { ImportResult } from "@/lib/csv-import";
 import { RevisionPanel } from "@/components/revision-panel";
+import { useCurrentPlan } from "@/components/feature-gate";
 
 type FormState = {
   preneur: string;
@@ -22,6 +23,7 @@ type FormState = {
   indice_reference: string;
   periodicite: Periodicite;
   preneur_email: string;
+  visible_equipe: boolean;
 };
 
 const emptyForm: FormState = {
@@ -36,14 +38,17 @@ const emptyForm: FormState = {
   indice_reference: "",
   periodicite: "annuelle",
   preneur_email: "",
+  visible_equipe: false,
 };
 
 export default function BauxPage() {
   const { t } = useApp();
   const supabase = useMemo(() => createClient(), []);
+  const { plan: effectivePlan, team } = useCurrentPlan();
+  const plan = effectivePlan ?? "decouverte";
 
   const [baux, setBaux] = useState<Bail[]>([]);
-  const [plan, setPlan] = useState<Plan>("decouverte");
+  const [myUserId, setMyUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [showImport, setShowImport] = useState(false);
@@ -69,25 +74,25 @@ export default function BauxPage() {
       setLoading(false);
       return;
     }
+    setMyUserId(user.id);
 
-    const [bauxRes, abonnementRes] = await Promise.all([
-      supabase.from("baux").select("*").order("created_at", { ascending: false }),
-      supabase.from("abonnements").select("plan").eq("user_id", user.id).maybeSingle(),
-    ]);
-
-    if (bauxRes.data) setBaux(bauxRes.data as Bail[]);
-    if (abonnementRes.data) setPlan(abonnementRes.data.plan as Plan);
+    const { data } = await supabase.from("baux").select("*").order("created_at", { ascending: false });
+    if (data) setBaux(data as Bail[]);
     setLoading(false);
   }
 
+  const ownBaux = useMemo(() => baux.filter((b) => b.user_id === myUserId), [baux, myUserId]);
+  const sharedBaux = useMemo(() => baux.filter((b) => b.user_id !== myUserId), [baux, myUserId]);
+
   const limit = limiteBaux(plan);
-  const limitReached = limit !== null && baux.length >= limit;
+  const limitReached = limit !== null && ownBaux.length >= limit;
   const canSearch = hasFeature(plan, "search");
   const canImport = hasFeature(plan, "csvImport");
   const canRevise = hasFeature(plan, "revisionWorkflow");
+  const canShareTeam = hasFeature(plan, "coopEquipe") && Boolean(team?.equipeId);
 
   const visibleBaux = useMemo(() => {
-    return baux.filter((bail) => {
+    return ownBaux.filter((bail) => {
       if (statusFilter !== "all" && bail.statut !== statusFilter) return false;
       if (canSearch && search.trim()) {
         const q = search.trim().toLowerCase();
@@ -98,7 +103,7 @@ export default function BauxPage() {
       }
       return true;
     });
-  }, [baux, search, statusFilter, canSearch]);
+  }, [ownBaux, search, statusFilter, canSearch]);
 
   function openCreateForm() {
     setEditingId(null);
@@ -121,6 +126,7 @@ export default function BauxPage() {
       indice_reference: bail.indice_reference?.toString() ?? "",
       periodicite: bail.periodicite,
       preneur_email: bail.preneur_email ?? "",
+      visible_equipe: bail.visible_equipe,
     });
     setErrors({});
     setShowForm(true);
@@ -165,6 +171,9 @@ export default function BauxPage() {
       periodicite: form.periodicite,
       preneur_email: form.preneur_email.trim() || null,
       statut,
+      ...(canShareTeam
+        ? { visible_equipe: form.visible_equipe, equipe_id: form.visible_equipe ? team!.equipeId : null }
+        : {}),
     };
 
     if (editingId) {
@@ -235,6 +244,7 @@ export default function BauxPage() {
           setForm={setForm}
           errors={errors}
           saving={saving}
+          canShareTeam={canShareTeam}
           onSubmit={handleSubmit}
           onCancel={() => setShowForm(false)}
         />
@@ -340,6 +350,38 @@ export default function BauxPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {canShareTeam && sharedBaux.length > 0 && (
+        <div className="mt-10">
+          <h2 className="mb-3 font-serif text-lg">{t.baux.sharedByTeamTitle}</h2>
+          <div className="card overflow-x-auto p-0">
+            <table className="w-full min-w-[560px] text-left text-sm">
+              <thead>
+                <tr className="border-b border-[var(--border-color)] text-xs uppercase tracking-wide text-[var(--foreground)]/60">
+                  <th className="px-4 py-3">{t.baux.preneur}</th>
+                  <th className="px-4 py-3">{t.baux.loyer}</th>
+                  <th className="px-4 py-3">{t.baux.indice}</th>
+                  <th className="px-4 py-3">{t.baux.prochaineRevision}</th>
+                  <th className="px-4 py-3">{t.baux.statut}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sharedBaux.map((bail) => (
+                  <tr key={bail.id} className="border-b border-[var(--border-color)] last:border-0">
+                    <td className="px-4 py-3 font-medium">{bail.preneur}</td>
+                    <td className="px-4 py-3">{bail.loyer_annuel.toLocaleString("fr-FR")} €</td>
+                    <td className="px-4 py-3">{bail.indice}</td>
+                    <td className="px-4 py-3">{bail.date_prochaine_revision ?? "—"}</td>
+                    <td className="px-4 py-3">
+                      <StatutBadge statut={bail.statut} label={t.baux.statuts[bail.statut]} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
@@ -476,6 +518,7 @@ function BailForm({
   setForm,
   errors,
   saving,
+  canShareTeam,
   onSubmit,
   onCancel,
 }: {
@@ -483,6 +526,7 @@ function BailForm({
   setForm: (form: FormState) => void;
   errors: Partial<Record<keyof FormState, boolean>>;
   saving: boolean;
+  canShareTeam: boolean;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
 }) {
@@ -570,6 +614,16 @@ function BailForm({
         />
         {t.baux.clauseTunnel}
       </label>
+      {canShareTeam && (
+        <label className="flex items-center gap-2 self-end pb-2 text-sm">
+          <input
+            type="checkbox"
+            checked={form.visible_equipe}
+            onChange={(e) => setForm({ ...form, visible_equipe: e.target.checked })}
+          />
+          {t.baux.visibleEquipe}
+        </label>
+      )}
       {form.clause_tunnel && (
         <>
           <Field label={t.calculateur.plancher}>
