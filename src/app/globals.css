@@ -193,6 +193,226 @@ h4 {
   }
 }
 
+.page-blobs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: 0.35;
+}
+
+.blob-laiton {
+  top: -12%;
+  left: -8%;
+  width: 420px;
+  height: 420px;
+  background: var(--color-laiton);
+}
+
+.blob-vert {
+  bottom: -18%;
+  right: -6%;
+  width: 380px;
+  height: 380px;
+  background: var(--color-vert);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .blob-laiton {
+    animation: blob-drift-a 19s ease-in-out infinite;
+  }
+  .blob-vert {
+    animation: blob-drift-b 23s ease-in-out infinite;
+  }
+}
+
+@keyframes blob-drift-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(50px, 35px) scale(1.15);
+  }
+}
+
+@keyframes blob-drift-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-40px, -30px) scale(1.12);
+  }
+}
+
+.tunnel-visual {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  perspective: 900px;
+}
+
+.tunnel-visual-stage {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 150ms ease-out;
+}
+
+.tunnel-ring {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 88%;
+  aspect-ratio: 1 / 1;
+  border-radius: 1.75rem;
+  border: 2px solid color-mix(in srgb, var(--color-laiton) 55%, transparent);
+  box-shadow: inset 0 0 30px color-mix(in srgb, var(--color-laiton) 16%, transparent);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tunnel-ring {
+    animation: tunnel-fly 5.4s linear infinite;
+  }
+}
+
+@keyframes tunnel-fly {
+  0% {
+    transform: translateZ(-560px) scale(0.15);
+    opacity: 0;
+    border-color: color-mix(in srgb, var(--color-vert) 65%, transparent);
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateZ(280px) scale(1.6);
+    opacity: 0;
+    border-color: color-mix(in srgb, var(--color-laiton) 35%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tunnel-ring {
+    opacity: 0.6;
+    border-color: color-mix(in srgb, var(--color-laiton) 45%, transparent);
+  }
+}
+
+.tunnel-core {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 26%;
+  aspect-ratio: 1 / 1;
+  border-radius: 9999px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-laiton) 75%, transparent), transparent 70%);
+  filter: blur(4px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tunnel-core {
+    animation: tunnel-core-pulse 3.2s ease-in-out infinite;
+  }
+}
+
+@keyframes tunnel-core-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+}
+
+.tilt-card {
+  perspective: 1000px;
+}
+
+.tilt-target {
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 120ms ease-out;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.tilt-target:hover,
+.tilt-card:hover .tilt-target {
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateZ(24px) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tilt-target,
+  .tilt-target:hover,
+  .tilt-card:hover .tilt-target {
+    transform: none !important;
+    transition: none;
+  }
+}
+
+.reveal-perspective {
+  perspective: 800px;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px) rotateX(-8deg);
+  transform-origin: top center;
+  transition:
+    opacity 640ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0) rotateX(0deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.float-idle {
+  animation: float-idle 4.2s ease-in-out infinite;
+}
+
+@keyframes float-idle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float-idle {
+    animation: none;
+  }
+}
+
 .skeleton {
   border-radius: 0.5rem;
   background: linear-gradient(
