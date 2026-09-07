@@ -367,7 +367,7 @@ function Equipe() {
                   <p className="text-xs text-[var(--foreground)]/50">
                     {senderLabel(m.user_id)} · {new Date(m.created_at).toLocaleString("fr-FR")}
                   </p>
-                  <p className="mt-0.5 inline-block max-w-md rounded-lg bg-[var(--foreground)]/[0.05] px-3 py-2 text-sm">
+                  <p className="mt-0.5 inline-block max-w-md break-words rounded-lg bg-[var(--foreground)]/[0.05] px-3 py-2 text-sm">
                     {m.contenu}
                   </p>
                 </div>

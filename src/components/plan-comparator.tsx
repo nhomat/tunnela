@@ -79,7 +79,7 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
           onChange={(e) => setNbBaux(Number(e.target.value))}
           className="w-full accent-[var(--accent)]"
         />
-        <div className="mt-6 flex items-center justify-between gap-4 rounded-lg bg-[var(--foreground)]/[0.04] px-4 py-3">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-lg bg-[var(--foreground)]/[0.04] px-4 py-3">
           <div>
             <span className="text-sm text-[var(--foreground)]/70">{t.pricing.compareRecommended}</span>
             <p className="font-serif text-xl text-[var(--accent)]">
