@@ -225,7 +225,6 @@ export default function ParametresPage() {
               autoComplete="new-password"
               minLength={8}
               showLabel={t.auth.showPassword}
-              hideLabel={t.auth.hidePassword}
             />
           </label>
           <button

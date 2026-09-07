@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 export function PasswordInput({
   id,
@@ -10,7 +10,6 @@ export function PasswordInput({
   autoComplete,
   minLength,
   showLabel,
-  hideLabel,
 }: {
   id?: string;
   value: string;
@@ -19,31 +18,31 @@ export function PasswordInput({
   autoComplete?: string;
   minLength?: number;
   showLabel: string;
-  hideLabel: string;
 }) {
   const [visible, setVisible] = useState(false);
+  const checkboxId = useId();
 
   return (
-    <div className="relative">
+    <div>
       <input
         id={id}
         type={visible ? "text" : "password"}
-        className="input transition-base pr-16"
+        className="input transition-base"
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
         minLength={minLength}
       />
-      <button
-        type="button"
-        onClick={() => setVisible((v) => !v)}
-        className="transition-base absolute inset-y-0 right-0 flex items-center px-3 text-xs text-[var(--foreground)]/60 hover:text-[var(--accent)]"
-        aria-label={visible ? hideLabel : showLabel}
-        tabIndex={-1}
-      >
-        {visible ? hideLabel : showLabel}
-      </button>
+      <label htmlFor={checkboxId} className="mt-2 flex items-center gap-2 text-xs text-[var(--foreground)]/70">
+        <input
+          id={checkboxId}
+          type="checkbox"
+          checked={visible}
+          onChange={(e) => setVisible(e.target.checked)}
+        />
+        {showLabel}
+      </label>
     </div>
   );
 }

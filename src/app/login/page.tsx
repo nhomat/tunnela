@@ -112,7 +112,6 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                     onChange={setPassword}
                     autoComplete="current-password"
                     showLabel={t.auth.showPassword}
-                    hideLabel={t.auth.hidePassword}
                   />
                 </div>
               )}
