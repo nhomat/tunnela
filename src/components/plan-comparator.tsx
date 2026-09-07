@@ -51,7 +51,7 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
 
   const recommended = useMemo(() => recommendPlan(nbBaux), [nbBaux]);
   const isMax = nbBaux >= SLIDER_MAX;
-  const thumbScale = 0.8 + (nbBaux / SLIDER_MAX) * 0.7;
+  const thumbScale = 0.85 + (nbBaux / SLIDER_MAX) * 0.35;
 
   function handleSelectRecommended() {
     if (onSelect) {
@@ -167,8 +167,8 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
         })}
       </div>
 
-      <div className="hidden overflow-x-auto sm:block">
-        <table className="mx-auto w-full max-w-4xl min-w-[560px] text-left text-sm">
+      <div className="card mx-auto hidden max-w-4xl overflow-x-auto sm:block">
+        <table className="w-full min-w-[560px] text-left text-sm">
           <thead>
             <tr className="border-b border-[var(--border-color)]">
               <th className="px-4 py-3 text-xs uppercase tracking-wide text-[var(--foreground)]/60">

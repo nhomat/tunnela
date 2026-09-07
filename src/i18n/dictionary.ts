@@ -14,7 +14,7 @@ export const dictionary = {
     },
     hero: {
       eyebrow: "Loi n° 2026-403 — article L.145-38-1 du Code de commerce",
-      title: "L'outil indispensable pour ne plus jamais rater une révision de bail",
+      title: "L'indispensable pour ne jamais rater une révision de loyer",
       subtitle:
         "Calculez les révisions de loyer ILC/ILAT, sécurisez vos clauses tunnel et générez vos avenants ICC → ILC en quelques minutes.",
       cta: "Essayer gratuitement",
@@ -457,7 +457,7 @@ export const dictionary = {
     },
     hero: {
       eyebrow: "French Law No. 2026-403 — Article L.145-38-1",
-      title: "The indispensable tool to never miss a lease revision again",
+      title: "Indispensable — never miss a rent revision again",
       subtitle:
         "Compute ILC/ILAT rent reviews, secure your rent-collar clauses and generate ICC → ILC amendments in minutes.",
       cta: "Try for free",
