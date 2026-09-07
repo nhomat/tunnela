@@ -28,7 +28,6 @@ export default function Home() {
         <section className="relative overflow-hidden">
           <div className="page-blobs">
             <span className="blob blob-laiton" />
-            <span className="blob blob-vert" />
           </div>
           <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-24 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="tunnel-enter text-center lg:text-left">

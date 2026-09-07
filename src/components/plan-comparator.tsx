@@ -49,7 +49,7 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
 
   const recommended = useMemo(() => recommendPlan(nbBaux), [nbBaux]);
   const isMax = nbBaux >= SLIDER_MAX;
-  const thumbScale = 1 + (nbBaux / SLIDER_MAX) ** 3 * 0.8;
+  const thumbScale = 0.65 + (nbBaux / SLIDER_MAX) * 1.15;
 
   function handleSelectRecommended() {
     if (onSelect) {
