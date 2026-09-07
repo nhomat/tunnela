@@ -77,7 +77,7 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
           max={SLIDER_MAX}
           value={nbBaux}
           onChange={(e) => setNbBaux(Number(e.target.value))}
-          className="w-full accent-[var(--accent)]"
+          className="range-slider"
         />
         <div className="plan-recommend-box mt-6">
           <button
