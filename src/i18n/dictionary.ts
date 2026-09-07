@@ -217,6 +217,25 @@ export const dictionary = {
       invalidCredentials: "Email ou mot de passe incorrect.",
       error: "Une erreur est survenue. Réessayez.",
       showPassword: "Afficher le mot de passe",
+      forgotPassword: "Mot de passe oublié ?",
+      forgotPasswordTitle: "Mot de passe oublié",
+      forgotPasswordBody:
+        "Indiquez votre adresse email : si un compte existe, vous recevrez un lien pour choisir un nouveau mot de passe.",
+      forgotPasswordSend: "Envoyer le lien de réinitialisation",
+      forgotPasswordSent:
+        "Si un compte existe pour cette adresse, un email avec un lien de réinitialisation vient d'être envoyé.",
+      backToLogin: "Retour à la connexion",
+      resetPasswordTitle: "Choisir un nouveau mot de passe",
+      resetPasswordBody: "Choisissez un nouveau mot de passe pour votre compte Tunnela.",
+      newPassword: "Nouveau mot de passe",
+      confirmPassword: "Confirmer le mot de passe",
+      resetPasswordSubmit: "Enregistrer le mot de passe",
+      resetPasswordSuccess: "Mot de passe mis à jour. Redirection vers votre tableau de bord…",
+      passwordMismatch: "Les mots de passe ne correspondent pas.",
+      passwordTooShort: "Le mot de passe doit contenir au moins 8 caractères.",
+      resetLinkInvalid:
+        "Ce lien de réinitialisation est invalide ou a expiré. Demandez-en un nouveau.",
+      requestNewLink: "Demander un nouveau lien",
     },
     dashboard: {
       nav: {
@@ -659,6 +678,24 @@ export const dictionary = {
       invalidCredentials: "Incorrect email or password.",
       error: "Something went wrong. Please try again.",
       showPassword: "Show password",
+      forgotPassword: "Forgot your password?",
+      forgotPasswordTitle: "Forgot password",
+      forgotPasswordBody:
+        "Enter your email address: if an account exists, you'll receive a link to choose a new password.",
+      forgotPasswordSend: "Send reset link",
+      forgotPasswordSent:
+        "If an account exists for this address, an email with a reset link was just sent.",
+      backToLogin: "Back to login",
+      resetPasswordTitle: "Choose a new password",
+      resetPasswordBody: "Choose a new password for your Tunnela account.",
+      newPassword: "New password",
+      confirmPassword: "Confirm password",
+      resetPasswordSubmit: "Save password",
+      resetPasswordSuccess: "Password updated. Redirecting to your dashboard…",
+      passwordMismatch: "Passwords don't match.",
+      passwordTooShort: "Password must be at least 8 characters long.",
+      resetLinkInvalid: "This reset link is invalid or has expired. Request a new one.",
+      requestNewLink: "Request a new link",
     },
     dashboard: {
       nav: {

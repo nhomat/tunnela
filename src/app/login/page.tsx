@@ -102,9 +102,17 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
               {!isSignup && (
                 <div>
-                  <label htmlFor="password" className="mb-1 block text-sm font-medium">
-                    {t.auth.passwordLabel}
-                  </label>
+                  <div className="mb-1 flex items-center justify-between gap-2">
+                    <label htmlFor="password" className="block text-sm font-medium">
+                      {t.auth.passwordLabel}
+                    </label>
+                    <Link
+                      href="/mot-de-passe-oublie"
+                      className="text-xs text-[var(--accent)] underline"
+                    >
+                      {t.auth.forgotPassword}
+                    </Link>
+                  </div>
                   <PasswordInput
                     id="password"
                     placeholder={t.auth.passwordOptional}
