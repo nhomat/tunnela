@@ -248,97 +248,117 @@ h4 {
   max-width: 380px;
   aspect-ratio: 1 / 1;
   margin: 0 auto;
-  perspective: 1000px;
+  perspective: 1100px;
 }
 
-.tunnel-visual-stage {
+/* Halo statique derrière l'objet : ne tourne pas avec lui, juste une
+   respiration douce pour donner de la chaleur à la scène. */
+.tunnel-visual::before {
+  content: "";
   position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transform: rotateX(12deg);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .tunnel-visual-stage {
-    animation: tunnel-spin 13s ease-in-out infinite;
-  }
-}
-
-/* Un carré plat vu presque de profil (proche de rotateY 90°) s'efface
-   visuellement à rien : on borne donc l'amplitude bien en-deçà de cet
-   angle plutôt que de faire un tour complet, pour garder la forme
-   toujours lisible tout en donnant une vraie sensation de profondeur 3D. */
-@keyframes tunnel-spin {
-  0%,
-  100% {
-    transform: rotateX(12deg) rotateY(-26deg);
-  }
-  50% {
-    transform: rotateX(12deg) rotateY(26deg);
-  }
-}
-
-.tunnel-ring {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  border-radius: 1.75rem;
-  border: 1.5px solid color-mix(in srgb, var(--color-laiton) 45%, transparent);
-  box-shadow: 0 0 24px color-mix(in srgb, var(--color-laiton) 20%, transparent);
-  opacity: 0.4;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .tunnel-ring {
-    animation: tunnel-breathe 7s ease-in-out infinite;
-  }
-}
-
-@keyframes tunnel-breathe {
-  0%,
-  100% {
-    opacity: 0.35;
-    scale: 1;
-  }
-  50% {
-    opacity: 0.85;
-    scale: 1.04;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tunnel-ring {
-    opacity: 0.5;
-  }
-}
-
-.tunnel-core {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: 22%;
-  aspect-ratio: 1 / 1;
+  inset: 20%;
   border-radius: 9999px;
-  background: radial-gradient(circle, color-mix(in srgb, var(--color-laiton) 65%, transparent), transparent 70%);
-  filter: blur(4px);
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-laiton) 40%, transparent), transparent 72%);
+  filter: blur(28px);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .tunnel-core {
-    animation: tunnel-core-pulse 7s ease-in-out infinite;
+  .tunnel-visual::before {
+    animation: tunnel-halo-pulse 6s ease-in-out infinite;
   }
 }
 
-@keyframes tunnel-core-pulse {
+@keyframes tunnel-halo-pulse {
   0%,
   100% {
-    transform: scale(1);
-    opacity: 0.7;
+    opacity: 0.6;
   }
   50% {
-    transform: scale(1.1);
-    opacity: 0.95;
+    opacity: 1;
   }
+}
+
+/* Un cube en vrai 3D plutôt que des plans plats : contrairement à un
+   simple carré, il a une épaisseur réelle et reste donc lisible sous
+   tous les angles — on peut le faire tourner sur 360° sans qu'il ne
+   s'efface jamais de profil. */
+.tunnel-cube {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 190px;
+  height: 190px;
+  transform-style: preserve-3d;
+  transform: rotateX(-20deg) rotateY(0deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tunnel-cube {
+    animation: tunnel-spin 20s linear infinite;
+  }
+}
+
+@keyframes tunnel-spin {
+  from {
+    transform: rotateX(-20deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-20deg) rotateY(360deg);
+  }
+}
+
+.tunnel-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 1.5rem;
+  border: 1.5px solid color-mix(in srgb, var(--color-laiton) 55%, transparent);
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--color-laiton) 30%, var(--surface)),
+    var(--surface) 65%
+  );
+  box-shadow: 0 0 30px color-mix(in srgb, var(--color-laiton) 14%, transparent);
+  backface-visibility: hidden;
+}
+
+.tunnel-face-front {
+  transform: translateZ(95px);
+}
+.tunnel-face-back {
+  transform: rotateY(180deg) translateZ(95px);
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--color-laiton) 16%, var(--surface)),
+    color-mix(in srgb, var(--surface) 90%, var(--color-encre)) 65%
+  );
+}
+.tunnel-face-right {
+  transform: rotateY(90deg) translateZ(95px);
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--color-laiton) 24%, var(--surface)),
+    color-mix(in srgb, var(--surface) 94%, var(--color-encre)) 65%
+  );
+}
+.tunnel-face-left {
+  transform: rotateY(-90deg) translateZ(95px);
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--color-laiton) 24%, var(--surface)),
+    color-mix(in srgb, var(--surface) 94%, var(--color-encre)) 65%
+  );
+}
+.tunnel-face-top {
+  transform: rotateX(90deg) translateZ(95px);
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--color-laiton) 42%, var(--surface)),
+    var(--surface) 65%
+  );
+}
+.tunnel-face-bottom {
+  transform: rotateX(-90deg) translateZ(95px);
+  background: color-mix(in srgb, var(--surface) 88%, var(--color-encre));
 }
 
 .tilt-card {
