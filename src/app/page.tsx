@@ -49,7 +49,7 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <div className="tunnel-enter pointer-events-none hidden select-none lg:block">
+            <div className="tunnel-enter pointer-events-none select-none">
               <TunnelVisual />
             </div>
           </div>
