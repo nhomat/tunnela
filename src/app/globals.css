@@ -376,6 +376,54 @@ h4 {
   padding: 3rem 1rem;
 }
 
+.logo-loader {
+  display: flex;
+  min-height: 40vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.logo-loader-svg {
+  width: 64px;
+  height: 64px;
+}
+
+.logo-loader-path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .logo-loader-path-outer {
+    animation: logo-draw 2.6s ease-in-out infinite;
+  }
+  .logo-loader-path-inner {
+    animation: logo-draw 2.6s ease-in-out infinite;
+    animation-delay: 0.25s;
+  }
+}
+
+@keyframes logo-draw {
+  0%,
+  100% {
+    stroke-dashoffset: 100;
+    opacity: 0.25;
+  }
+  50% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-loader-path {
+    stroke-dashoffset: 0;
+    opacity: 0.8;
+  }
+}
+
 .loading-spinner {
   display: block;
   width: 38px;

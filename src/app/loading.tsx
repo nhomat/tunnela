@@ -1,9 +1,9 @@
-import { LoadingTunnel } from "@/components/loading-tunnel";
+import { LogoLoader } from "@/components/logo-loader";
 
 export default function Loading() {
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <LoadingTunnel />
+      <LogoLoader />
     </div>
   );
 }

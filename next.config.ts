@@ -17,9 +17,15 @@ const connectSrc = ["'self'", supabaseOrigin, supabaseWsOrigin].filter(Boolean).
 // dans une iframe, et la fuite réseau vers un domaine non listé — sans
 // exiger d'infrastructure de nonce qui compliquerait chaque futur ajout de
 // script inline.
+// React dev mode reconstructs stack traces with eval() for better error
+// overlays/HMR ; ce n'est jamais utilisé en production (React le garantit
+// lui-même), donc on ne l'autorise que hors production pour ne pas gêner
+// le développement local sans affaiblir la CSP réellement déployée.
+const isProd = process.env.NODE_ENV === "production";
+
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
   "font-src 'self' data:",

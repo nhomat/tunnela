@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useApp } from "./providers";
 import { PLANS } from "@/lib/stripe";
 import type { Plan } from "@/lib/types";
@@ -42,7 +43,16 @@ export function Pricing({
           return (
             <div key={plan.id} className="card card-hover tunnel-enter flex flex-col gap-4">
               <div>
-                <h3 className="font-serif text-xl">{plan.nom}</h3>
+                {onSelect ? (
+                  <h3 className="font-serif text-xl">{plan.nom}</h3>
+                ) : (
+                  <Link
+                    href={`/offres/${plan.id}`}
+                    className="transition-base font-serif text-xl hover:text-[var(--accent)]"
+                  >
+                    {plan.nom}
+                  </Link>
+                )}
                 <p className="mt-1 text-sm text-[var(--foreground)]/70">{limiteLabel}</p>
               </div>
               <ul className="flex flex-col gap-2 text-sm text-[var(--foreground)]/80">

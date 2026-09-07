@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useApp } from "./providers";
 import { PLANS, COOP_ADDON_NOM, COOP_ADDON_PRIX_MENSUEL } from "@/lib/stripe";
 import { hasFeature } from "@/lib/types";
@@ -46,10 +47,11 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
   const { t } = useApp();
   const router = useRouter();
   const [nbBaux, setNbBaux] = useState(10);
+  const [openPlan, setOpenPlan] = useState<Plan | null>(null);
 
   const recommended = useMemo(() => recommendPlan(nbBaux), [nbBaux]);
   const isMax = nbBaux >= SLIDER_MAX;
-  const thumbScale = 0.65 + (nbBaux / SLIDER_MAX) * 1.15;
+  const thumbScale = 0.8 + (nbBaux / SLIDER_MAX) * 0.7;
 
   function handleSelectRecommended() {
     if (onSelect) {
@@ -100,7 +102,72 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
       </div>
 
       <h3 className="mb-6 mt-16 text-center font-serif text-2xl">{t.pricing.compareTableTitle}</h3>
-      <div className="overflow-x-auto">
+
+      {/* Mobile : un tableau de 4 colonnes force le défilement horizontal
+          et un texte tassé illisible sur petit écran. On le remplace par un
+          accordéon (un plan à la fois), repliable, avec la même donnée. */}
+      <div className="mx-auto flex max-w-xl flex-col gap-3 sm:hidden">
+        {PLANS.map((plan) => {
+          const open = openPlan === plan.id;
+          return (
+            <div key={plan.id} className="card">
+              <button
+                type="button"
+                onClick={() => setOpenPlan(open ? null : plan.id)}
+                className="transition-base flex w-full items-center justify-between gap-4 text-left"
+                aria-expanded={open}
+              >
+                <span
+                  className={`font-serif text-lg ${
+                    plan.id === recommended ? "text-[var(--accent)]" : ""
+                  }`}
+                >
+                  {plan.nom}
+                </span>
+                <span
+                  aria-hidden="true"
+                  className={`transition-base flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[var(--accent)] ${
+                    open ? "rotate-45" : ""
+                  }`}
+                >
+                  +
+                </span>
+              </button>
+              <div
+                className="grid transition-[grid-template-rows] duration-300 ease-out"
+                style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+              >
+                <div className="overflow-hidden">
+                  <ul className="mt-4 flex flex-col gap-2 text-sm">
+                    <li className="flex items-center justify-between gap-2">
+                      <span className="text-[var(--foreground)]/70">{t.pricing.compareFeatures.maxLeases}</span>
+                      <span>{plan.limiteBaux === null ? "∞" : plan.limiteBaux}</span>
+                    </li>
+                    <li className="flex items-center justify-between gap-2">
+                      <span className="text-[var(--foreground)]/70">{t.pricing.compareFeatures.calculator}</span>
+                      <Check value={true} />
+                    </li>
+                    {FEATURE_ROWS.map((feature) => (
+                      <li key={feature} className="flex items-center justify-between gap-2">
+                        <span className="text-[var(--foreground)]/70">{t.pricing.compareFeatures[feature]}</span>
+                        <Check value={hasFeature(plan.id, feature)} />
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    href={`/offres/${plan.id}`}
+                    className="transition-base mt-4 inline-block text-sm text-[var(--accent)] hover:underline"
+                  >
+                    {plan.nom} →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="hidden overflow-x-auto sm:block">
         <table className="mx-auto w-full max-w-4xl min-w-[560px] text-left text-sm">
           <thead>
             <tr className="border-b border-[var(--border-color)]">
@@ -114,7 +181,9 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
                     plan.id === recommended ? "text-[var(--accent)]" : ""
                   }`}
                 >
-                  {plan.nom}
+                  <Link href={`/offres/${plan.id}`} className="transition-base hover:text-[var(--accent)]">
+                    {plan.nom}
+                  </Link>
                 </th>
               ))}
             </tr>
@@ -156,9 +225,20 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
         </table>
       </div>
 
-      <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-[var(--foreground)]/60">
-        {t.pricing.addonNote.replace("{nom}", COOP_ADDON_NOM).replace("{prix}", String(COOP_ADDON_PRIX_MENSUEL))}
-      </p>
+      <div className="card card-hover mx-auto mt-10 flex max-w-2xl flex-col items-center gap-3 border-[var(--accent)]/40 bg-[var(--accent)]/[0.06] text-center">
+        <span
+          aria-hidden="true"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent)]/15 text-lg text-[var(--accent)]"
+        >
+          👥
+        </span>
+        <p className="text-base text-[var(--foreground)]/85">
+          {t.pricing.addonNote.replace("{nom}", COOP_ADDON_NOM).replace("{prix}", String(COOP_ADDON_PRIX_MENSUEL))}
+        </p>
+        <Link href="/#tarifs" className="btn-primary transition-base text-sm">
+          {t.pricing.addonNoteCta.replace("{nom}", COOP_ADDON_NOM)}
+        </Link>
+      </div>
     </section>
   );
 }

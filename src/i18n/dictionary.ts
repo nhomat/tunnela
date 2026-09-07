@@ -105,6 +105,33 @@ export const dictionary = {
       },
       addonNote:
         "Besoin de plusieurs utilisateurs et du partage de dossiers en équipe ? L'add-on {nom} s'ajoute à n'importe quel abonnement payant pour {prix} €/mois supplémentaires.",
+      addonNoteCta: "Découvrir l'add-on {nom}",
+    },
+    planDetail: {
+      backToComparator: "← Retour au comparatif",
+      idealForLabel: "Idéal pour",
+      featuresTitle: "Ce qui est inclus",
+      otherPlans: "Voir les autres plans",
+      decouverte: {
+        tagline: "Pour découvrir Tunnela sans engagement",
+        idealFor:
+          "Un premier portefeuille de quelques baux, pour tester le calculateur de révision et le suivi de conformité avant de passer à l'échelle.",
+      },
+      cabinet: {
+        tagline: "Pour les cabinets qui gèrent des baux au quotidien",
+        idealFor:
+          "Un cabinet de gestion ou une PME avec un portefeuille actif, qui veut générer des clauses tunnel et des avenants sans risque d'erreur.",
+      },
+      portefeuille: {
+        tagline: "Pour les portefeuilles à forte volumétrie",
+        idealFor:
+          "Une foncière ou un asset manager qui suit plusieurs dizaines de baux et veut un échéancier consolidé, avec notification directe des preneurs.",
+      },
+      fonciere: {
+        tagline: "Pour les foncières et les grands comptes",
+        idealFor:
+          "Un portefeuille sans limite, avec récupération automatique des indices ILC/ILAT/ICC et un interlocuteur Tunnela dédié.",
+      },
     },
     howItWorks: {
       title: "Comment ça marche",
@@ -520,6 +547,33 @@ export const dictionary = {
       },
       addonNote:
         "Need multiple users and team file sharing? The {nom} add-on attaches to any paid plan for an extra {prix} €/month.",
+      addonNoteCta: "Discover the {nom} add-on",
+    },
+    planDetail: {
+      backToComparator: "← Back to the comparator",
+      idealForLabel: "Ideal for",
+      featuresTitle: "What's included",
+      otherPlans: "See the other plans",
+      decouverte: {
+        tagline: "Discover Tunnela with no commitment",
+        idealFor:
+          "A first portfolio of a few leases, to try the review calculator and compliance tracking before scaling up.",
+      },
+      cabinet: {
+        tagline: "For firms managing leases day to day",
+        idealFor:
+          "A management firm or SME with an active portfolio, generating rent-collar clauses and amendments without risk of error.",
+      },
+      portefeuille: {
+        tagline: "For high-volume portfolios",
+        idealFor:
+          "A property company or asset manager tracking dozens of leases, wanting a consolidated review calendar with direct tenant notices.",
+      },
+      fonciere: {
+        tagline: "For property companies and large accounts",
+        idealFor:
+          "An unlimited portfolio, with automatic ILC/ILAT/ICC index retrieval and a dedicated Tunnela contact.",
+      },
     },
     howItWorks: {
       title: "How it works",
