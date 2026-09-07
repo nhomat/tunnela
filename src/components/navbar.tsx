@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useApp } from "./providers";
 import { HomeLogoLink } from "./home-logo-link";
+import { ThemeLangToggle } from "./theme-lang-toggle";
 
 export function Navbar() {
   const { t } = useApp();
@@ -28,6 +29,9 @@ export function Navbar() {
           </Link>
         </nav>
         <div className="flex items-center gap-3">
+          <div className="hidden sm:block">
+            <ThemeLangToggle />
+          </div>
           <Link href="/login" className="hidden text-sm sm:inline transition-base hover:text-[var(--accent)]">
             {t.nav.login}
           </Link>
@@ -91,6 +95,9 @@ export function Navbar() {
           >
             {t.nav.login}
           </Link>
+          <div className="px-2 py-2">
+            <ThemeLangToggle />
+          </div>
         </nav>
       )}
     </header>

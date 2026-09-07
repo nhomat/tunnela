@@ -1,14 +1,14 @@
-const RING_COUNT = 6;
+const RING_SIZES = [100, 76, 52, 28];
 
 export function TunnelVisual() {
   return (
     <div className="tunnel-visual" aria-hidden="true">
       <div className="tunnel-visual-stage">
-        {Array.from({ length: RING_COUNT }).map((_, i) => (
+        {RING_SIZES.map((size, i) => (
           <span
-            key={i}
+            key={size}
             className="tunnel-ring"
-            style={{ animationDelay: `${i * -0.9}s` }}
+            style={{ width: `${size}%`, height: `${size}%`, animationDelay: `${i * 0.7}s` }}
           />
         ))}
         <span className="tunnel-core" />
