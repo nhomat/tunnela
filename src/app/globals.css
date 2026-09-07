@@ -89,6 +89,34 @@ h4 {
   }
 }
 
+.plan-recommend-box {
+  perspective: 800px;
+}
+
+.plan-flip {
+  transform-style: preserve-3d;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .plan-flip {
+    animation: plan-flip-in 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@keyframes plan-flip-in {
+  from {
+    opacity: 0;
+    transform: rotateX(-70deg) translateY(-6px);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: rotateX(0deg) translateY(0);
+  }
+}
+
 .skeleton {
   border-radius: 0.5rem;
   background: linear-gradient(
