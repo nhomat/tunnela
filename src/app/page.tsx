@@ -50,9 +50,9 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <TiltCard className="tunnel-enter hidden lg:block">
+            <div className="tunnel-enter pointer-events-none hidden select-none lg:block">
               <TunnelVisual />
-            </TiltCard>
+            </div>
           </div>
         </section>
 
