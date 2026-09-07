@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
-import { hasFeature } from "@/lib/types";
-import type { Plan } from "@/lib/types";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -16,13 +14,12 @@ export async function POST(request: Request) {
 
   const { data: abonnement } = await supabase
     .from("abonnements")
-    .select("plan")
+    .select("coop_actif")
     .eq("user_id", user.id)
     .maybeSingle();
 
-  const plan = (abonnement?.plan as Plan) ?? "decouverte";
-  if (!hasFeature(plan, "coopEquipe")) {
-    return NextResponse.json({ error: "plan_required" }, { status: 403 });
+  if (!abonnement?.coop_actif) {
+    return NextResponse.json({ error: "addon_required" }, { status: 403 });
   }
 
   const { data: equipe } = await supabase

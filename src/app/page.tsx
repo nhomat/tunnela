@@ -106,21 +106,31 @@ function Faq() {
         {t.faq.items.map((item, i) => {
           const open = openIndex === i;
           return (
-            <div key={item.q} className="card">
+            <div key={item.q} className="card transition-base hover:shadow-sm">
               <button
                 type="button"
                 onClick={() => setOpenIndex(open ? null : i)}
-                className="transition-base flex w-full items-center justify-between text-left"
+                className="transition-base flex w-full items-center justify-between gap-4 text-left"
                 aria-expanded={open}
               >
                 <span className="font-medium">{item.q}</span>
-                <span aria-hidden="true" className="ml-4 text-[var(--accent)]">
-                  {open ? "−" : "+"}
+                <span
+                  aria-hidden="true"
+                  className={`transition-base flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[var(--accent)] ${
+                    open ? "rotate-45" : ""
+                  }`}
+                >
+                  +
                 </span>
               </button>
-              {open && (
-                <p className="mt-3 text-sm text-[var(--foreground)]/75">{item.a}</p>
-              )}
+              <div
+                className="grid transition-[grid-template-rows] duration-300 ease-out"
+                style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+              >
+                <div className="overflow-hidden">
+                  <p className="mt-3 text-sm text-[var(--foreground)]/75">{item.a}</p>
+                </div>
+              </div>
             </div>
           );
         })}

@@ -80,13 +80,6 @@ export const dictionary = {
           "Accompagnement à la mise en place",
           "Interlocuteur dédié",
         ],
-        coop: [
-          "Baux illimités",
-          "Tout Foncière, plus :",
-          "Plusieurs comptes sous un seul abonnement",
-          "Partage sélectif de dossiers entre collègues",
-          "Idéal pour les gros cabinets et foncières",
-        ],
       },
       compareTitle: "Quel plan vous correspond ?",
       compareSubtitle:
@@ -109,8 +102,9 @@ export const dictionary = {
         prioritySupport: "Support prioritaire",
         autoIndex: "Indices ILC/ILAT/ICC automatiques",
         dedicatedContact: "Interlocuteur dédié",
-        coopEquipe: "Multi-utilisateurs & partage d'équipe",
       },
+      addonNote:
+        "Besoin de plusieurs utilisateurs et du partage de dossiers en équipe ? L'add-on {nom} s'ajoute à n'importe quel abonnement payant pour {prix} €/mois supplémentaires.",
     },
     howItWorks: {
       title: "Comment ça marche",
@@ -157,6 +151,10 @@ export const dictionary = {
           q: "L'interface est-elle disponible en anglais ?",
           a: "Oui, un sélecteur FR/EN traduit toute l'interface. Les textes juridiques générés (clause tunnel, avenant) restent toujours en français, quelle que soit la langue choisie.",
         },
+        {
+          q: "Qu'est-ce que l'add-on Coop ?",
+          a: "C'est un supplément qui s'ajoute à un abonnement Cabinet, Portefeuille ou Foncière existant : il permet à plusieurs collègues de travailler sous le même abonnement, chacun avec son propre compte, avec partage sélectif de dossiers et une messagerie d'équipe.",
+        },
       ],
     },
     footer: {
@@ -171,6 +169,8 @@ export const dictionary = {
       linkComparator: "Comparateur des offres",
       linkArticle: "L'article L.145-38-1",
       linkFaq: "Questions fréquentes",
+      linkBookCall: "Réserver un call",
+      linkMentionsLegales: "Mentions légales",
       linkLogin: "Connexion",
       linkSignup: "Essayer gratuitement",
     },
@@ -324,7 +324,18 @@ export const dictionary = {
     equipe: {
       title: "Équipe",
       subtitle:
-        "Le plan Coop permet à plusieurs personnes de travailler sous le même abonnement, chacune avec son propre compte.",
+        "L'add-on Coop permet à plusieurs personnes de travailler sous le même abonnement, chacune avec son propre compte.",
+      needsPlanTitle: "Passez d'abord à un abonnement payant",
+      needsPlanBody:
+        "L'add-on Coop s'ajoute à un abonnement Cabinet, Portefeuille ou Foncière existant. Choisissez d'abord une de ces offres.",
+      addonTitle: "Add-on Coop",
+      addonSubtitle:
+        "Ajoutez des comptes collègues à votre abonnement, avec partage sélectif de dossiers et messagerie d'équipe.",
+      addonSubscribe: "Activer l'add-on Coop",
+      addonError: "Échec de l'activation. Réessayez.",
+      addonUnsubscribe: "Retirer l'add-on Coop",
+      addonUnsubscribeConfirm:
+        "Retirer l'add-on Coop ? L'équipe et son historique de messages seront définitivement supprimés pour tous les membres.",
       teamNameLabel: "Nom de l'équipe",
       teamNamePlaceholder: "Cabinet Dupont & Associés",
       createTeam: "Créer l'équipe",
@@ -345,6 +356,18 @@ export const dictionary = {
       noMessages: "Aucun message pour l'instant. Lancez la conversation.",
       messagePlaceholder: "Écrire un message à l'équipe…",
       sendMessage: "Envoyer",
+    },
+    bookCall: {
+      title: "Réserver un call",
+      subtitle: "Présentez-nous votre cabinet en quelques minutes, on vous recontacte rapidement.",
+      nameLabel: "Nom complet",
+      companyLabel: "Société (optionnel)",
+      phoneLabel: "Téléphone (optionnel)",
+      messageLabel: "Message (optionnel)",
+      messagePlaceholder: "Taille du portefeuille, disponibilités, questions…",
+      submit: "Envoyer la demande",
+      success: "Merci ! Votre demande a bien été envoyée, nous revenons vers vous rapidement.",
+      error: "Échec de l'envoi. Réessayez ou écrivez-nous directement.",
     },
     admin: {
       indicesTitle: "Indices publiés (INSEE)",
@@ -462,13 +485,6 @@ export const dictionary = {
           "Onboarding assistance",
           "Dedicated contact",
         ],
-        coop: [
-          "Unlimited leases",
-          "Everything in Foncière, plus:",
-          "Multiple accounts under one subscription",
-          "Selective file sharing between colleagues",
-          "Built for large firms and property groups",
-        ],
       },
       compareTitle: "Which plan fits you?",
       compareSubtitle: "Tell us the size of your portfolio to see the best-fit plan.",
@@ -490,8 +506,9 @@ export const dictionary = {
         prioritySupport: "Priority support",
         autoIndex: "Automatic ILC/ILAT/ICC indices",
         dedicatedContact: "Dedicated contact",
-        coopEquipe: "Multi-user & team sharing",
       },
+      addonNote:
+        "Need multiple users and team file sharing? The {nom} add-on attaches to any paid plan for an extra {prix} €/month.",
     },
     howItWorks: {
       title: "How it works",
@@ -538,6 +555,10 @@ export const dictionary = {
           q: "Is the interface available in English?",
           a: "Yes, an FR/EN switch translates the whole interface. Generated legal texts (tunnel clause, amendment) always stay in French, whatever language you choose.",
         },
+        {
+          q: "What is the Coop add-on?",
+          a: "It's a supplement that attaches to an existing Cabinet, Portefeuille, or Foncière subscription: it lets several colleagues work under the same subscription, each with their own account, with selective file sharing and team messaging.",
+        },
       ],
     },
     footer: {
@@ -552,6 +573,8 @@ export const dictionary = {
       linkComparator: "Compare plans",
       linkArticle: "Article L.145-38-1",
       linkFaq: "FAQ",
+      linkBookCall: "Book a call",
+      linkMentionsLegales: "Legal notice",
       linkLogin: "Log in",
       linkSignup: "Try for free",
     },
@@ -703,7 +726,18 @@ export const dictionary = {
     equipe: {
       title: "Team",
       subtitle:
-        "The Coop plan lets several people work under the same subscription, each with their own account.",
+        "The Coop add-on lets several people work under the same subscription, each with their own account.",
+      needsPlanTitle: "Upgrade to a paid plan first",
+      needsPlanBody:
+        "The Coop add-on attaches to an existing Cabinet, Portefeuille, or Foncière subscription. Choose one of these plans first.",
+      addonTitle: "Coop add-on",
+      addonSubtitle:
+        "Add colleague accounts to your subscription, with selective file sharing and team messaging.",
+      addonSubscribe: "Activate the Coop add-on",
+      addonError: "Activation failed. Please try again.",
+      addonUnsubscribe: "Remove the Coop add-on",
+      addonUnsubscribeConfirm:
+        "Remove the Coop add-on? The team and its message history will be permanently deleted for every member.",
       teamNameLabel: "Team name",
       teamNamePlaceholder: "Smith & Partners",
       createTeam: "Create the team",
@@ -724,6 +758,18 @@ export const dictionary = {
       noMessages: "No messages yet. Start the conversation.",
       messagePlaceholder: "Write a message to the team…",
       sendMessage: "Send",
+    },
+    bookCall: {
+      title: "Book a call",
+      subtitle: "Tell us about your firm in a few minutes, we'll get back to you quickly.",
+      nameLabel: "Full name",
+      companyLabel: "Company (optional)",
+      phoneLabel: "Phone (optional)",
+      messageLabel: "Message (optional)",
+      messagePlaceholder: "Portfolio size, availability, questions…",
+      submit: "Send request",
+      success: "Thanks! Your request has been sent, we'll be in touch shortly.",
+      error: "Failed to send. Please try again or email us directly.",
     },
     admin: {
       indicesTitle: "Published indices (INSEE)",

@@ -2,7 +2,7 @@ export type IndexType = "ILC" | "ILAT" | "ICC";
 
 export type StatutConformite = "conforme" | "a_verifier" | "non_conforme";
 
-export type Plan = "decouverte" | "cabinet" | "portefeuille" | "fonciere" | "coop";
+export type Plan = "decouverte" | "cabinet" | "portefeuille" | "fonciere";
 
 export type Periodicite = "annuelle" | "trimestrielle";
 
@@ -46,15 +46,19 @@ export interface Abonnement {
   statut: string;
   nom_bailleur_defaut: string | null;
   alert_delai_jours: number;
+  coop_actif: boolean;
+  stripe_coop_item_id: string | null;
   updated_at?: string;
 }
 
+// Foncière plafonné à 500 baux plutôt qu'illimité : au-delà, l'économie du
+// plan à prix fixe ne tient plus — ces volumes relèvent de l'add-on Coop
+// (multi-utilisateurs) ou d'un accord dédié.
 export const PLAN_LIMITS: Record<Plan, number | null> = {
   decouverte: 3,
   cabinet: 20,
   portefeuille: 100,
-  fonciere: null,
-  coop: null,
+  fonciere: 500,
 };
 
 export function limiteBaux(plan: Plan): number | null {
@@ -72,10 +76,9 @@ export type Feature =
   | "notifyEmail"
   | "prioritySupport"
   | "dedicatedContact"
-  | "autoIndex"
-  | "coopEquipe";
+  | "autoIndex";
 
-const PLAN_ORDER: Plan[] = ["decouverte", "cabinet", "portefeuille", "fonciere", "coop"];
+const PLAN_ORDER: Plan[] = ["decouverte", "cabinet", "portefeuille", "fonciere"];
 
 const FEATURE_MIN_PLAN: Record<Feature, Plan> = {
   generator: "cabinet",
@@ -89,7 +92,6 @@ const FEATURE_MIN_PLAN: Record<Feature, Plan> = {
   prioritySupport: "portefeuille",
   dedicatedContact: "fonciere",
   autoIndex: "fonciere",
-  coopEquipe: "coop",
 };
 
 export function hasFeature(plan: Plan, feature: Feature): boolean {
@@ -98,6 +100,13 @@ export function hasFeature(plan: Plan, feature: Feature): boolean {
 
 export function minPlanForFeature(feature: Feature): Plan {
   return FEATURE_MIN_PLAN[feature];
+}
+
+// L'add-on Coop (multi-utilisateurs + partage d'équipe) est un supplément
+// payant indépendant du plan de base : il faut déjà être client payant
+// (pas Découverte) pour pouvoir le souscrire.
+export function canUseCoop(plan: Plan, coopActif: boolean): boolean {
+  return coopActif && plan !== "decouverte";
 }
 
 export function calculerStatutConformite(

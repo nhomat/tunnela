@@ -98,13 +98,17 @@ create policy "Les membres actifs voient les baux partages de leur equipe"
 
 create table if not exists abonnements (
   user_id uuid primary key references auth.users(id) on delete cascade,
-  plan text not null default 'decouverte' check (plan in ('decouverte', 'cabinet', 'portefeuille', 'fonciere', 'coop')),
+  plan text not null default 'decouverte' check (plan in ('decouverte', 'cabinet', 'portefeuille', 'fonciere')),
   is_admin boolean not null default false,
   stripe_customer_id text,
   stripe_subscription_id text,
   statut text not null default 'actif',
   nom_bailleur_defaut text,
   alert_delai_jours integer not null default 30 check (alert_delai_jours between 7 and 90),
+  -- Coop est un add-on payant (ligne Stripe supplémentaire sur l'abonnement
+  -- existant), pas un palier de plan séparé.
+  coop_actif boolean not null default false,
+  stripe_coop_item_id text,
   updated_at timestamptz not null default now()
 );
 

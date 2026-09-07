@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useApp } from "./providers";
 import { HomeLogoLink } from "./home-logo-link";
+import { ThemeLangToggle } from "./theme-lang-toggle";
 
 export function Footer() {
   const { t } = useApp();
@@ -27,6 +28,8 @@ export function Footer() {
         <FooterColumn title={t.footer.resourcesHeading}>
           <FooterLink href="/article-clause-tunnel">{t.footer.linkArticle}</FooterLink>
           <FooterLink href="/#faq">{t.footer.linkFaq}</FooterLink>
+          <FooterLink href="/reserver-un-call">{t.footer.linkBookCall}</FooterLink>
+          <FooterLink href="/mentions-legales">{t.footer.linkMentionsLegales}</FooterLink>
         </FooterColumn>
 
         <FooterColumn title={t.footer.accountHeading}>
@@ -38,8 +41,11 @@ export function Footer() {
       </div>
 
       <div className="border-t border-[var(--border-color)]">
-        <div className="mx-auto max-w-6xl px-6 py-6 text-sm text-[var(--foreground)]/60">
-          © {year} Tunnela. {t.footer.rights}
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-6 text-sm text-[var(--foreground)]/60">
+          <span>
+            © {year} Tunnela. {t.footer.rights}
+          </span>
+          <ThemeLangToggle />
         </div>
       </div>
     </footer>

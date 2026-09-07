@@ -1,10 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
-import { PLANS } from "@/lib/stripe";
+import { PLANS, COOP_ADDON_NOM, COOP_ADDON_PRIX_MENSUEL } from "@/lib/stripe";
 import { hasFeature } from "@/lib/types";
 import type { Feature, Plan } from "@/lib/types";
+
+const SLIDER_MAX = 150;
 
 function recommendPlan(nbBaux: number): Plan {
   if (nbBaux <= 3) return "decouverte";
@@ -37,14 +40,23 @@ const FEATURE_ROWS: Feature[] = [
   "prioritySupport",
   "autoIndex",
   "dedicatedContact",
-  "coopEquipe",
 ];
 
-export function PlanComparator() {
+export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }) {
   const { t } = useApp();
+  const router = useRouter();
   const [nbBaux, setNbBaux] = useState(10);
 
   const recommended = useMemo(() => recommendPlan(nbBaux), [nbBaux]);
+  const isMax = nbBaux >= SLIDER_MAX;
+
+  function handleSelectRecommended() {
+    if (onSelect) {
+      onSelect(recommended);
+    } else {
+      router.push("/signup");
+    }
+  }
 
   return (
     <section id="comparateur" className="mx-auto max-w-6xl px-6 py-20">
@@ -55,22 +67,28 @@ export function PlanComparator() {
 
       <div className="card mx-auto max-w-xl">
         <label htmlFor="nbBaux" className="mb-2 block text-sm font-medium">
-          {t.pricing.compareLeasesLabel} : <span className="font-serif text-lg">{nbBaux}</span>
+          {t.pricing.compareLeasesLabel} :{" "}
+          <span className="font-serif text-lg">{isMax ? "150+" : nbBaux}</span>
         </label>
         <input
           id="nbBaux"
           type="range"
           min={1}
-          max={150}
+          max={SLIDER_MAX}
           value={nbBaux}
           onChange={(e) => setNbBaux(Number(e.target.value))}
           className="w-full accent-[var(--accent)]"
         />
-        <div className="mt-6 flex items-center justify-between rounded-lg bg-[var(--foreground)]/[0.04] px-4 py-3">
-          <span className="text-sm text-[var(--foreground)]/70">{t.pricing.compareRecommended}</span>
-          <span className="font-serif text-xl text-[var(--accent)]">
-            {PLANS.find((p) => p.id === recommended)?.nom}
-          </span>
+        <div className="mt-6 flex items-center justify-between gap-4 rounded-lg bg-[var(--foreground)]/[0.04] px-4 py-3">
+          <div>
+            <span className="text-sm text-[var(--foreground)]/70">{t.pricing.compareRecommended}</span>
+            <p className="font-serif text-xl text-[var(--accent)]">
+              {PLANS.find((p) => p.id === recommended)?.nom}
+            </p>
+          </div>
+          <button type="button" onClick={handleSelectRecommended} className="btn-primary transition-base text-sm">
+            {t.pricing.cta}
+          </button>
         </div>
       </div>
 
@@ -130,6 +148,10 @@ export function PlanComparator() {
           </tbody>
         </table>
       </div>
+
+      <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-[var(--foreground)]/60">
+        {t.pricing.addonNote.replace("{nom}", COOP_ADDON_NOM).replace("{prix}", String(COOP_ADDON_PRIX_MENSUEL))}
+      </p>
     </section>
   );
 }

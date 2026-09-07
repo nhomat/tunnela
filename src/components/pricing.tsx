@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import { PLANS } from "@/lib/stripe";
 import type { Plan } from "@/lib/types";
@@ -12,6 +13,15 @@ export function Pricing({
   onSelect?: (plan: Plan) => void;
 }) {
   const { t, locale } = useApp();
+  const router = useRouter();
+
+  function handleSelect(plan: Plan) {
+    if (onSelect) {
+      onSelect(plan);
+    } else {
+      router.push("/signup");
+    }
+  }
 
   return (
     <section id="tarifs" className="mx-auto max-w-6xl px-6 py-20">
@@ -19,7 +29,7 @@ export function Pricing({
         <h2 className="font-serif text-3xl font-medium">{t.pricing.title}</h2>
         <p className="mt-2 text-[var(--foreground)]/70">{t.pricing.subtitle}</p>
       </div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {PLANS.map((plan) => {
           const isCurrent = currentPlan === plan.id;
           const limiteLabel =
@@ -60,7 +70,7 @@ export function Pricing({
                 <button
                   type="button"
                   disabled={isCurrent}
-                  onClick={() => onSelect?.(plan.id)}
+                  onClick={() => handleSelect(plan.id)}
                   className={`transition-base mt-4 w-full ${
                     isCurrent ? "btn-secondary opacity-60" : "btn-primary"
                   }`}

@@ -7,6 +7,10 @@ export interface TeamContext {
   equipeId: string | null;
   equipeNom: string | null;
   isOwner: boolean;
+  /** true si CE compte (propriétaire ou membre actif) a accès aux fonctionnalités Coop. */
+  coopAccess: boolean;
+  /** Plan à utiliser pour les limites/fonctionnalités : le sien, ou celui du
+   * propriétaire de l'équipe si membre actif d'une équipe Coop active. */
   effectivePlan: Plan;
 }
 
@@ -20,25 +24,33 @@ export interface TeamMember {
 }
 
 /**
- * Un abonnement Coop est payé par le propriétaire de l'équipe ; ses membres
- * gardent chacun leur propre compte mais héritent du plan "coop" tant qu'ils
- * sont actifs dans cette équipe, sans payer individuellement.
+ * Coop est un add-on payé par le propriétaire de l'équipe (coop_actif sur
+ * son abonnement) ; ses membres gardent chacun leur propre compte et
+ * héritent de l'accès aux fonctionnalités d'équipe tant qu'ils sont actifs
+ * dans cette équipe, sans souscrire individuellement.
  */
 export async function resolveTeamContext(
   supabase: SupabaseClient,
   userId: string,
-  ownPlan: Plan
+  ownPlan: Plan,
+  ownCoopActif: boolean
 ): Promise<TeamContext> {
-  if (ownPlan === "coop") {
+  if (ownCoopActif) {
     const { data: equipe } = await supabase
       .from("equipes")
       .select("id, nom")
       .eq("proprietaire_user_id", userId)
       .maybeSingle();
     if (equipe) {
-      return { equipeId: equipe.id, equipeNom: equipe.nom, isOwner: true, effectivePlan: "coop" };
+      return {
+        equipeId: equipe.id,
+        equipeNom: equipe.nom,
+        isOwner: true,
+        coopAccess: true,
+        effectivePlan: ownPlan,
+      };
     }
-    return { equipeId: null, equipeNom: null, isOwner: false, effectivePlan: "coop" };
+    return { equipeId: null, equipeNom: null, isOwner: false, coopAccess: true, effectivePlan: ownPlan };
   }
 
   const { data: membership } = await supabase
@@ -58,20 +70,21 @@ export async function resolveTeamContext(
   if (membership?.equipe_id && equipeInfo?.proprietaire_user_id) {
     const { data: ownerAbo } = await supabase
       .from("abonnements")
-      .select("plan")
+      .select("plan, coop_actif")
       .eq("user_id", equipeInfo.proprietaire_user_id)
       .maybeSingle();
-    if (ownerAbo?.plan === "coop") {
+    if (ownerAbo?.coop_actif) {
       return {
         equipeId: membership.equipe_id,
         equipeNom: equipeInfo.nom,
         isOwner: false,
-        effectivePlan: "coop",
+        coopAccess: true,
+        effectivePlan: ownerAbo.plan as Plan,
       };
     }
   }
 
-  return { equipeId: null, equipeNom: null, isOwner: false, effectivePlan: ownPlan };
+  return { equipeId: null, equipeNom: null, isOwner: false, coopAccess: false, effectivePlan: ownPlan };
 }
 
 export async function listTeamMembers(

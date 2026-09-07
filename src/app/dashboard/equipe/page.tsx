@@ -1,28 +1,87 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
-import { FeatureGate, useCurrentPlan } from "@/components/feature-gate";
+import { useCurrentPlan } from "@/components/feature-gate";
 import { listTeamMembers, listTeamMessages } from "@/lib/team";
 import type { TeamMember, TeamMessage } from "@/lib/team";
+import { COOP_ADDON_PRIX_MENSUEL } from "@/lib/stripe";
 
 export default function EquipePage() {
-  const { plan, loading } = useCurrentPlan();
+  const { ownPlan, team, loading } = useCurrentPlan();
 
   if (loading) return <p className="text-sm text-[var(--foreground)]/60">…</p>;
 
+  if (team?.coopAccess) return <Equipe />;
+
+  if (ownPlan === "decouverte") {
+    return <CoopUpgradeNeeded />;
+  }
+
+  return <CoopAddonPromo />;
+}
+
+function CoopUpgradeNeeded() {
+  const { t } = useApp();
   return (
-    <FeatureGate feature="coopEquipe" plan={plan}>
-      <Equipe />
-    </FeatureGate>
+    <div className="card tunnel-enter max-w-lg text-center">
+      <p className="font-serif text-lg">{t.equipe.needsPlanTitle}</p>
+      <p className="mt-2 text-sm text-[var(--foreground)]/70">{t.equipe.needsPlanBody}</p>
+      <Link href="/dashboard/abonnement" className="btn-primary transition-base mt-4 inline-flex text-sm">
+        {t.baux.upgrade}
+      </Link>
+    </div>
+  );
+}
+
+function CoopAddonPromo() {
+  const { t } = useApp();
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState(false);
+
+  async function handleSubscribe() {
+    setPending(true);
+    setError(false);
+    try {
+      const res = await fetch("/api/stripe/addon/coop", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action: "subscribe" }),
+      });
+      if (!res.ok) throw new Error();
+      window.location.reload();
+    } catch {
+      setError(true);
+      setPending(false);
+    }
+  }
+
+  return (
+    <div className="card tunnel-enter max-w-lg text-center">
+      <p className="font-serif text-lg">{t.equipe.addonTitle}</p>
+      <p className="mt-2 text-sm text-[var(--foreground)]/70">{t.equipe.addonSubtitle}</p>
+      <p className="mt-4 font-serif text-3xl">
+        +{COOP_ADDON_PRIX_MENSUEL} €<span className="text-sm text-[var(--foreground)]/60"> {t.pricing.perMonth}</span>
+      </p>
+      <button
+        type="button"
+        onClick={handleSubscribe}
+        disabled={pending}
+        className="btn-primary transition-base mt-4 disabled:opacity-60"
+      >
+        {t.equipe.addonSubscribe}
+      </button>
+      {error && <p className="mt-2 text-sm text-[var(--danger)]">{t.equipe.addonError}</p>}
+    </div>
   );
 }
 
 function Equipe() {
   const { t } = useApp();
   const supabase = useMemo(() => createClient(), []);
-  const { team, ownPlan } = useCurrentPlan();
+  const { team } = useCurrentPlan();
 
   const [equipeId, setEquipeId] = useState<string | null>(null);
   const [nom, setNom] = useState("");
@@ -38,6 +97,7 @@ function Equipe() {
   const [messages, setMessages] = useState<TeamMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [unsubscribing, setUnsubscribing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -55,7 +115,7 @@ function Equipe() {
     }
     setMyUserId(user.id);
 
-    if (ownPlan === "coop") {
+    if (team?.isOwner) {
       const { data: equipe } = await supabase
         .from("equipes")
         .select("id, nom")
@@ -172,6 +232,21 @@ function Equipe() {
     if (!window.confirm(t.equipe.removeConfirm)) return;
     await supabase.from("membres_equipe").delete().eq("id", memberId);
     await load();
+  }
+
+  async function handleUnsubscribeAddon() {
+    if (!window.confirm(t.equipe.addonUnsubscribeConfirm)) return;
+    setUnsubscribing(true);
+    try {
+      const res = await fetch("/api/stripe/addon/coop", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action: "unsubscribe" }),
+      });
+      if (res.ok) window.location.reload();
+    } finally {
+      setUnsubscribing(false);
+    }
   }
 
   if (loading) return <p className="text-sm text-[var(--foreground)]/60">…</p>;
@@ -315,6 +390,17 @@ function Equipe() {
               </button>
             </form>
           </div>
+
+          {isOwner && (
+            <button
+              type="button"
+              onClick={handleUnsubscribeAddon}
+              disabled={unsubscribing}
+              className="transition-base mt-8 text-sm text-[var(--danger)] hover:underline disabled:opacity-60"
+            >
+              {t.equipe.addonUnsubscribe}
+            </button>
+          )}
         </>
       )}
     </div>

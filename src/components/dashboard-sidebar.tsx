@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "./providers";
-import { LogoMark } from "./logo";
+import { HomeLogoLink } from "./home-logo-link";
 import { ThemeLangToggle } from "./theme-lang-toggle";
 import { AdminPlanSwitcher } from "./admin-plan-switcher";
 import { useCurrentPlan } from "./feature-gate";
@@ -34,11 +34,8 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
 
   return (
     <aside className="border-b border-[var(--border-color)] md:sticky md:top-0 md:h-screen md:w-64 md:shrink-0 md:border-b-0 md:border-r">
-      <div className="flex items-center justify-between px-6 py-4">
-        <Link href="/">
-          <LogoMark />
-        </Link>
-        <ThemeLangToggle />
+      <div className="px-6 py-4">
+        <HomeLogoLink />
       </div>
 
       <nav className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col md:overflow-visible md:px-3 md:pb-0">
@@ -70,6 +67,9 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
             <ConformityRing ratio={conformityRatio} />
           </div>
         )}
+        <div className="mb-4 flex justify-center">
+          <ThemeLangToggle />
+        </div>
         <button
           type="button"
           onClick={handleLogout}

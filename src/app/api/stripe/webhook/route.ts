@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getStripe, planForPriceId } from "@/lib/stripe";
+import { getStripe, planForPriceId, coopAddonPriceId } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type Stripe from "stripe";
 
@@ -41,14 +41,23 @@ export async function POST(request: Request) {
 
     case "customer.subscription.updated": {
       const subscription = event.data.object as Stripe.Subscription;
-      const priceId = subscription.items.data[0]?.price.id;
-      const plan = priceId ? planForPriceId(priceId) : null;
+      const coopPriceId = coopAddonPriceId();
+
+      let plan: ReturnType<typeof planForPriceId> = null;
+      let coopItemId: string | null = null;
+      for (const item of subscription.items.data) {
+        const matchedPlan = planForPriceId(item.price.id);
+        if (matchedPlan) plan = matchedPlan;
+        if (coopPriceId && item.price.id === coopPriceId) coopItemId = item.id;
+      }
 
       await supabase
         .from("abonnements")
         .update({
           plan: plan ?? undefined,
           statut: subscription.status,
+          coop_actif: coopItemId !== null,
+          stripe_coop_item_id: coopItemId,
           updated_at: new Date().toISOString(),
         })
         .eq("stripe_subscription_id", subscription.id);
@@ -62,6 +71,8 @@ export async function POST(request: Request) {
         .update({
           plan: "decouverte",
           statut: "annule",
+          coop_actif: false,
+          stripe_coop_item_id: null,
           updated_at: new Date().toISOString(),
         })
         .eq("stripe_subscription_id", subscription.id);

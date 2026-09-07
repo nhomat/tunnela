@@ -43,15 +43,8 @@ export const PLANS: PlanDefinition[] = [
     id: "fonciere",
     nom: "Foncière",
     prixMensuel: 290,
-    limiteBaux: null,
+    limiteBaux: 500,
     priceEnvVar: "STRIPE_PRICE_FONCIERE",
-  },
-  {
-    id: "coop",
-    nom: "Coop",
-    prixMensuel: 290,
-    limiteBaux: null,
-    priceEnvVar: "STRIPE_PRICE_COOP",
   },
 ];
 
@@ -68,4 +61,13 @@ export function planForPriceId(priceId: string): Plan | null {
     }
   }
   return null;
+}
+
+// Add-on Coop (multi-utilisateurs + partage d'équipe) : un supplément
+// ajouté à l'abonnement de base existant, pas un palier séparé.
+export const COOP_ADDON_NOM = "Coop";
+export const COOP_ADDON_PRIX_MENSUEL = 150;
+
+export function coopAddonPriceId(): string | null {
+  return process.env.STRIPE_PRICE_COOP_ADDON ?? null;
 }

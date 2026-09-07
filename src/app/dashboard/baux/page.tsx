@@ -88,7 +88,7 @@ export default function BauxPage() {
   const canSearch = hasFeature(plan, "search");
   const canImport = hasFeature(plan, "csvImport");
   const canRevise = hasFeature(plan, "revisionWorkflow");
-  const canShareTeam = hasFeature(plan, "coopEquipe") && Boolean(team?.equipeId);
+  const canShareTeam = Boolean(team?.coopAccess) && Boolean(team?.equipeId);
 
   const visibleBaux = useMemo(() => {
     return ownBaux.filter((bail) => {

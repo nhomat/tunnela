@@ -29,14 +29,14 @@ export function useCurrentPlan() {
       }
       const { data } = await supabase
         .from("abonnements")
-        .select("plan, is_admin")
+        .select("plan, is_admin, coop_actif")
         .eq("user_id", user.id)
         .maybeSingle();
       if (data) {
         const rawPlan = data.plan as Plan;
         setOwnPlan(rawPlan);
         setIsAdmin(Boolean(data.is_admin));
-        const context = await resolveTeamContext(supabase, user.id, rawPlan);
+        const context = await resolveTeamContext(supabase, user.id, rawPlan, Boolean(data.coop_actif));
         setTeam(context);
         setPlan(context.effectivePlan);
       }
