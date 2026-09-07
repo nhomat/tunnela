@@ -28,25 +28,35 @@ export const PLANS: PlanDefinition[] = [
   {
     id: "cabinet",
     nom: "Cabinet",
-    prixMensuel: 35,
+    prixMensuel: 49.99,
     limiteBaux: 20,
     priceEnvVar: "STRIPE_PRICE_CABINET",
   },
   {
     id: "portefeuille",
     nom: "Portefeuille",
-    prixMensuel: 100,
+    prixMensuel: 129.99,
     limiteBaux: 100,
     priceEnvVar: "STRIPE_PRICE_PORTEFEUILLE",
   },
   {
     id: "fonciere",
     nom: "Foncière",
-    prixMensuel: 300,
+    prixMensuel: 249.99,
     limiteBaux: 500,
     priceEnvVar: "STRIPE_PRICE_FONCIERE",
   },
 ];
+
+// Formate un prix pour l'affichage (virgule en français, point en anglais),
+// avec deux décimales dès que le montant n'est pas un entier — nécessaire
+// pour les prix "charme" du type 49,99 €.
+export function formatPrixMensuel(prixMensuel: number, locale: "fr" | "en"): string {
+  return prixMensuel.toLocaleString(locale === "fr" ? "fr-FR" : "en-US", {
+    minimumFractionDigits: Number.isInteger(prixMensuel) ? 0 : 2,
+    maximumFractionDigits: 2,
+  });
+}
 
 export function priceIdForPlan(plan: Plan): string | null {
   const def = PLANS.find((p) => p.id === plan);

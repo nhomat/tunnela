@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useApp } from "@/components/providers";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { PLANS } from "@/lib/stripe";
+import { PLANS, formatPrixMensuel } from "@/lib/stripe";
 import type { Plan } from "@/lib/types";
 
 function isPlan(value: string): value is Plan {
@@ -13,7 +13,7 @@ function isPlan(value: string): value is Plan {
 }
 
 export function OffreDetailClient() {
-  const { t } = useApp();
+  const { t, locale } = useApp();
   const router = useRouter();
   const params = useParams<{ plan: string }>();
   const planId = params.plan;
@@ -62,7 +62,7 @@ export function OffreDetailClient() {
 
           <div className="card mx-auto mt-10 max-w-md">
             <p className="font-serif text-4xl">
-              {plan.prixMensuel === 0 ? t.pricing.free : `${plan.prixMensuel} €`}
+              {!plan.prixMensuel ? t.pricing.free : `${formatPrixMensuel(plan.prixMensuel, locale)} €`}
               {plan.prixMensuel !== 0 && (
                 <span className="text-base text-[var(--foreground)]/60"> {t.pricing.perMonth}</span>
               )}

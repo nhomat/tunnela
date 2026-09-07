@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useApp } from "./providers";
-import { PLANS } from "@/lib/stripe";
+import { PLANS, formatPrixMensuel } from "@/lib/stripe";
 import type { Plan } from "@/lib/types";
 
 export function Pricing({
@@ -67,9 +67,9 @@ export function Pricing({
               </ul>
               <div className="mt-auto">
                 <p className="font-serif text-3xl">
-                  {plan.prixMensuel === 0
+                  {!plan.prixMensuel
                     ? t.pricing.free
-                    : `${plan.prixMensuel} €${locale === "fr" ? "" : ""}`}
+                    : `${formatPrixMensuel(plan.prixMensuel, locale)} €`}
                   {plan.prixMensuel !== 0 && (
                     <span className="text-sm text-[var(--foreground)]/60">
                       {" "}
