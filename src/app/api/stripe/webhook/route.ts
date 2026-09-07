@@ -79,6 +79,20 @@ export async function POST(request: Request) {
       break;
     }
 
+    case "account.updated": {
+      const account = event.data.object as Stripe.Account;
+      await supabase
+        .from("abonnements")
+        .update({
+          stripe_connect_details_submitted: Boolean(account.details_submitted),
+          stripe_connect_charges_enabled: Boolean(account.charges_enabled),
+          stripe_connect_payouts_enabled: Boolean(account.payouts_enabled),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("stripe_connect_account_id", account.id);
+      break;
+    }
+
     default:
       break;
   }

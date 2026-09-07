@@ -400,6 +400,16 @@ export const dictionary = {
       dataTitle: "Mes données",
       dataSubtitle: "Téléchargez une copie de votre portefeuille de baux au format CSV.",
       exportCsv: "Exporter en CSV",
+      connectTitle: "Recevoir des paiements (Stripe Connect)",
+      connectSubtitle:
+        "Connectez votre propre compte Stripe pour recevoir directement les paiements qui vous sont destinés.",
+      connectButton: "Connecter mon compte Stripe",
+      connectResume: "Reprendre l'inscription",
+      connectIncomplete: "Inscription commencée mais non terminée.",
+      connectReviewing: "Informations transmises, vérification en cours par Stripe.",
+      connectActive: "Compte Stripe connecté et actif.",
+      connectRefresh: "Vérifier le statut",
+      connectError: "Échec de la connexion à Stripe. Réessayez.",
       dangerTitle: "Zone à risque",
       dangerSubtitle:
         "Supprime définitivement votre compte, votre portefeuille et vos données associées. Si vous êtes propriétaire d'une équipe Coop, celle-ci est supprimée pour tous ses membres. Action irréversible.",
@@ -802,6 +812,16 @@ export const dictionary = {
       dataTitle: "My data",
       dataSubtitle: "Download a copy of your lease portfolio as a CSV file.",
       exportCsv: "Export as CSV",
+      connectTitle: "Receive payments (Stripe Connect)",
+      connectSubtitle:
+        "Connect your own Stripe account to receive payments intended for you directly.",
+      connectButton: "Connect my Stripe account",
+      connectResume: "Resume onboarding",
+      connectIncomplete: "Onboarding started but not finished.",
+      connectReviewing: "Information submitted, Stripe is reviewing it.",
+      connectActive: "Stripe account connected and active.",
+      connectRefresh: "Check status",
+      connectError: "Failed to connect to Stripe. Please try again.",
       dangerTitle: "Danger zone",
       dangerSubtitle:
         "Permanently deletes your account, your portfolio, and related data. If you own a Coop team, it is deleted for every member. This cannot be undone.",

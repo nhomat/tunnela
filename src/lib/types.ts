@@ -48,6 +48,10 @@ export interface Abonnement {
   alert_delai_jours: number;
   coop_actif: boolean;
   stripe_coop_item_id: string | null;
+  stripe_connect_account_id: string | null;
+  stripe_connect_details_submitted: boolean;
+  stripe_connect_charges_enabled: boolean;
+  stripe_connect_payouts_enabled: boolean;
   updated_at?: string;
 }
 

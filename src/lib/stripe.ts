@@ -71,3 +71,9 @@ export const COOP_ADDON_PRIX_MENSUEL = 150;
 export function coopAddonPriceId(): string | null {
   return process.env.STRIPE_PRICE_COOP_ADDON ?? null;
 }
+
+// URL de base de l'application, utilisée pour construire les liens de
+// redirection Stripe (Checkout, Account Links Connect, etc.).
+export function appUrl(): string {
+  return process.env.NEXT_PUBLIC_APP_URL ?? "https://tunnela.vercel.app";
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { useCurrentPlan } from "@/components/feature-gate";
@@ -31,6 +31,13 @@ export default function ParametresPage() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
 
+  const searchParams = useSearchParams();
+  const [connectAccountId, setConnectAccountId] = useState<string | null>(null);
+  const [connectDetailsSubmitted, setConnectDetailsSubmitted] = useState(false);
+  const [connectChargesEnabled, setConnectChargesEnabled] = useState(false);
+  const [connectPending, setConnectPending] = useState(false);
+  const [connectError, setConnectError] = useState(false);
+
   useEffect(() => {
     void (async () => {
       const {
@@ -42,16 +49,66 @@ export default function ParametresPage() {
       }
       const { data } = await supabase
         .from("abonnements")
-        .select("nom_bailleur_defaut, alert_delai_jours")
+        .select(
+          "nom_bailleur_defaut, alert_delai_jours, stripe_connect_account_id, stripe_connect_details_submitted, stripe_connect_charges_enabled"
+        )
         .eq("user_id", user.id)
         .maybeSingle();
       if (data) {
         setNomBailleur(data.nom_bailleur_defaut ?? "");
         setAlertDelai(data.alert_delai_jours ?? 30);
+        setConnectAccountId(data.stripe_connect_account_id);
+        setConnectDetailsSubmitted(Boolean(data.stripe_connect_details_submitted));
+        setConnectChargesEnabled(Boolean(data.stripe_connect_charges_enabled));
       }
       setLoading(false);
     })();
   }, [supabase]);
+
+  async function handleConnectStripe() {
+    setConnectPending(true);
+    setConnectError(false);
+    try {
+      const res = await fetch("/api/stripe/connect/onboard", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok || !data.url) throw new Error();
+      window.location.href = data.url;
+    } catch {
+      setConnectError(true);
+      setConnectPending(false);
+    }
+  }
+
+  async function refreshConnectStatus() {
+    setConnectPending(true);
+    try {
+      const res = await fetch("/api/stripe/connect/status");
+      const data = await res.json();
+      if (data.connected) {
+        setConnectDetailsSubmitted(Boolean(data.details_submitted));
+        setConnectChargesEnabled(Boolean(data.charges_enabled));
+      }
+    } finally {
+      setConnectPending(false);
+    }
+  }
+
+  // Retour depuis l'onboarding Stripe hébergé : "success" revérifie le
+  // statut réel (avant même que le webhook n'arrive), "refresh" relance
+  // directement une nouvelle inscription si le lien précédent a expiré ou
+  // a été abandonné en cours de route.
+  useEffect(() => {
+    const stripeConnect = searchParams.get("stripe_connect");
+    if (stripeConnect === "success") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      void refreshConnectStatus();
+      router.replace("/dashboard/parametres");
+    } else if (stripeConnect === "refresh") {
+      router.replace("/dashboard/parametres");
+      void handleConnectStripe();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   async function handleSaveProfil(e: React.FormEvent) {
     e.preventDefault();
@@ -192,6 +249,58 @@ export default function ParametresPage() {
         <button type="button" onClick={handleExport} disabled={exporting} className="btn-secondary transition-base disabled:opacity-60">
           {t.parametres.exportCsv}
         </button>
+      </section>
+
+      <section className="card">
+        <h2 className="mb-1 font-serif text-lg">{t.parametres.connectTitle}</h2>
+        <p className="mb-4 text-sm text-[var(--foreground)]/70">{t.parametres.connectSubtitle}</p>
+
+        {!connectAccountId && (
+          <button
+            type="button"
+            onClick={handleConnectStripe}
+            disabled={connectPending}
+            className="btn-primary transition-base disabled:opacity-60"
+          >
+            {connectPending ? "…" : t.parametres.connectButton}
+          </button>
+        )}
+
+        {connectAccountId && !connectChargesEnabled && (
+          <>
+            <p className="mb-3 text-sm text-[var(--accent)]">
+              {connectDetailsSubmitted ? t.parametres.connectReviewing : t.parametres.connectIncomplete}
+            </p>
+            <button
+              type="button"
+              onClick={handleConnectStripe}
+              disabled={connectPending}
+              className="btn-primary transition-base disabled:opacity-60"
+            >
+              {connectPending ? "…" : t.parametres.connectResume}
+            </button>
+          </>
+        )}
+
+        {connectAccountId && connectChargesEnabled && (
+          <div className="flex items-center gap-2 text-sm text-[var(--success)]">
+            <span aria-hidden="true">✓</span>
+            <span>{t.parametres.connectActive}</span>
+          </div>
+        )}
+
+        {connectAccountId && (
+          <button
+            type="button"
+            onClick={refreshConnectStatus}
+            disabled={connectPending}
+            className="transition-base mt-3 block text-xs text-[var(--foreground)]/60 hover:underline disabled:opacity-60"
+          >
+            {t.parametres.connectRefresh}
+          </button>
+        )}
+
+        {connectError && <p className="mt-2 text-sm text-[var(--danger)]">{t.parametres.connectError}</p>}
       </section>
 
       <section className="card border-[var(--danger)]/40">

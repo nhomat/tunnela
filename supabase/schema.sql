@@ -109,6 +109,14 @@ create table if not exists abonnements (
   -- existant), pas un palier de plan séparé.
   coop_actif boolean not null default false,
   stripe_coop_item_id text,
+  -- Stripe Connect Express : permet à l'utilisateur de connecter son propre
+  -- compte Stripe pour recevoir les paiements qui lui sont destinés. Le
+  -- statut (details_submitted/charges_enabled/payouts_enabled) est mis à
+  -- jour par le webhook "account.updated" et par un contrôle à la demande.
+  stripe_connect_account_id text unique,
+  stripe_connect_details_submitted boolean not null default false,
+  stripe_connect_charges_enabled boolean not null default false,
+  stripe_connect_payouts_enabled boolean not null default false,
   updated_at timestamptz not null default now()
 );
 
