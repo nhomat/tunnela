@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import { PLANS, COOP_ADDON_NOM, COOP_ADDON_PRIX_MENSUEL } from "@/lib/stripe";
@@ -49,6 +49,7 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
 
   const recommended = useMemo(() => recommendPlan(nbBaux), [nbBaux]);
   const isMax = nbBaux >= SLIDER_MAX;
+  const thumbScale = 1 + (nbBaux / SLIDER_MAX) ** 3 * 0.8;
 
   function handleSelectRecommended() {
     if (onSelect) {
@@ -78,6 +79,7 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
           value={nbBaux}
           onChange={(e) => setNbBaux(Number(e.target.value))}
           className="range-slider"
+          style={{ "--thumb-scale": thumbScale } as CSSProperties}
         />
         <div className="plan-recommend-box mt-6">
           <button
