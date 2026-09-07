@@ -7,6 +7,7 @@ import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { PasswordInput } from "@/components/password-input";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -104,14 +105,14 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                   <label htmlFor="password" className="mb-1 block text-sm font-medium">
                     {t.auth.passwordLabel}
                   </label>
-                  <input
+                  <PasswordInput
                     id="password"
-                    type="password"
-                    className="input transition-base"
                     placeholder={t.auth.passwordOptional}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={setPassword}
                     autoComplete="current-password"
+                    showLabel={t.auth.showPassword}
+                    hideLabel={t.auth.hidePassword}
                   />
                 </div>
               )}

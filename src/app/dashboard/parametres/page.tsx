@@ -8,6 +8,7 @@ import { useCurrentPlan } from "@/components/feature-gate";
 import { hasFeature } from "@/lib/types";
 import { exportBauxAsCsv } from "@/lib/csv-import";
 import { PageLoading } from "@/components/table-skeleton";
+import { PasswordInput } from "@/components/password-input";
 import type { Bail } from "@/lib/types";
 
 export default function ParametresPage() {
@@ -218,13 +219,13 @@ export default function ParametresPage() {
         <form onSubmit={handleChangePassword} className="flex flex-col gap-4 sm:flex-row sm:items-end">
           <label className="flex-1 text-sm">
             <span className="mb-1 block font-medium">{t.parametres.newPasswordLabel}</span>
-            <input
-              type="password"
-              className="input transition-base"
+            <PasswordInput
               value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              onChange={setNewPassword}
               autoComplete="new-password"
               minLength={8}
+              showLabel={t.auth.showPassword}
+              hideLabel={t.auth.hidePassword}
             />
           </label>
           <button

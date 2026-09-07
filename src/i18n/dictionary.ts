@@ -189,6 +189,8 @@ export const dictionary = {
       invalidEmail: "Adresse email invalide.",
       invalidCredentials: "Email ou mot de passe incorrect.",
       error: "Une erreur est survenue. Réessayez.",
+      showPassword: "Afficher",
+      hidePassword: "Masquer",
     },
     dashboard: {
       nav: {
@@ -603,6 +605,8 @@ export const dictionary = {
       invalidEmail: "Invalid email address.",
       invalidCredentials: "Incorrect email or password.",
       error: "Something went wrong. Please try again.",
+      showPassword: "Show",
+      hidePassword: "Hide",
     },
     dashboard: {
       nav: {
