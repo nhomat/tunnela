@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { hasFeature } from "@/lib/types";
 import type { Plan } from "@/lib/types";
 
+const MAX_LENGTH = 20_000;
+
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -25,14 +27,34 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "plan_required" }, { status: 403 });
   }
 
-  const { to, subject, text } = (await request.json()) as {
-    to?: string;
+  const { bailId, subject, text } = (await request.json()) as {
+    bailId?: string;
     subject?: string;
     text?: string;
   };
 
-  if (!to || !subject || !text) {
+  if (
+    !bailId ||
+    !subject?.trim() ||
+    !text?.trim() ||
+    subject.length > 300 ||
+    text.length > MAX_LENGTH
+  ) {
     return NextResponse.json({ error: "missing_fields" }, { status: 400 });
+  }
+
+  // Le destinataire n'est jamais pris depuis la requête : il est toujours
+  // relu depuis le bail lui-même (visibilité déjà bornée par les policies
+  // RLS de la table `baux`), pour empêcher qu'un client altéré transforme
+  // cette route en relais d'emails vers une adresse arbitraire.
+  const { data: bail } = await supabase
+    .from("baux")
+    .select("preneur_email")
+    .eq("id", bailId)
+    .maybeSingle();
+
+  if (!bail?.preneur_email) {
+    return NextResponse.json({ error: "bail_not_found" }, { status: 404 });
   }
 
   if (!process.env.RESEND_API_KEY) {
@@ -42,7 +64,7 @@ export async function POST(request: Request) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const { error } = await resend.emails.send({
     from: process.env.ALERT_FROM_EMAIL ?? "Tunnela <alertes@tunnela.fr>",
-    to,
+    to: bail.preneur_email,
     subject,
     text,
   });

@@ -1,3 +1,12 @@
+-- Schéma privé, non exposé par PostgREST : héberge les fonctions internes
+-- (utilisées uniquement par des policies RLS ou des triggers) qui ne
+-- doivent jamais être appelables directement en RPC public. PostgREST
+-- n'expose que les schémas listés dans sa config (public par défaut) ;
+-- Postgres, lui, peut appeler une fonction de n'importe quel schéma depuis
+-- une policy RLS ou un trigger tant que le rôle courant a EXECUTE dessus.
+create schema if not exists private;
+grant usage on schema private to authenticated, anon, service_role;
+
 create table if not exists equipes (
   id uuid primary key default gen_random_uuid(),
   proprietaire_user_id uuid not null references auth.users(id) on delete cascade,
@@ -10,8 +19,8 @@ alter table equipes enable row level security;
 
 create policy "Le proprietaire gere son equipe"
   on equipes for all
-  using (auth.uid() = proprietaire_user_id)
-  with check (auth.uid() = proprietaire_user_id);
+  using ((select auth.uid()) = proprietaire_user_id)
+  with check ((select auth.uid()) = proprietaire_user_id);
 
 create table if not exists membres_equipe (
   id uuid primary key default gen_random_uuid(),
@@ -32,7 +41,10 @@ alter table membres_equipe enable row level security;
 -- en interne pour éviter la récursion infinie qui se produit quand une policy
 -- sur membres_equipe (ou une policy en chaîne sur equipes/abonnements) se
 -- réévalue elle-même via une sous-requête directe sur membres_equipe.
-create or replace function public.is_active_member_of_equipe(target_equipe_id uuid)
+-- Elle vit dans le schéma `private` (non exposé par PostgREST) : les
+-- policies RLS peuvent l'appeler (le rôle authenticated a EXECUTE dessus),
+-- mais elle n'est pas accessible en RPC public.
+create or replace function private.is_active_member_of_equipe(target_equipe_id uuid)
 returns boolean
 language sql
 security definer
@@ -45,21 +57,21 @@ as $$
   );
 $$;
 
-revoke all on function public.is_active_member_of_equipe(uuid) from public, anon;
-grant execute on function public.is_active_member_of_equipe(uuid) to authenticated;
+revoke all on function private.is_active_member_of_equipe(uuid) from public, anon, authenticated;
+grant execute on function private.is_active_member_of_equipe(uuid) to authenticated;
 
 create policy "Les membres voient leur equipe"
   on equipes for select
-  using (is_active_member_of_equipe(equipes.id));
+  using (private.is_active_member_of_equipe(equipes.id));
 
 create policy "Le proprietaire gere les membres"
   on membres_equipe for all
-  using (exists (select 1 from equipes e where e.id = membres_equipe.equipe_id and e.proprietaire_user_id = auth.uid()))
-  with check (exists (select 1 from equipes e where e.id = membres_equipe.equipe_id and e.proprietaire_user_id = auth.uid()));
+  using (exists (select 1 from equipes e where e.id = membres_equipe.equipe_id and e.proprietaire_user_id = (select auth.uid())))
+  with check (exists (select 1 from equipes e where e.id = membres_equipe.equipe_id and e.proprietaire_user_id = (select auth.uid())));
 
 create policy "Un membre voit les lignes de sa propre equipe"
   on membres_equipe for select
-  using (user_id = auth.uid() or is_active_member_of_equipe(equipe_id));
+  using (user_id = (select auth.uid()) or private.is_active_member_of_equipe(equipe_id));
 
 create table if not exists baux (
   id uuid primary key default gen_random_uuid(),
@@ -84,17 +96,17 @@ create table if not exists baux (
 
 alter table baux enable row level security;
 
-create policy "Les utilisateurs voient leurs propres baux"
-  on baux for select using (auth.uid() = user_id);
-
+-- Une seule policy couvre à la fois SELECT et les écritures pour le
+-- propriétaire du bail (une policy SELECT séparée avec la même condition
+-- serait redondante : PostgreSQL évaluerait les deux à chaque lecture).
 create policy "Les utilisateurs gèrent leurs propres baux"
-  on baux for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  on baux for all using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 -- Abonnement "Coop" : un membre actif d'une équipe voit les baux qu'un
 -- collègue a explicitement marqués comme partagés (visible_equipe = true).
 create policy "Les membres actifs voient les baux partages de leur equipe"
   on baux for select
-  using (visible_equipe = true and equipe_id is not null and is_active_member_of_equipe(equipe_id));
+  using (visible_equipe = true and equipe_id is not null and private.is_active_member_of_equipe(equipe_id));
 
 create table if not exists abonnements (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -123,7 +135,7 @@ create table if not exists abonnements (
 alter table abonnements enable row level security;
 
 create policy "Les utilisateurs voient leur propre abonnement"
-  on abonnements for select using (auth.uid() = user_id);
+  on abonnements for select using ((select auth.uid()) = user_id);
 
 -- Écriture réservée au service_role (webhook Stripe côté serveur uniquement,
 -- jamais depuis le client) pour tous les comptes normaux : aucune policy
@@ -136,13 +148,17 @@ create policy "Les utilisateurs voient leur propre abonnement"
 -- ne peut jamais écrire sur cette table par ce biais.
 create policy "Les administrateurs changent leur propre plan"
   on abonnements for update
-  using (auth.uid() = user_id and is_admin)
-  with check (auth.uid() = user_id and is_admin);
+  using ((select auth.uid()) = user_id and is_admin)
+  with check ((select auth.uid()) = user_id and is_admin);
 
 -- Permet à un utilisateur de modifier uniquement ses propres paramètres
 -- (nom du bailleur, délai d'alerte) sans lui ouvrir une policy UPDATE
 -- générale sur abonnements, qui laisserait sinon n'importe quel client
 -- modifier son propre "plan" ou "is_admin" via la même requête PostgREST.
+-- Contrairement aux fonctions ci-dessus, celle-ci reste dans `public` et
+-- reste appelable directement par le client (supabase.rpc(...)) : c'est
+-- son usage prévu, et elle se limite d'elle-même à la ligne de l'appelant
+-- (where user_id = auth.uid()).
 create or replace function public.update_my_parametres(p_nom_bailleur text, p_alert_delai_jours integer)
 returns void
 language plpgsql
@@ -171,7 +187,7 @@ create policy "Les membres voient le plan du proprietaire de leur equipe"
   using (
     exists (
       select 1 from equipes e
-      where e.proprietaire_user_id = abonnements.user_id and is_active_member_of_equipe(e.id)
+      where e.proprietaire_user_id = abonnements.user_id and private.is_active_member_of_equipe(e.id)
     )
   );
 
@@ -198,12 +214,14 @@ create policy "Tout le monde authentifie lit les indices publies"
 
 create policy "Seuls les admins gerent les indices publies"
   on indices_publies for all
-  using (exists (select 1 from abonnements a where a.user_id = auth.uid() and a.is_admin))
-  with check (exists (select 1 from abonnements a where a.user_id = auth.uid() and a.is_admin));
+  using (exists (select 1 from abonnements a where a.user_id = (select auth.uid()) and a.is_admin))
+  with check (exists (select 1 from abonnements a where a.user_id = (select auth.uid()) and a.is_admin));
 
 -- Messagerie sécurisée par équipe (plan Coop). can_access_equipe() couvre à
 -- la fois le propriétaire (absent de membres_equipe) et les membres actifs.
-create or replace function public.can_access_equipe(target_equipe_id uuid)
+-- Comme is_active_member_of_equipe(), elle vit dans `private` : nécessaire
+-- aux policies ci-dessous, mais jamais exposée en RPC public.
+create or replace function private.can_access_equipe(target_equipe_id uuid)
 returns boolean
 language sql
 security definer
@@ -214,8 +232,8 @@ as $$
     or exists (select 1 from membres_equipe where equipe_id = target_equipe_id and user_id = auth.uid() and statut = 'actif');
 $$;
 
-revoke all on function public.can_access_equipe(uuid) from public, anon;
-grant execute on function public.can_access_equipe(uuid) to authenticated;
+revoke all on function private.can_access_equipe(uuid) from public, anon, authenticated;
+grant execute on function private.can_access_equipe(uuid) to authenticated;
 
 create table if not exists messages_equipe (
   id uuid primary key default gen_random_uuid(),
@@ -229,18 +247,21 @@ alter table messages_equipe enable row level security;
 
 create policy "Les membres de l'equipe lisent les messages"
   on messages_equipe for select
-  using (can_access_equipe(equipe_id));
+  using (private.can_access_equipe(equipe_id));
 
 create policy "Les membres de l'equipe envoient des messages"
   on messages_equipe for insert
-  with check (can_access_equipe(equipe_id) and user_id = auth.uid());
+  with check (private.can_access_equipe(equipe_id) and user_id = (select auth.uid()));
 
 create policy "Un auteur supprime son propre message"
   on messages_equipe for delete
-  using (user_id = auth.uid());
+  using (user_id = (select auth.uid()));
 
 create index if not exists baux_user_id_idx on baux (user_id);
 create index if not exists baux_date_prochaine_revision_idx on baux (date_prochaine_revision);
+create index if not exists idx_baux_equipe_id on baux (equipe_id);
+create index if not exists idx_membres_equipe_user_id on membres_equipe (user_id);
+create index if not exists idx_messages_equipe_user_id on messages_equipe (user_id);
 create index if not exists indices_publies_indice_periode_idx on indices_publies (indice, periode desc);
 create index if not exists messages_equipe_equipe_id_idx on messages_equipe (equipe_id, created_at);
 
@@ -250,8 +271,11 @@ alter publication supabase_realtime add table messages_equipe;
 -- désactivé) : un appel direct à l'API REST avec un jeton valide pouvait la
 -- contourner. On l'applique aussi en base, avec le même calcul de "plan
 -- effectif" que côté application (un membre actif d'une équipe Coop hérite
--- du plan de base de son propriétaire).
-create or replace function public.effective_plan(p_user_id uuid)
+-- du plan de base de son propriétaire). effective_plan() vit dans `private`
+-- : elle n'est appelée qu'en interne par le trigger ci-dessous (exécuté
+-- avec les privilèges du propriétaire de la fonction), donc n'a besoin
+-- d'aucun GRANT vers anon/authenticated.
+create or replace function private.effective_plan(p_user_id uuid)
 returns text
 language plpgsql
 security definer
@@ -289,10 +313,9 @@ begin
 end;
 $$;
 
-revoke all on function public.effective_plan(uuid) from public, anon;
-grant execute on function public.effective_plan(uuid) to authenticated;
+revoke all on function private.effective_plan(uuid) from public, anon, authenticated;
 
-create or replace function public.enforce_limite_baux()
+create or replace function private.enforce_limite_baux()
 returns trigger
 language plpgsql
 security definer
@@ -303,7 +326,7 @@ declare
   v_limite integer;
   v_count integer;
 begin
-  v_plan := effective_plan(new.user_id);
+  v_plan := private.effective_plan(new.user_id);
   v_limite := case v_plan
     when 'cabinet' then 20
     when 'portefeuille' then 100
@@ -320,10 +343,12 @@ begin
 end;
 $$;
 
+revoke all on function private.enforce_limite_baux() from public, anon, authenticated;
+
 drop trigger if exists enforce_limite_baux_trigger on baux;
 create trigger enforce_limite_baux_trigger
   before insert on baux
-  for each row execute procedure public.enforce_limite_baux();
+  for each row execute procedure private.enforce_limite_baux();
 
 -- Un utilisateur nouvellement inscrit reçoit automatiquement un abonnement
 -- "découverte" par défaut. S'il avait été invité dans une équipe Coop avec

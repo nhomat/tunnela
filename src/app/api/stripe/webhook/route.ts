@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       if (userId) {
         await supabase.from("abonnements").upsert({
           user_id: userId,
-          plan: session.metadata?.plan ?? "cabinet",
+          plan: session.metadata?.plan ?? "decouverte",
           stripe_customer_id: (session.customer as string) ?? null,
           stripe_subscription_id: (session.subscription as string) ?? null,
           statut: "actif",

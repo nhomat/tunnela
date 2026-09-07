@@ -134,7 +134,7 @@ export function RevisionPanel({
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          to: bail.preneur_email,
+          bailId: bail.id,
           subject: `Notification de révision de loyer — ${bail.preneur}`,
           text: notificationText,
         }),
