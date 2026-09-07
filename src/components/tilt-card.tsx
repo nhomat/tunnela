@@ -17,8 +17,8 @@ export function TiltCard({
     const rect = el.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    el.style.setProperty("--tilt-x", `${(-y * 14).toFixed(2)}deg`);
-    el.style.setProperty("--tilt-y", `${(x * 14).toFixed(2)}deg`);
+    el.style.setProperty("--tilt-x", `${(-y * 6).toFixed(2)}deg`);
+    el.style.setProperty("--tilt-y", `${(x * 6).toFixed(2)}deg`);
   }
 
   function handleMouseLeave() {
