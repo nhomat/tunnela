@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -10,6 +11,14 @@ export async function POST(request: Request) {
 
   if (!user) {
     return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
+  }
+
+  const { allowed } = await checkRateLimit(`team-invite:${user.id}`, {
+    max: 10,
+    windowMinutes: 10,
+  });
+  if (!allowed) {
+    return NextResponse.json({ error: "too_many_requests" }, { status: 429 });
   }
 
   const { data: abonnement } = await supabase

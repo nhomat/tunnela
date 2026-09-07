@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { checkRateLimit, clientIp } from "@/lib/rate-limit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: Request) {
+  const { allowed } = await checkRateLimit(`contact:${clientIp(request)}`, {
+    max: 3,
+    windowMinutes: 10,
+  });
+  if (!allowed) {
+    return NextResponse.json({ error: "too_many_requests" }, { status: 429 });
+  }
+
   const { nom, email, societe, telephone, message } = (await request.json()) as {
     nom?: string;
     email?: string;

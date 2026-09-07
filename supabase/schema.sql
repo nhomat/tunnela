@@ -380,3 +380,19 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- Compteur générique de requêtes par "bucket" (ex. contact:1.2.3.4), utilisé
+-- pour limiter les endpoints publics non authentifiés (formulaire de
+-- contact) sans dépendre d'une infra externe (Redis, etc.). Accessible
+-- uniquement via service_role : RLS activée sans aucune policy, donc ni
+-- anon ni authenticated ne peuvent lire/écrire directement dessus.
+create table if not exists public.rate_limit_hits (
+  id bigint generated always as identity primary key,
+  bucket text not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_rate_limit_hits_bucket_created
+  on public.rate_limit_hits (bucket, created_at desc);
+
+alter table public.rate_limit_hits enable row level security;

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { hasFeature } from "@/lib/types";
 import type { Plan } from "@/lib/types";
 
@@ -25,6 +26,14 @@ export async function POST(request: Request) {
   const plan = (abonnement?.plan as Plan) ?? "decouverte";
   if (!hasFeature(plan, "notifyEmail")) {
     return NextResponse.json({ error: "plan_required" }, { status: 403 });
+  }
+
+  const { allowed } = await checkRateLimit(`send-revision:${user.id}`, {
+    max: 20,
+    windowMinutes: 10,
+  });
+  if (!allowed) {
+    return NextResponse.json({ error: "too_many_requests" }, { status: 429 });
   }
 
   const { bailId, subject, text } = (await request.json()) as {
