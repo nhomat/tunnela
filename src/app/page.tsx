@@ -110,7 +110,7 @@ function HowItWorks() {
           {t.howItWorks.steps.map((step, i) => (
             <Reveal key={step.title} delay={i * 110}>
               <div
-                className="btn-primary float-idle mb-3 flex h-9 w-9 items-center justify-center rounded-full p-0 font-serif text-sm"
+                className="btn-primary float-idle mb-3 flex h-9 w-9 items-center justify-center !rounded-full p-0 font-serif text-sm"
                 style={{ animationDelay: `${i * 0.3}s` }}
               >
                 {i + 1}
