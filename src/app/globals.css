@@ -248,10 +248,10 @@ h4 {
   max-width: 380px;
   aspect-ratio: 1 / 1;
   margin: 0 auto;
-  perspective: 1100px;
+  perspective: 1200px;
 }
 
-/* Halo statique derrière l'objet : ne tourne pas avec lui, juste une
+/* Halo statique derrière la scène : ne bouge pas avec la carte, juste une
    respiration douce pour donner de la chaleur à la scène. */
 .tunnel-visual::before {
   content: "";
@@ -278,87 +278,184 @@ h4 {
   }
 }
 
-/* Un cube en vrai 3D plutôt que des plans plats : contrairement à un
-   simple carré, il a une épaisseur réelle et reste donc lisible sous
-   tous les angles — on peut le faire tourner sur 360° sans qu'il ne
-   s'efface jamais de profil. */
-.tunnel-cube {
+/* Plutôt qu'une forme géométrique abstraite, le visuel montre le produit en
+   action : une carte de bail qui flotte doucement en 3D, avec un mini
+   graphique de révision de loyer qui reste dans les bornes de la clause
+   tunnel — la promesse du produit, animée. */
+.tunnel-stage {
   position: absolute;
   inset: 0;
-  margin: auto;
-  width: 190px;
-  height: 190px;
   transform-style: preserve-3d;
-  transform: rotateX(-20deg) rotateY(0deg);
+  transform: rotateX(9deg) rotateY(-15deg) translateY(0px);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .tunnel-cube {
-    animation: tunnel-spin 20s linear infinite;
+  .tunnel-stage {
+    animation: tunnel-float 7s ease-in-out infinite;
   }
 }
 
-@keyframes tunnel-spin {
+@keyframes tunnel-float {
+  0%,
+  100% {
+    transform: rotateX(9deg) rotateY(-15deg) translateY(0px);
+  }
+  50% {
+    transform: rotateX(4deg) rotateY(-6deg) translateY(-14px);
+  }
+}
+
+.tunnel-card-back {
+  position: absolute;
+  inset: 12% 4% 4% 14%;
+  border-radius: 1.6rem;
+  border: 1px solid color-mix(in srgb, var(--color-laiton) 26%, transparent);
+  background: color-mix(in srgb, var(--surface) 65%, transparent);
+  transform: translateZ(-70px) translate(14px, 18px);
+  opacity: 0.55;
+}
+
+.tunnel-card-main {
+  position: absolute;
+  inset: 6% 2% 2% 10%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.3rem 1.4rem;
+  border-radius: 1.6rem;
+  border: 1px solid color-mix(in srgb, var(--color-laiton) 55%, transparent);
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--color-laiton) 16%, var(--surface)),
+    var(--surface) 72%
+  );
+  box-shadow:
+    0 30px 55px -22px rgba(0, 0, 0, 0.35),
+    0 0 26px color-mix(in srgb, var(--color-laiton) 16%, transparent);
+  transform: translateZ(55px);
+}
+
+.tunnel-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.tunnel-card-label {
+  color: color-mix(in srgb, var(--foreground) 62%, transparent);
+}
+
+.tunnel-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.22rem 0.6rem;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-laiton) 20%, transparent);
+  color: var(--foreground);
+  white-space: nowrap;
+}
+
+.tunnel-card-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--color-laiton);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tunnel-card-badge::before {
+    animation: tunnel-halo-pulse 2.4s ease-in-out infinite;
+  }
+}
+
+.tunnel-card-value {
+  color: var(--foreground);
+}
+
+.tunnel-card-sub {
+  color: color-mix(in srgb, var(--foreground) 58%, transparent);
+}
+
+.tunnel-chart {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.tunnel-chart-band {
+  fill: color-mix(in srgb, var(--color-laiton) 16%, transparent);
+}
+
+.tunnel-chart-bound {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-laiton) 45%, transparent);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.tunnel-chart-line {
+  fill: none;
+  stroke: var(--color-laiton);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tunnel-chart-line {
+    animation: tunnel-draw 5s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes tunnel-draw {
   from {
-    transform: rotateX(-20deg) rotateY(0deg);
+    stroke-dashoffset: 1;
   }
   to {
-    transform: rotateX(-20deg) rotateY(360deg);
+    stroke-dashoffset: 0;
   }
 }
 
-.tunnel-face {
-  position: absolute;
-  inset: 0;
-  border-radius: 1.5rem;
-  border: 1.5px solid color-mix(in srgb, var(--color-laiton) 55%, transparent);
-  background: linear-gradient(
-    155deg,
-    color-mix(in srgb, var(--color-laiton) 30%, var(--surface)),
-    var(--surface) 65%
-  );
-  box-shadow: 0 0 30px color-mix(in srgb, var(--color-laiton) 14%, transparent);
-  backface-visibility: hidden;
+.tunnel-chart-dot {
+  fill: var(--color-laiton);
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-laiton) 70%, transparent));
+  transform: translate(130px, 52px);
 }
 
-.tunnel-face-front {
-  transform: translateZ(95px);
+@media (prefers-reduced-motion: no-preference) {
+  .tunnel-chart-dot {
+    animation: tunnel-dot-move 5s ease-in-out infinite;
+  }
 }
-.tunnel-face-back {
-  transform: rotateY(180deg) translateZ(95px);
-  background: linear-gradient(
-    155deg,
-    color-mix(in srgb, var(--color-laiton) 16%, var(--surface)),
-    color-mix(in srgb, var(--surface) 90%, var(--color-encre)) 65%
-  );
-}
-.tunnel-face-right {
-  transform: rotateY(90deg) translateZ(95px);
-  background: linear-gradient(
-    155deg,
-    color-mix(in srgb, var(--color-laiton) 24%, var(--surface)),
-    color-mix(in srgb, var(--surface) 94%, var(--color-encre)) 65%
-  );
-}
-.tunnel-face-left {
-  transform: rotateY(-90deg) translateZ(95px);
-  background: linear-gradient(
-    155deg,
-    color-mix(in srgb, var(--color-laiton) 24%, var(--surface)),
-    color-mix(in srgb, var(--surface) 94%, var(--color-encre)) 65%
-  );
-}
-.tunnel-face-top {
-  transform: rotateX(90deg) translateZ(95px);
-  background: linear-gradient(
-    155deg,
-    color-mix(in srgb, var(--color-laiton) 42%, var(--surface)),
-    var(--surface) 65%
-  );
-}
-.tunnel-face-bottom {
-  transform: rotateX(-90deg) translateZ(95px);
-  background: color-mix(in srgb, var(--surface) 88%, var(--color-encre));
+
+@keyframes tunnel-dot-move {
+  0% {
+    transform: translate(0px, 55px);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  25% {
+    transform: translate(69px, 54px);
+  }
+  50% {
+    transform: translate(130px, 52px);
+  }
+  75% {
+    transform: translate(191px, 51px);
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(260px, 50px);
+    opacity: 0;
+  }
 }
 
 .tilt-card {
