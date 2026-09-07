@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useCurrentPlan } from "@/components/feature-gate";
 import { hasFeature } from "@/lib/types";
 import { exportBauxAsCsv } from "@/lib/csv-import";
+import { PageLoading } from "@/components/table-skeleton";
 import type { Bail } from "@/lib/types";
 
 export default function ParametresPage() {
@@ -110,7 +111,7 @@ export default function ParametresPage() {
     }
   }
 
-  if (loading) return <p className="text-sm text-[var(--foreground)]/60">…</p>;
+  if (loading) return <PageLoading />;
 
   return (
     <div className="tunnel-enter flex max-w-2xl flex-col gap-8">

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { FeatureGate, useCurrentPlan } from "@/components/feature-gate";
+import { TableSkeleton } from "@/components/table-skeleton";
 import type { Bail } from "@/lib/types";
 
 export default function EcheancierPage() {
@@ -60,7 +61,7 @@ function Echeancier() {
   }, [baux]);
 
   if (loading) {
-    return <p className="text-sm text-[var(--foreground)]/60">…</p>;
+    return <TableSkeleton />;
   }
 
   if (baux.length === 0) {

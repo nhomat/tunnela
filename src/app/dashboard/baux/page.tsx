@@ -10,6 +10,7 @@ import { generateTemplateCsv, parseLeasesCsv } from "@/lib/csv-import";
 import type { ImportResult } from "@/lib/csv-import";
 import { RevisionPanel } from "@/components/revision-panel";
 import { useCurrentPlan } from "@/components/feature-gate";
+import { TableSkeleton } from "@/components/table-skeleton";
 
 type FormState = {
   preneur: string;
@@ -286,7 +287,7 @@ export default function BauxPage() {
       )}
 
       {loading ? (
-        <p className="text-sm text-[var(--foreground)]/60">…</p>
+        <TableSkeleton />
       ) : baux.length === 0 ? (
         <p className="text-sm text-[var(--foreground)]/60">{t.baux.empty}</p>
       ) : visibleBaux.length === 0 ? (

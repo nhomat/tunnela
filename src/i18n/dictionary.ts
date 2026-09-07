@@ -160,7 +160,7 @@ export const dictionary = {
     footer: {
       rights: "Tous droits réservés.",
       legal: "Article L.145-38-1",
-      tagline: "Le copilote des révisions de baux commerciaux.",
+      tagline: "La lumière au bout du tunnel réglementaire.",
       productHeading: "Produit",
       resourcesHeading: "Ressources",
       accountHeading: "Compte",
@@ -564,7 +564,7 @@ export const dictionary = {
     footer: {
       rights: "All rights reserved.",
       legal: "Article L.145-38-1",
-      tagline: "The copilot for commercial lease rent reviews.",
+      tagline: "The light at the end of the regulatory tunnel.",
       productHeading: "Product",
       resourcesHeading: "Resources",
       accountHeading: "Account",

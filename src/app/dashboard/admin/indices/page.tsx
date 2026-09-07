@@ -5,6 +5,7 @@ import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { useCurrentPlan } from "@/components/feature-gate";
 import { listIndices } from "@/lib/indices";
+import { PageLoading, TableSkeleton } from "@/components/table-skeleton";
 import type { IndicePublie } from "@/lib/indices";
 import type { IndexType } from "@/lib/types";
 
@@ -48,7 +49,7 @@ export default function AdminIndicesPage() {
     await load();
   }
 
-  if (planLoading) return <p className="text-sm text-[var(--foreground)]/60">…</p>;
+  if (planLoading) return <PageLoading />;
 
   if (!isAdmin) {
     return <p className="text-sm text-[var(--foreground)]/60">{t.admin.indicesNotAllowed}</p>;
@@ -99,7 +100,7 @@ export default function AdminIndicesPage() {
       </form>
 
       {loading ? (
-        <p className="text-sm text-[var(--foreground)]/60">…</p>
+        <TableSkeleton rows={3} />
       ) : (
         <div className="card overflow-x-auto p-0">
           <table className="w-full min-w-[480px] text-left text-sm">

@@ -48,7 +48,7 @@ export default function Home() {
           </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((f) => (
-              <div key={f.title} className="card tunnel-enter">
+              <div key={f.title} className="card card-hover tunnel-enter">
                 <h3 className="font-serif text-lg">{f.title}</h3>
                 <p className="mt-2 text-sm text-[var(--foreground)]/70">{f.body}</p>
               </div>
@@ -106,7 +106,7 @@ function Faq() {
         {t.faq.items.map((item, i) => {
           const open = openIndex === i;
           return (
-            <div key={item.q} className="card transition-base hover:shadow-sm">
+            <div key={item.q} className="card card-hover">
               <button
                 type="button"
                 onClick={() => setOpenIndex(open ? null : i)}

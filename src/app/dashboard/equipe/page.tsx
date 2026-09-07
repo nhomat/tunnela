@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { useCurrentPlan } from "@/components/feature-gate";
+import { PageLoading, TableSkeleton } from "@/components/table-skeleton";
 import { listTeamMembers, listTeamMessages } from "@/lib/team";
 import type { TeamMember, TeamMessage } from "@/lib/team";
 import { COOP_ADDON_PRIX_MENSUEL } from "@/lib/stripe";
@@ -12,7 +13,7 @@ import { COOP_ADDON_PRIX_MENSUEL } from "@/lib/stripe";
 export default function EquipePage() {
   const { ownPlan, team, loading } = useCurrentPlan();
 
-  if (loading) return <p className="text-sm text-[var(--foreground)]/60">…</p>;
+  if (loading) return <PageLoading />;
 
   if (team?.coopAccess) return <Equipe />;
 
@@ -249,7 +250,7 @@ function Equipe() {
     }
   }
 
-  if (loading) return <p className="text-sm text-[var(--foreground)]/60">…</p>;
+  if (loading) return <TableSkeleton rows={3} />;
 
   return (
     <div className="tunnel-enter">

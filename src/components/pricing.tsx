@@ -40,7 +40,7 @@ export function Pricing({
           const features = t.pricing.planFeatures[plan.id];
 
           return (
-            <div key={plan.id} className="card tunnel-enter flex flex-col gap-4">
+            <div key={plan.id} className="card card-hover tunnel-enter flex flex-col gap-4">
               <div>
                 <h3 className="font-serif text-xl">{plan.nom}</h3>
                 <p className="mt-1 text-sm text-[var(--foreground)]/70">{limiteLabel}</p>
