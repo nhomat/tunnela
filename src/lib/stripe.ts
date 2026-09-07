@@ -35,14 +35,14 @@ export const PLANS: PlanDefinition[] = [
   {
     id: "portefeuille",
     nom: "Portefeuille",
-    prixMensuel: 150,
+    prixMensuel: 100,
     limiteBaux: 100,
     priceEnvVar: "STRIPE_PRICE_PORTEFEUILLE",
   },
   {
     id: "fonciere",
     nom: "Foncière",
-    prixMensuel: 290,
+    prixMensuel: 300,
     limiteBaux: 500,
     priceEnvVar: "STRIPE_PRICE_FONCIERE",
   },
