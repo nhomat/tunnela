@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Tunnela — Copilote des révisions de baux commerciaux",
+  title: "Tunnela — L'outil indispensable pour vos révisions de baux commerciaux",
   description:
     "Calculez les révisions de loyer ILC/ILAT, sécurisez vos clauses tunnel et générez vos avenants ICC → ILC, conformément à l'article L.145-38-1 du Code de commerce.",
   icons: {
