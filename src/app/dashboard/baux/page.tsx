@@ -57,6 +57,7 @@ export default function BauxPage() {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, boolean>>>({});
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatutConformite | "all">("all");
   const [revisingId, setRevisingId] = useState<string | null>(null);
@@ -109,6 +110,7 @@ export default function BauxPage() {
     setEditingId(null);
     setForm(emptyForm);
     setErrors({});
+    setSaveError(null);
     setShowForm(true);
   }
 
@@ -176,13 +178,16 @@ export default function BauxPage() {
         : {}),
     };
 
-    if (editingId) {
-      await supabase.from("baux").update(payload).eq("id", editingId);
-    } else {
-      await supabase.from("baux").insert({ ...payload, user_id: user.id });
-    }
+    const { error } = editingId
+      ? await supabase.from("baux").update(payload).eq("id", editingId)
+      : await supabase.from("baux").insert({ ...payload, user_id: user.id });
 
     setSaving(false);
+    if (error) {
+      setSaveError(t.baux.limitReached);
+      return;
+    }
+    setSaveError(null);
     setShowForm(false);
     await loadData();
   }
@@ -239,15 +244,20 @@ export default function BauxPage() {
       )}
 
       {showForm && (
-        <BailForm
-          form={form}
-          setForm={setForm}
-          errors={errors}
-          saving={saving}
-          canShareTeam={canShareTeam}
-          onSubmit={handleSubmit}
-          onCancel={() => setShowForm(false)}
-        />
+        <>
+          {saveError && (
+            <p className="mb-3 text-sm text-[var(--danger)]">{saveError}</p>
+          )}
+          <BailForm
+            form={form}
+            setForm={setForm}
+            errors={errors}
+            saving={saving}
+            canShareTeam={canShareTeam}
+            onSubmit={handleSubmit}
+            onCancel={() => setShowForm(false)}
+          />
+        </>
       )}
 
       {revisingId &&
@@ -400,6 +410,7 @@ function CsvImportPanel({
   const { t } = useApp();
   const [result, setResult] = useState<ImportResult | null>(null);
   const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState(false);
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -437,9 +448,17 @@ function CsvImportPanel({
       remainingCapacity === null ? result.valid : result.valid.slice(0, remainingCapacity);
 
     if (rows.length > 0) {
-      await supabase.from("baux").insert(rows.map((row) => ({ ...row, user_id: user.id })));
+      const { error } = await supabase
+        .from("baux")
+        .insert(rows.map((row) => ({ ...row, user_id: user.id })));
+      if (error) {
+        setImportError(true);
+        setImporting(false);
+        return;
+      }
     }
 
+    setImportError(false);
     setImporting(false);
     onImported();
   }
@@ -454,6 +473,10 @@ function CsvImportPanel({
           {t.baux.downloadTemplate}
         </button>
       </div>
+
+      {importError && (
+        <p className="mt-3 text-sm text-[var(--danger)]">{t.baux.limitReached}</p>
+      )}
 
       {result && (
         <div className="mt-4 text-sm">

@@ -238,6 +238,85 @@ create index if not exists messages_equipe_equipe_id_idx on messages_equipe (equ
 
 alter publication supabase_realtime add table messages_equipe;
 
+-- La limite de baux par plan n'était vérifiée que côté client (bouton
+-- désactivé) : un appel direct à l'API REST avec un jeton valide pouvait la
+-- contourner. On l'applique aussi en base, avec le même calcul de "plan
+-- effectif" que côté application (un membre actif d'une équipe Coop hérite
+-- du plan de base de son propriétaire).
+create or replace function public.effective_plan(p_user_id uuid)
+returns text
+language plpgsql
+security definer
+set search_path = public
+stable
+as $$
+declare
+  v_own_plan text;
+  v_coop_actif boolean;
+  v_owner_id uuid;
+  v_owner_plan text;
+  v_owner_coop_actif boolean;
+begin
+  select plan, coop_actif into v_own_plan, v_coop_actif
+  from abonnements where user_id = p_user_id;
+
+  if v_coop_actif then
+    return v_own_plan;
+  end if;
+
+  select e.proprietaire_user_id into v_owner_id
+  from membres_equipe me
+  join equipes e on e.id = me.equipe_id
+  where me.user_id = p_user_id and me.statut = 'actif';
+
+  if v_owner_id is not null then
+    select plan, coop_actif into v_owner_plan, v_owner_coop_actif
+    from abonnements where user_id = v_owner_id;
+    if v_owner_coop_actif then
+      return v_owner_plan;
+    end if;
+  end if;
+
+  return coalesce(v_own_plan, 'decouverte');
+end;
+$$;
+
+revoke all on function public.effective_plan(uuid) from public, anon;
+grant execute on function public.effective_plan(uuid) to authenticated;
+
+create or replace function public.enforce_limite_baux()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_plan text;
+  v_limite integer;
+  v_count integer;
+begin
+  v_plan := effective_plan(new.user_id);
+  v_limite := case v_plan
+    when 'cabinet' then 20
+    when 'portefeuille' then 100
+    when 'fonciere' then 500
+    else 3
+  end;
+
+  select count(*) into v_count from baux where user_id = new.user_id;
+  if v_count >= v_limite then
+    raise exception 'limite_baux_atteinte: plan % autorise % baux maximum', v_plan, v_limite;
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists enforce_limite_baux_trigger on baux;
+create trigger enforce_limite_baux_trigger
+  before insert on baux
+  for each row execute procedure public.enforce_limite_baux();
+
 -- Un utilisateur nouvellement inscrit reçoit automatiquement un abonnement
 -- "découverte" par défaut. S'il avait été invité dans une équipe Coop avec
 -- cette adresse email avant son inscription, on l'y rattache aussitôt.
