@@ -12,6 +12,7 @@ import { RevisionPanel } from "@/components/revision-panel";
 import { useCurrentPlan } from "@/components/feature-gate";
 import { TableSkeleton } from "@/components/table-skeleton";
 import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
+import { PageIcon3D } from "@/components/page-icon-3d";
 
 const SKELETON_CYCLE_MS = 1400;
 
@@ -205,7 +206,15 @@ export default function BauxPage() {
   return (
     <div className="tunnel-enter">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-serif text-2xl">{t.baux.title}</h1>
+        <div className="flex items-center gap-3">
+          <PageIcon3D>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <rect x="4" y="3" width="12" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </PageIcon3D>
+          <h1 className="font-serif text-2xl">{t.baux.title}</h1>
+        </div>
         <div className="flex flex-wrap gap-3">
           {canImport && (
             <button

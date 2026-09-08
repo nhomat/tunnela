@@ -6,6 +6,7 @@ import { genererClauseTunnel, genererAvenantICC } from "@/lib/clause-generator";
 import { exportTextAsPdf } from "@/lib/pdf-export";
 import { FeatureGate, useCurrentPlan } from "@/components/feature-gate";
 import { createClient } from "@/lib/supabase/client";
+import { PageIcon3D } from "@/components/page-icon-3d";
 
 type Mode = "tunnel" | "avenant";
 
@@ -95,7 +96,25 @@ function ClauseGenerator() {
 
   return (
     <div className="tunnel-enter">
-      <h1 className="mb-6 font-serif text-2xl">{t.clause.title}</h1>
+      <div className="mb-6 flex items-center gap-3">
+        <PageIcon3D>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path
+              d="M5 2.5h7l3 3V17a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1Z"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <path d="M12 2.5V6h3" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+            <path
+              d="M7 10.5l4-4 1.5 1.5-4 4H7v-1.5Z"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </PageIcon3D>
+        <h1 className="font-serif text-2xl">{t.clause.title}</h1>
+      </div>
 
       <div className="mb-8 inline-flex rounded-lg border border-[var(--border-color)] p-1">
         <ModeButton active={mode === "tunnel"} onClick={() => setMode("tunnel")}>

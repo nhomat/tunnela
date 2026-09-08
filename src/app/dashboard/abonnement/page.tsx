@@ -6,6 +6,7 @@ import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { Pricing } from "@/components/pricing";
 import { COOP_ADDON_NOM, COOP_ADDON_PRIX_MENSUEL } from "@/lib/stripe";
+import { PageIcon3D } from "@/components/page-icon-3d";
 import type { Plan } from "@/lib/types";
 
 export default function AbonnementPage() {
@@ -47,7 +48,19 @@ export default function AbonnementPage() {
 
   return (
     <div className="tunnel-enter">
-      <h1 className="mb-2 font-serif text-2xl">{t.pricing.title}</h1>
+      <div className="mb-2 flex items-center gap-3">
+        <PageIcon3D>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path
+              d="M10 2.5l1.8 4.4 4.7 0.4-3.6 3 1.1 4.6L10 12.6l-4 2.3 1.1-4.6-3.6-3 4.7-.4L10 2.5Z"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </PageIcon3D>
+        <h1 className="font-serif text-2xl">{t.pricing.title}</h1>
+      </div>
       <p className="mb-6 text-sm text-[var(--foreground)]/70">{t.pricing.subtitle}</p>
       {pending && <p className="mb-4 text-sm text-[var(--accent)]">…</p>}
       <div className="-mx-6">

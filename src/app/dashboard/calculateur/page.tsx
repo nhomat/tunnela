@@ -7,6 +7,7 @@ import { useCurrentPlan } from "@/components/feature-gate";
 import { hasFeature } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
 import { getLatestIndice } from "@/lib/indices";
+import { PageIcon3D } from "@/components/page-icon-3d";
 
 export default function CalculateurPage() {
   const { t } = useApp();
@@ -63,7 +64,21 @@ export default function CalculateurPage() {
 
   return (
     <div className="tunnel-enter">
-      <h1 className="mb-8 font-serif text-2xl">{t.calculateur.title}</h1>
+      <div className="mb-8 flex items-center gap-3">
+        <PageIcon3D>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="4" y="2" width="12" height="16" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+            <rect x="6.5" y="4.5" width="7" height="3" rx="0.5" stroke="currentColor" strokeWidth="1.3" />
+            <circle cx="7" cy="11" r="0.9" fill="currentColor" />
+            <circle cx="10" cy="11" r="0.9" fill="currentColor" />
+            <circle cx="13" cy="11" r="0.9" fill="currentColor" />
+            <circle cx="7" cy="14" r="0.9" fill="currentColor" />
+            <circle cx="10" cy="14" r="0.9" fill="currentColor" />
+            <circle cx="13" cy="14" r="0.9" fill="currentColor" />
+          </svg>
+        </PageIcon3D>
+        <h1 className="font-serif text-2xl">{t.calculateur.title}</h1>
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-2">
         <form onSubmit={handleSubmit} className="card flex flex-col gap-4">

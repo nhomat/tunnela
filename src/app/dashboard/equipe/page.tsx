@@ -10,6 +10,7 @@ import { listTeamMembers, listTeamMessages } from "@/lib/team";
 import type { TeamMember, TeamMessage } from "@/lib/team";
 import { COOP_ADDON_PRIX_MENSUEL } from "@/lib/stripe";
 import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
+import { PageIcon3D } from "@/components/page-icon-3d";
 
 const SPINNER_CYCLE_MS = 900;
 const SKELETON_CYCLE_MS = 1400;
@@ -260,7 +261,22 @@ function Equipe() {
 
   return (
     <div className="tunnel-enter">
-      <h1 className="mb-2 font-serif text-2xl">{t.equipe.title}</h1>
+      <div className="mb-2 flex items-center gap-3">
+        <PageIcon3D>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="7" cy="6.5" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+            <circle cx="14" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.5" />
+            <path
+              d="M2.5 16c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+            <path d="M12.5 12c1.9 0 3.5 1.8 3.5 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </PageIcon3D>
+        <h1 className="font-serif text-2xl">{t.equipe.title}</h1>
+      </div>
       <p className="mb-8 text-[var(--foreground)]/70">{t.equipe.subtitle}</p>
 
       {isOwner && !equipeId && (

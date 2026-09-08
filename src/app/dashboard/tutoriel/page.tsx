@@ -5,6 +5,7 @@ import { useApp } from "@/components/providers";
 import { useCurrentPlan } from "@/components/feature-gate";
 import { PageLoading } from "@/components/table-skeleton";
 import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
+import { PageIcon3D } from "@/components/page-icon-3d";
 import type { Plan } from "@/lib/types";
 
 const SPINNER_CYCLE_MS = 900;
@@ -22,7 +23,15 @@ export default function TutorielPage() {
 
   return (
     <div className="tunnel-enter max-w-2xl">
-      <h1 className="mb-2 font-serif text-2xl">{t.tutoriel.title}</h1>
+      <div className="mb-2 flex items-center gap-3">
+        <PageIcon3D>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M8.5 7l5 3-5 3V7Z" fill="currentColor" />
+          </svg>
+        </PageIcon3D>
+        <h1 className="font-serif text-2xl">{t.tutoriel.title}</h1>
+      </div>
       <p className="mb-6 text-sm text-[var(--foreground)]/70">{t.tutoriel.subtitle}</p>
 
       <div className="mb-6 flex flex-wrap gap-2">

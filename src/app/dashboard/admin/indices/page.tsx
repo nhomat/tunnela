@@ -7,6 +7,7 @@ import { useCurrentPlan } from "@/components/feature-gate";
 import { listIndices } from "@/lib/indices";
 import { PageLoading, TableSkeleton } from "@/components/table-skeleton";
 import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
+import { PageIcon3D } from "@/components/page-icon-3d";
 import type { IndicePublie } from "@/lib/indices";
 import type { IndexType } from "@/lib/types";
 
@@ -64,7 +65,21 @@ export default function AdminIndicesPage() {
 
   return (
     <div className="tunnel-enter">
-      <h1 className="mb-2 font-serif text-2xl">{t.admin.indicesTitle}</h1>
+      <div className="mb-2 flex items-center gap-3">
+        <PageIcon3D>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path
+              d="M3 15l4-5 3 3 6-8"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path d="M13 5h3v3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </PageIcon3D>
+        <h1 className="font-serif text-2xl">{t.admin.indicesTitle}</h1>
+      </div>
       <p className="mb-8 text-[var(--foreground)]/70">{t.admin.indicesSubtitle}</p>
 
       <form onSubmit={handleSubmit} className="card mb-8 grid gap-4 sm:grid-cols-4 sm:items-end">

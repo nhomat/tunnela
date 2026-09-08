@@ -10,6 +10,7 @@ import { exportBauxAsCsv } from "@/lib/csv-import";
 import { PageLoading } from "@/components/table-skeleton";
 import { PasswordInput } from "@/components/password-input";
 import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
+import { PageIcon3D } from "@/components/page-icon-3d";
 import type { Bail } from "@/lib/types";
 
 const SPINNER_CYCLE_MS = 900;
@@ -177,7 +178,20 @@ export default function ParametresPage() {
 
   return (
     <div className="tunnel-enter flex max-w-2xl flex-col gap-8">
-      <h1 className="font-serif text-2xl">{t.parametres.title}</h1>
+      <div className="flex items-center gap-3">
+        <PageIcon3D>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="10" r="2.6" stroke="currentColor" strokeWidth="1.5" />
+            <path
+              d="M10 2.5v2M10 15.5v2M17.5 10h-2M4.5 10h-2M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4M15.3 15.3l-1.4-1.4M6.1 6.1 4.7 4.7"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        </PageIcon3D>
+        <h1 className="font-serif text-2xl">{t.parametres.title}</h1>
+      </div>
 
       <section className="card">
         <h2 className="mb-1 font-serif text-lg">{t.parametres.profilTitle}</h2>

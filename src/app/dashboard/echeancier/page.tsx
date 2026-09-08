@@ -6,7 +6,22 @@ import { createClient } from "@/lib/supabase/client";
 import { FeatureGate, useCurrentPlan } from "@/components/feature-gate";
 import { TableSkeleton } from "@/components/table-skeleton";
 import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
+import { PageIcon3D } from "@/components/page-icon-3d";
 import type { Bail } from "@/lib/types";
+
+function EcheancierIcon() {
+  return (
+    <PageIcon3D>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="3" y="4" width="14" height="13" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M3 8h14" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M7 2.5v3M13 2.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="7" cy="11.5" r="1" fill="currentColor" />
+        <circle cx="10" cy="11.5" r="1" fill="currentColor" />
+      </svg>
+    </PageIcon3D>
+  );
+}
 
 const SKELETON_CYCLE_MS = 1400;
 
@@ -71,7 +86,10 @@ function Echeancier() {
   if (baux.length === 0) {
     return (
       <div className="tunnel-enter">
-        <h1 className="mb-2 font-serif text-2xl">{t.echeancier.title}</h1>
+        <div className="mb-2 flex items-center gap-3">
+          <EcheancierIcon />
+          <h1 className="font-serif text-2xl">{t.echeancier.title}</h1>
+        </div>
         <p className="mb-8 text-[var(--foreground)]/70">{t.echeancier.subtitle}</p>
         <p className="text-sm text-[var(--foreground)]/60">{t.echeancier.empty}</p>
       </div>
