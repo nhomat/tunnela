@@ -35,14 +35,14 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
   }
 
   return (
-    <aside className="border-b border-[var(--border-color)] md:sticky md:top-0 md:h-screen md:w-64 md:shrink-0 md:border-b-0 md:border-r">
+    <aside className="border-b border-[var(--border-color)] md:sticky md:top-0 md:flex md:h-screen md:w-64 md:shrink-0 md:flex-col md:border-b-0 md:border-r">
       <div className="px-6 py-4">
         <Link href="/dashboard/baux" className="transition-base float-idle inline-block">
           <LogoMark />
         </Link>
       </div>
 
-      <nav className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col md:overflow-visible md:px-3 md:pb-0">
+      <nav className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-1 md:flex-col md:overflow-visible md:px-3 md:pb-0">
         {links.map((link) => {
           const active = pathname === link.href;
           return (
@@ -61,7 +61,7 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
         })}
       </nav>
 
-      <div className="px-6 py-4 md:py-6">
+      <div className="px-6 py-4 md:mt-auto md:py-6">
         {isAdmin && plan && <AdminPlanSwitcher currentPlan={plan} />}
         {typeof conformityRatio === "number" && (
           <div className="mb-6">
@@ -72,12 +72,12 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
           </div>
         )}
         <div className="mb-4 flex justify-center">
-          <ThemeLangToggle />
+          <ThemeLangToggle compact />
         </div>
         <button
           type="button"
           onClick={handleLogout}
-          className="btn-secondary transition-base w-full text-sm"
+          className="btn-secondary transition-base w-full px-3.5 py-1.5 text-xs"
         >
           {t.dashboard.logout}
         </button>

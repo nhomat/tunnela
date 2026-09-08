@@ -42,8 +42,8 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     }
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function submit() {
+    if (status === "sending") return;
 
     if (!EMAIL_RE.test(email)) {
       setInvalid(true);
@@ -80,6 +80,24 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       setErrorMessage(t.auth.error);
       setStatus("error");
     }
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    void submit();
+  }
+
+  // Filet de sécurité : certains navigateurs avalent la touche Entrée pour
+  // valider une suggestion d'autocomplétion au lieu de soumettre le
+  // formulaire (l'utilisateur doit alors cliquer manuellement). On
+  // déclenche la soumission nous-mêmes dès que Entrée est pressée dans un
+  // champ du formulaire, sans dupliquer avec la soumission native.
+  function handleFormKeyDown(e: React.KeyboardEvent<HTMLFormElement>) {
+    if (e.key !== "Enter" || e.nativeEvent.isComposing) return;
+    const target = e.target as HTMLElement;
+    if (target.tagName === "TEXTAREA" || (target as HTMLInputElement).type === "checkbox") return;
+    e.preventDefault();
+    void submit();
   }
 
   return (
@@ -132,13 +150,14 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           {status === "sent" ? (
             <p className="mt-6 text-sm text-[var(--success)]">{t.auth.checkEmail}</p>
           ) : (
-            <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} className="mt-6 flex flex-col gap-4">
               <div>
                 <label htmlFor="email" className="mb-1 block text-sm font-medium">
                   {t.auth.emailLabel}
                 </label>
                 <input
                   id="email"
+                  name="email"
                   type="email"
                   className="input transition-base"
                   placeholder={t.auth.emailPlaceholder}
@@ -148,6 +167,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                     if (invalid) setInvalid(false);
                   }}
                   aria-invalid={invalid}
+                  autoComplete="email"
                   required
                 />
                 {invalid && (
@@ -162,6 +182,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                   </label>
                   <input
                     id="telephone"
+                    name="telephone"
                     type="tel"
                     className="input transition-base"
                     placeholder={t.auth.phonePlaceholder}
@@ -187,6 +208,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                   </div>
                   <PasswordInput
                     id="password"
+                    name="password"
                     placeholder={t.auth.passwordOptional}
                     value={password}
                     onChange={setPassword}

@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 
 export function PasswordInput({
   id,
+  name,
   value,
   onChange,
   placeholder,
@@ -12,6 +13,7 @@ export function PasswordInput({
   showLabel,
 }: {
   id?: string;
+  name?: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -26,6 +28,7 @@ export function PasswordInput({
     <div>
       <input
         id={id}
+        name={name}
         type={visible ? "text" : "password"}
         className="input transition-base"
         placeholder={placeholder}
