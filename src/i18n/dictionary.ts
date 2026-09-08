@@ -217,6 +217,10 @@ export const dictionary = {
       invalidCredentials: "Email ou mot de passe incorrect.",
       error: "Une erreur est survenue. Réessayez.",
       showPassword: "Afficher le mot de passe",
+      continueWithGoogle: "Continuer avec Google",
+      orDivider: "ou",
+      phoneLabel: "Numéro de téléphone (optionnel)",
+      phonePlaceholder: "06 12 34 56 78",
       forgotPassword: "Mot de passe oublié ?",
       forgotPasswordTitle: "Mot de passe oublié",
       forgotPasswordBody:
@@ -723,6 +727,10 @@ export const dictionary = {
       invalidCredentials: "Incorrect email or password.",
       error: "Something went wrong. Please try again.",
       showPassword: "Show password",
+      continueWithGoogle: "Continue with Google",
+      orDivider: "or",
+      phoneLabel: "Phone number (optional)",
+      phonePlaceholder: "+1 555 123 4567",
       forgotPassword: "Forgot your password?",
       forgotPasswordTitle: "Forgot password",
       forgotPasswordBody:

@@ -129,6 +129,7 @@ create table if not exists abonnements (
   stripe_connect_details_submitted boolean not null default false,
   stripe_connect_charges_enabled boolean not null default false,
   stripe_connect_payouts_enabled boolean not null default false,
+  telephone text,
   updated_at timestamptz not null default now()
 );
 
@@ -359,8 +360,8 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  insert into public.abonnements (user_id, plan)
-  values (new.id, 'decouverte')
+  insert into public.abonnements (user_id, plan, telephone)
+  values (new.id, 'decouverte', new.raw_user_meta_data->>'telephone')
   on conflict (user_id) do nothing;
 
   update public.membres_equipe
