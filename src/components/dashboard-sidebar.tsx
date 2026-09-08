@@ -98,7 +98,7 @@ function ConformityRing({ ratio }: { ratio: number }) {
   }, [targetOffset]);
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="conformity-ring-3d flex items-center gap-3">
       <svg width="60" height="60" viewBox="0 0 60 60" className="shrink-0">
         <circle
           cx="30"

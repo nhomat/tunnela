@@ -40,6 +40,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <div className="page-blobs">
         <span className="blob blob-laiton dashboard-blob" />
         <span className="blob blob-cobalt dashboard-blob-b" />
+        <span className="dot-grid-2d page-dot-grid" aria-hidden="true" />
+        <span className="tunnel-ring-3d page-ring-3d" aria-hidden="true" />
       </div>
       <DashboardSidebar conformityRatio={conformityRatio} />
       <main className="relative flex-1 px-6 py-8 md:px-10 md:py-10">{children}</main>

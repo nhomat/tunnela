@@ -85,7 +85,12 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   return (
     <>
       <Navbar />
-      <main className="flex flex-1 items-center justify-center px-6 py-20">
+      <main className="relative flex flex-1 items-center justify-center overflow-hidden px-6 py-20">
+        <div className="page-blobs">
+          <span className="blob blob-laiton" />
+          <span className="dot-grid-2d page-dot-grid" aria-hidden="true" />
+          <span className="tunnel-ring-3d page-ring-3d" aria-hidden="true" />
+        </div>
         <div className="card tunnel-enter w-full max-w-sm">
           <h1 className="font-serif text-2xl">
             {isSignup ? t.auth.signupTitle : t.auth.loginTitle}

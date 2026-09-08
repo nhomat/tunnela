@@ -275,6 +275,66 @@ h4 {
   }
 }
 
+/* Décor 2D : trame de points discrète, en fond de page, pour habiller les
+   zones vides sans distraire du contenu. */
+.dot-grid-2d {
+  position: absolute;
+  background-image: radial-gradient(circle, var(--foreground) 1px, transparent 1.4px);
+  background-size: 22px 22px;
+  opacity: 0.07;
+  -webkit-mask-image: radial-gradient(circle, black, transparent 72%);
+  mask-image: radial-gradient(circle, black, transparent 72%);
+}
+
+.page-dot-grid {
+  bottom: 6%;
+  left: 34%;
+  width: 260px;
+  height: 260px;
+}
+
+/* Décor 3D : anneau qui bascule lentement en perspective, pour donner de
+   la profondeur derrière le contenu (comme .tunnel-stage, en plus discret). */
+.tunnel-ring-3d {
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  border-radius: 9999px;
+  border: 16px solid color-mix(in srgb, var(--color-cobalt) 30%, transparent);
+  opacity: 0.4;
+  transform: perspective(700px) rotateX(58deg) rotateY(0deg);
+}
+
+.page-ring-3d {
+  top: 42%;
+  right: -4%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tunnel-ring-3d {
+    animation: ring-tumble 34s linear infinite;
+  }
+}
+
+@keyframes ring-tumble {
+  0% {
+    transform: perspective(700px) rotateX(58deg) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(700px) rotateX(58deg) rotateY(360deg);
+  }
+}
+
+.conformity-ring-3d {
+  display: inline-flex;
+  transition: transform 200ms ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .conformity-ring-3d:hover {
+    transform: perspective(400px) rotateY(10deg) scale(1.04);
+  }
+}
+
 .tunnel-visual {
   position: relative;
   width: 100%;

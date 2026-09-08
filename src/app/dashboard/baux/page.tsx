@@ -477,7 +477,7 @@ function CsvImportPanel({
   }
 
   return (
-    <div className="card tunnel-enter mb-8">
+    <div className="card card-hover tunnel-enter mb-8">
       <h2 className="font-serif text-lg">{t.baux.importTitle}</h2>
       <p className="mt-2 text-sm text-[var(--foreground)]/70">{t.baux.importDropHint}</p>
       <div className="mt-4 flex flex-wrap items-center gap-3">
