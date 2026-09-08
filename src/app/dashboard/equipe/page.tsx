@@ -8,7 +8,7 @@ import { useCurrentPlan } from "@/components/feature-gate";
 import { PageLoading, TableSkeleton } from "@/components/table-skeleton";
 import { listTeamMembers, listTeamMessages } from "@/lib/team";
 import type { TeamMember, TeamMessage } from "@/lib/team";
-import { COOP_ADDON_PRIX_MENSUEL } from "@/lib/stripe";
+import { COOP_ADDON_PRIX_PAR_PERSONNE } from "@/lib/stripe";
 import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
 import { PageIcon3D } from "@/components/page-icon-3d";
 
@@ -33,7 +33,7 @@ export default function EquipePage() {
 function CoopUpgradeNeeded() {
   const { t } = useApp();
   return (
-    <div className="card tunnel-enter max-w-lg text-center">
+    <div className="card card-hover tunnel-enter max-w-lg text-center">
       <p className="font-serif text-lg">{t.equipe.needsPlanTitle}</p>
       <p className="mt-2 text-sm text-[var(--foreground)]/70">{t.equipe.needsPlanBody}</p>
       <Link href="/dashboard/abonnement" className="btn-primary transition-base mt-4 inline-flex text-sm">
@@ -66,11 +66,12 @@ function CoopAddonPromo() {
   }
 
   return (
-    <div className="card tunnel-enter max-w-lg text-center">
+    <div className="card card-hover tunnel-enter max-w-lg text-center">
       <p className="font-serif text-lg">{t.equipe.addonTitle}</p>
       <p className="mt-2 text-sm text-[var(--foreground)]/70">{t.equipe.addonSubtitle}</p>
       <p className="mt-4 font-serif text-3xl">
-        +{COOP_ADDON_PRIX_MENSUEL} €<span className="text-sm text-[var(--foreground)]/60"> {t.pricing.perMonth}</span>
+        +{COOP_ADDON_PRIX_PAR_PERSONNE} €
+        <span className="text-sm text-[var(--foreground)]/60"> {t.pricing.perMonthPerPerson}</span>
       </p>
       <button
         type="button"
@@ -237,7 +238,11 @@ function Equipe() {
 
   async function handleRemove(memberId: string) {
     if (!window.confirm(t.equipe.removeConfirm)) return;
-    await supabase.from("membres_equipe").delete().eq("id", memberId);
+    await fetch("/api/team/remove", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ memberId }),
+    });
     await load();
   }
 

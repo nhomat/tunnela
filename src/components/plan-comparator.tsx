@@ -4,7 +4,7 @@ import { useMemo, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useApp } from "./providers";
-import { PLANS, COOP_ADDON_NOM, COOP_ADDON_PRIX_MENSUEL } from "@/lib/stripe";
+import { PLANS, COOP_ADDON_NOM, COOP_ADDON_PRIX_PAR_PERSONNE } from "@/lib/stripe";
 import { hasFeature } from "@/lib/types";
 import type { Feature, Plan } from "@/lib/types";
 
@@ -233,7 +233,7 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
           👥
         </span>
         <p className="text-base text-[var(--foreground)]/85">
-          {t.pricing.addonNote.replace("{nom}", COOP_ADDON_NOM).replace("{prix}", String(COOP_ADDON_PRIX_MENSUEL))}
+          {t.pricing.addonNote.replace("{nom}", COOP_ADDON_NOM).replace("{prix}", String(COOP_ADDON_PRIX_PAR_PERSONNE))}
         </p>
         <Link href="/#tarifs" className="btn-primary transition-base text-sm">
           {t.pricing.addonNoteCta.replace("{nom}", COOP_ADDON_NOM)}

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getStripe, coopAddonPriceId } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 export async function POST(request: Request) {
   const authClient = await createClient();
@@ -46,7 +46,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ coop_actif: false });
   }
 
-  // action === "subscribe"
+  // action === "subscribe" : active seulement l'accès à la fonctionnalité
+  // Coop (création d'équipe, invitations). La facturation (20 €/mois par
+  // personne) ne démarre qu'à la première invitation — voir syncCoopBilling.
   if (abonnement.plan === "decouverte" || !abonnement.stripe_subscription_id) {
     return NextResponse.json({ error: "plan_required" }, { status: 400 });
   }
@@ -54,20 +56,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ coop_actif: true });
   }
 
-  const priceId = coopAddonPriceId();
-  if (!priceId) {
-    return NextResponse.json({ error: "addon_not_configured" }, { status: 500 });
-  }
-
-  const item = await stripe.subscriptionItems.create({
-    subscription: abonnement.stripe_subscription_id,
-    price: priceId,
-  });
-
-  await supabase
-    .from("abonnements")
-    .update({ coop_actif: true, stripe_coop_item_id: item.id })
-    .eq("user_id", user.id);
+  await supabase.from("abonnements").update({ coop_actif: true }).eq("user_id", user.id);
 
   return NextResponse.json({ coop_actif: true });
 }

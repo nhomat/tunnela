@@ -43,6 +43,7 @@ export const dictionary = {
       title: "Tarifs",
       subtitle: "Sans engagement, annulable à tout moment.",
       perMonth: "/ mois",
+      perMonthPerPerson: "/ mois par personne",
       free: "Gratuit",
       upTo: "jusqu'à",
       beyond: "au-delà de",
@@ -104,7 +105,7 @@ export const dictionary = {
         dedicatedContact: "Interlocuteur dédié",
       },
       addonNote:
-        "Besoin de plusieurs utilisateurs et du partage de dossiers en équipe ? L'add-on {nom} s'ajoute à n'importe quel abonnement payant pour {prix} €/mois supplémentaires.",
+        "Besoin de plusieurs utilisateurs et du partage de dossiers en équipe ? L'add-on {nom} s'ajoute à n'importe quel abonnement payant pour {prix} €/mois par personne ajoutée.",
       addonNoteCta: "Découvrir l'add-on {nom}",
     },
     planDetail: {
@@ -426,7 +427,7 @@ export const dictionary = {
         "L'add-on Coop s'ajoute à un abonnement Cabinet, Portefeuille ou Foncière existant. Choisissez d'abord une de ces offres.",
       addonTitle: "Add-on Coop",
       addonSubtitle:
-        "Ajoutez des comptes collègues à votre abonnement, avec partage sélectif de dossiers et messagerie d'équipe.",
+        "Ajoutez des comptes collègues à votre abonnement, avec partage sélectif de dossiers et messagerie d'équipe. Facturé 20 €/mois par personne ajoutée — activez d'abord l'add-on, puis invitez.",
       addonSubscribe: "Activer l'add-on Coop",
       addonError: "Échec de l'activation. Réessayez.",
       addonUnsubscribe: "Retirer l'add-on Coop",
@@ -554,6 +555,7 @@ export const dictionary = {
       title: "Pricing",
       subtitle: "No commitment, cancel anytime.",
       perMonth: "/ month",
+      perMonthPerPerson: "/ month per person",
       free: "Free",
       upTo: "up to",
       beyond: "beyond",
@@ -614,7 +616,7 @@ export const dictionary = {
         dedicatedContact: "Dedicated contact",
       },
       addonNote:
-        "Need multiple users and team file sharing? The {nom} add-on attaches to any paid plan for an extra {prix} €/month.",
+        "Need multiple users and team file sharing? The {nom} add-on attaches to any paid plan for {prix} €/month per added person.",
       addonNoteCta: "Discover the {nom} add-on",
     },
     planDetail: {
@@ -933,7 +935,7 @@ export const dictionary = {
         "The Coop add-on attaches to an existing Cabinet, Portefeuille, or Foncière subscription. Choose one of these plans first.",
       addonTitle: "Coop add-on",
       addonSubtitle:
-        "Add colleague accounts to your subscription, with selective file sharing and team messaging.",
+        "Add colleague accounts to your subscription, with selective file sharing and team messaging. Billed 20 €/month per added person — activate the add-on first, then invite.",
       addonSubscribe: "Activate the Coop add-on",
       addonError: "Activation failed. Please try again.",
       addonUnsubscribe: "Remove the Coop add-on",

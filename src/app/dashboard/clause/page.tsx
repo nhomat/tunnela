@@ -246,7 +246,7 @@ function ClauseGenerator() {
           </button>
         </form>
 
-        <div className="card tunnel-enter">
+        <div className="card card-hover tunnel-enter">
           {texte ? (
             <>
               <pre className="max-h-[32rem] overflow-auto whitespace-pre-wrap font-sans text-sm">

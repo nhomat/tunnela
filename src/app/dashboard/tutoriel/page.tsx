@@ -52,7 +52,7 @@ export default function TutorielPage() {
         ))}
       </div>
 
-      <div className="card tunnel-visual-frame mb-6 flex aspect-video flex-col items-center justify-center gap-3 overflow-hidden">
+      <div className="card card-hover tunnel-visual-frame mb-6 flex aspect-video flex-col items-center justify-center gap-3 overflow-hidden">
         <span className="tutoriel-play-badge">
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
             <path d="M7 5.5L16 11L7 16.5V5.5Z" fill="currentColor" />

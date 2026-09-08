@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { Pricing } from "@/components/pricing";
-import { COOP_ADDON_NOM, COOP_ADDON_PRIX_MENSUEL } from "@/lib/stripe";
+import { COOP_ADDON_NOM, COOP_ADDON_PRIX_PAR_PERSONNE } from "@/lib/stripe";
 import { PageIcon3D } from "@/components/page-icon-3d";
 import type { Plan } from "@/lib/types";
 
@@ -67,10 +67,10 @@ export default function AbonnementPage() {
         <Pricing currentPlan={plan} onSelect={handleSelect} />
       </div>
       {plan !== "decouverte" && (
-        <div className="card mt-8">
+        <div className="card card-hover mt-8">
           <h2 className="font-serif text-lg">{t.equipe.addonTitle}</h2>
           <p className="mt-2 text-sm text-[var(--foreground)]/70">
-            {t.equipe.addonSubtitle} +{COOP_ADDON_PRIX_MENSUEL} € {t.pricing.perMonth}.
+            {t.equipe.addonSubtitle} +{COOP_ADDON_PRIX_PAR_PERSONNE} € {t.pricing.perMonthPerPerson}.
           </p>
           <Link href="/dashboard/equipe" className="btn-secondary transition-base mt-4 inline-flex text-sm">
             {COOP_ADDON_NOM} →

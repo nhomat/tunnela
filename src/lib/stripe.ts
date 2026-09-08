@@ -74,9 +74,11 @@ export function planForPriceId(priceId: string): Plan | null {
 }
 
 // Add-on Coop (multi-utilisateurs + partage d'équipe) : un supplément
-// ajouté à l'abonnement de base existant, pas un palier séparé.
+// ajouté à l'abonnement de base existant, facturé à la personne — chaque
+// collègue invité (ligne membres_equipe) ajoute COOP_ADDON_PRIX_PAR_PERSONNE
+// €/mois, via la quantité de l'item d'abonnement Stripe dédié.
 export const COOP_ADDON_NOM = "Coop";
-export const COOP_ADDON_PRIX_MENSUEL = 150;
+export const COOP_ADDON_PRIX_PAR_PERSONNE = 20;
 
 export function coopAddonPriceId(): string | null {
   return process.env.STRIPE_PRICE_COOP_ADDON ?? null;

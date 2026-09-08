@@ -187,7 +187,7 @@ export default function CalculateurPage() {
           </button>
         </form>
 
-        <div className="card tunnel-enter">
+        <div className="card card-hover tunnel-enter">
           {result ? (
             <dl className="flex flex-col gap-4">
               <Row label={t.calculateur.variationBrute} value={`${result.variationBrutePct} %`} />
