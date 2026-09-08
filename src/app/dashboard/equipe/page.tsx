@@ -9,11 +9,16 @@ import { PageLoading, TableSkeleton } from "@/components/table-skeleton";
 import { listTeamMembers, listTeamMessages } from "@/lib/team";
 import type { TeamMember, TeamMessage } from "@/lib/team";
 import { COOP_ADDON_PRIX_MENSUEL } from "@/lib/stripe";
+import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
+
+const SPINNER_CYCLE_MS = 900;
+const SKELETON_CYCLE_MS = 1400;
 
 export default function EquipePage() {
   const { ownPlan, team, loading } = useCurrentPlan();
+  const showLoading = useHoldLoadingAnimation(loading, SPINNER_CYCLE_MS);
 
-  if (loading) return <PageLoading />;
+  if (showLoading) return <PageLoading />;
 
   if (team?.coopAccess) return <Equipe />;
 
@@ -250,7 +255,8 @@ function Equipe() {
     }
   }
 
-  if (loading) return <TableSkeleton rows={3} />;
+  const showLoading = useHoldLoadingAnimation(loading, SKELETON_CYCLE_MS);
+  if (showLoading) return <TableSkeleton rows={3} />;
 
   return (
     <div className="tunnel-enter">

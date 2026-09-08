@@ -11,6 +11,9 @@ import type { ImportResult } from "@/lib/csv-import";
 import { RevisionPanel } from "@/components/revision-panel";
 import { useCurrentPlan } from "@/components/feature-gate";
 import { TableSkeleton } from "@/components/table-skeleton";
+import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
+
+const SKELETON_CYCLE_MS = 1400;
 
 type FormState = {
   preneur: string;
@@ -61,6 +64,7 @@ export default function BauxPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatutConformite | "all">("all");
   const [revisingId, setRevisingId] = useState<string | null>(null);
+  const showLoading = useHoldLoadingAnimation(loading, SKELETON_CYCLE_MS);
 
   useEffect(() => {
     void loadData();
@@ -296,7 +300,7 @@ export default function BauxPage() {
         </div>
       )}
 
-      {loading ? (
+      {showLoading ? (
         <TableSkeleton />
       ) : baux.length === 0 ? (
         <p className="text-sm text-[var(--foreground)]/60">{t.baux.empty}</p>

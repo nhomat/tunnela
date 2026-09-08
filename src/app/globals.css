@@ -226,6 +226,14 @@ h4 {
   background: var(--color-laiton);
 }
 
+.dashboard-blob {
+  top: -12%;
+  right: -8%;
+  width: 380px;
+  height: 380px;
+  opacity: 0.09;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .blob-laiton {
     animation: blob-drift-a 32s ease-in-out infinite;
@@ -659,6 +667,16 @@ h4 {
     color 160ms ease,
     box-shadow 160ms ease,
     transform 160ms ease;
+}
+
+.conformity-ring-fill {
+  transition: stroke-dashoffset 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .conformity-ring-fill {
+    transition: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

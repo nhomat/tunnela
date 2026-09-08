@@ -6,8 +6,12 @@ import { createClient } from "@/lib/supabase/client";
 import { useCurrentPlan } from "@/components/feature-gate";
 import { listIndices } from "@/lib/indices";
 import { PageLoading, TableSkeleton } from "@/components/table-skeleton";
+import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
 import type { IndicePublie } from "@/lib/indices";
 import type { IndexType } from "@/lib/types";
+
+const SPINNER_CYCLE_MS = 900;
+const SKELETON_CYCLE_MS = 1400;
 
 export default function AdminIndicesPage() {
   const { t } = useApp();
@@ -49,7 +53,10 @@ export default function AdminIndicesPage() {
     await load();
   }
 
-  if (planLoading) return <PageLoading />;
+  const showPlanLoading = useHoldLoadingAnimation(planLoading, SPINNER_CYCLE_MS);
+  const showIndicesLoading = useHoldLoadingAnimation(loading, SKELETON_CYCLE_MS);
+
+  if (showPlanLoading) return <PageLoading />;
 
   if (!isAdmin) {
     return <p className="text-sm text-[var(--foreground)]/60">{t.admin.indicesNotAllowed}</p>;
@@ -99,7 +106,7 @@ export default function AdminIndicesPage() {
         </button>
       </form>
 
-      {loading ? (
+      {showIndicesLoading ? (
         <TableSkeleton rows={3} />
       ) : (
         <div className="card overflow-x-auto p-0">

@@ -9,7 +9,10 @@ import { hasFeature } from "@/lib/types";
 import { exportBauxAsCsv } from "@/lib/csv-import";
 import { PageLoading } from "@/components/table-skeleton";
 import { PasswordInput } from "@/components/password-input";
+import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
 import type { Bail } from "@/lib/types";
+
+const SPINNER_CYCLE_MS = 900;
 
 export default function ParametresPage() {
   const { t } = useApp();
@@ -169,7 +172,8 @@ export default function ParametresPage() {
     }
   }
 
-  if (loading) return <PageLoading />;
+  const showLoading = useHoldLoadingAnimation(loading, SPINNER_CYCLE_MS);
+  if (showLoading) return <PageLoading />;
 
   return (
     <div className="tunnel-enter flex max-w-2xl flex-col gap-8">

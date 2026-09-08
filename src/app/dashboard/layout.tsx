@@ -36,9 +36,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <div className="flex min-h-screen flex-col md:flex-row">
+    <div className="relative flex min-h-screen flex-col overflow-hidden md:flex-row">
+      <div className="page-blobs">
+        <span className="blob blob-laiton dashboard-blob" />
+      </div>
       <DashboardSidebar conformityRatio={conformityRatio} />
-      <main className="flex-1 px-6 py-8 md:px-10 md:py-10">{children}</main>
+      <main className="relative flex-1 px-6 py-8 md:px-10 md:py-10">{children}</main>
     </div>
   );
 }

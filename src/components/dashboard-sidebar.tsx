@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "./providers";
@@ -35,7 +36,7 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
   return (
     <aside className="border-b border-[var(--border-color)] md:sticky md:top-0 md:h-screen md:w-64 md:shrink-0 md:border-b-0 md:border-r">
       <div className="px-6 py-4">
-        <Link href="/dashboard/baux" className="transition-base">
+        <Link href="/dashboard/baux" className="transition-base float-idle inline-block">
           <LogoMark />
         </Link>
       </div>
@@ -87,7 +88,13 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
 function ConformityRing({ ratio }: { ratio: number }) {
   const pct = Math.round(Math.max(0, Math.min(1, ratio)) * 100);
   const circumference = 2 * Math.PI * 26;
-  const offset = circumference * (1 - pct / 100);
+  const targetOffset = circumference * (1 - pct / 100);
+  const [offset, setOffset] = useState(circumference);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setOffset(targetOffset));
+    return () => cancelAnimationFrame(frame);
+  }, [targetOffset]);
 
   return (
     <div className="flex items-center gap-3">
@@ -111,7 +118,7 @@ function ConformityRing({ ratio }: { ratio: number }) {
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           transform="rotate(-90 30 30)"
-          className="transition-base"
+          className="conformity-ring-fill"
         />
       </svg>
       <span className="font-serif text-lg">{pct}%</span>

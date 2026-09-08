@@ -5,7 +5,10 @@ import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { FeatureGate, useCurrentPlan } from "@/components/feature-gate";
 import { TableSkeleton } from "@/components/table-skeleton";
+import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
 import type { Bail } from "@/lib/types";
+
+const SKELETON_CYCLE_MS = 1400;
 
 export default function EcheancierPage() {
   const { plan } = useCurrentPlan();
@@ -60,7 +63,8 @@ function Echeancier() {
     return { within30, upcoming, noDate };
   }, [baux]);
 
-  if (loading) {
+  const showLoading = useHoldLoadingAnimation(loading, SKELETON_CYCLE_MS);
+  if (showLoading) {
     return <TableSkeleton />;
   }
 
