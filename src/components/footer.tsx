@@ -45,6 +45,12 @@ export function Footer() {
           <span>
             © {year} Tunnela. {t.footer.rights}
           </span>
+          <a
+            href="mailto:tunnela.team@gmail.com"
+            className="transition-base hover:text-[var(--accent)]"
+          >
+            {t.footer.contactLabel} : tunnela.team@gmail.com
+          </a>
           <ThemeLangToggle />
         </div>
       </div>
