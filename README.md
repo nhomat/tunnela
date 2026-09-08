@@ -8,7 +8,7 @@ Stack : Next.js (App Router) + TypeScript + Tailwind CSS + Supabase (auth +
 base de données) + Stripe (abonnements) + Resend (emails d'alerte). Pensé
 pour un déploiement Vercel.
 
-**En ligne :** https://tunnela.vercel.app
+**En ligne :** https://tunnela.fr
 
 ## Démarrage local
 

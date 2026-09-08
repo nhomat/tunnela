@@ -87,5 +87,5 @@ export function coopAddonPriceId(): string | null {
 // URL de base de l'application, utilisée pour construire les liens de
 // redirection Stripe (Checkout, Account Links Connect, etc.).
 export function appUrl(): string {
-  return process.env.NEXT_PUBLIC_APP_URL ?? "https://tunnela.vercel.app";
+  return process.env.NEXT_PUBLIC_APP_URL ?? "https://tunnela.fr";
 }
