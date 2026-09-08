@@ -367,6 +367,33 @@ begin
   set user_id = new.id, statut = 'actif', joined_at = now()
   where email = new.email and user_id is null;
 
+  -- Portefeuille de démonstration pour qu'un nouveau compte n'affiche pas un
+  -- tableau vide : 3 baux fictifs couvrant les 3 statuts de conformité
+  -- (conforme / à vérifier / non conforme), pour que l'utilisateur découvre
+  -- tout de suite le calculateur, la clause tunnel et le générateur d'avenant.
+  -- Ce sont des baux normaux : l'utilisateur peut les modifier ou les
+  -- supprimer comme n'importe quel autre.
+  insert into public.baux (
+    user_id, preneur, adresse, loyer_annuel, indice, clause_tunnel,
+    plancher_pct, plafond_pct, date_prochaine_revision, statut,
+    indice_reference, periodicite, preneur_email
+  ) values
+    (
+      new.id, 'SARL Bouteille & Fils', '12 rue de Rivoli, 75004 Paris',
+      24000, 'ILC', true, -1, 3, current_date + interval '45 days', 'conforme',
+      130.5, 'annuelle', 'contact@exemple-locataire.fr'
+    ),
+    (
+      new.id, 'Boulangerie Lemoine', '8 avenue Jean Jaurès, 69007 Lyon',
+      18000, 'ILC', false, null, null, current_date + interval '20 days', 'a_verifier',
+      130.5, 'annuelle', 'lemoine@exemple-locataire.fr'
+    ),
+    (
+      new.id, 'Pharmacie du Centre', '3 place de la République, 33000 Bordeaux',
+      32000, 'ICC', false, null, null, current_date + interval '10 days', 'non_conforme',
+      2148.0, 'annuelle', 'pharmacie-centre@exemple-locataire.fr'
+    );
+
   return new;
 end;
 $$;

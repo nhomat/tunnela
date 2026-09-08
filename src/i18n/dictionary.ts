@@ -244,6 +244,7 @@ export const dictionary = {
         clause: "Clause & avenant",
         echeancier: "Échéancier",
         equipe: "Équipe",
+        tutoriel: "Tutoriel",
         parametres: "Paramètres",
         indices: "Indices (admin)",
       },
@@ -253,6 +254,50 @@ export const dictionary = {
       featureLockedBody: "Disponible à partir du plan",
       adminSwitcherLabel: "Vue client (admin)",
       adminSwitcherHint: "Change ton plan sans passer par Stripe, pour tester chaque offre.",
+    },
+    tutoriel: {
+      title: "Comment fonctionne Tunnela",
+      subtitle: "Une vidéo courte et un guide écrit, adaptés à votre abonnement.",
+      videoComingSoon: "Vidéo bientôt disponible",
+      plans: {
+        decouverte: {
+          title: "Découverte",
+          steps: [
+            "Ajoutez vos baux (jusqu'à 3) avec preneur, loyer, indice et date de révision.",
+            "Utilisez le calculateur ILC/ILAT/ICC pour connaître le montant exact de la révision.",
+            "Suivez le statut de conformité de chaque bail en un coup d'œil.",
+          ],
+        },
+        cabinet: {
+          title: "Cabinet",
+          steps: [
+            "Tout ce qui est inclus dans Découverte, jusqu'à 20 baux.",
+            "Générez vos clauses tunnel et avenants ICC → ILC, prêts à signer.",
+            "Exportez vos documents générés en PDF.",
+            "Recevez une alerte email avant chaque échéance de révision.",
+            "Mettez à jour un bail en un clic grâce au workflow de révision guidé.",
+          ],
+        },
+        portefeuille: {
+          title: "Portefeuille",
+          steps: [
+            "Tout ce qui est inclus dans Cabinet, jusqu'à 100 baux.",
+            "Recherchez et filtrez rapidement dans un grand portefeuille.",
+            "Importez votre portefeuille existant en un import CSV.",
+            "Consultez l'échéancier consolidé de toutes vos révisions à venir.",
+            "Notifiez vos preneurs directement par email depuis Tunnela.",
+            "Bénéficiez d'un support prioritaire.",
+          ],
+        },
+        fonciere: {
+          title: "Foncière",
+          steps: [
+            "Tout ce qui est inclus dans Portefeuille, jusqu'à 500 baux (au-delà, nous contacter).",
+            "Un interlocuteur dédié vous accompagne dans la mise en place.",
+            "Les indices ILC/ILAT/ICC sont récupérés et mis à jour automatiquement.",
+          ],
+        },
+      },
     },
     baux: {
       title: "Portefeuille de baux",
@@ -704,6 +749,7 @@ export const dictionary = {
         clause: "Clause & amendment",
         echeancier: "Review calendar",
         equipe: "Team",
+        tutoriel: "Tutorial",
         parametres: "Settings",
         indices: "Indices (admin)",
       },
@@ -713,6 +759,50 @@ export const dictionary = {
       featureLockedBody: "Available from the",
       adminSwitcherLabel: "Client view (admin)",
       adminSwitcherHint: "Switch your plan without going through Stripe, to test each tier.",
+    },
+    tutoriel: {
+      title: "How Tunnela works",
+      subtitle: "A short video and a written guide, matched to your subscription.",
+      videoComingSoon: "Video coming soon",
+      plans: {
+        decouverte: {
+          title: "Découverte",
+          steps: [
+            "Add your leases (up to 3) with tenant, rent, index and revision date.",
+            "Use the ILC/ILAT/ICC calculator to get the exact revision amount.",
+            "Track each lease's compliance status at a glance.",
+          ],
+        },
+        cabinet: {
+          title: "Cabinet",
+          steps: [
+            "Everything in Découverte, up to 20 leases.",
+            "Generate ready-to-sign tunnel clauses and ICC → ILC amendments.",
+            "Export your generated documents as PDF.",
+            "Get an email alert before each revision due date.",
+            "Update a lease in one click with the guided revision workflow.",
+          ],
+        },
+        portefeuille: {
+          title: "Portefeuille",
+          steps: [
+            "Everything in Cabinet, up to 100 leases.",
+            "Search and filter quickly across a large portfolio.",
+            "Import your existing portfolio with a single CSV upload.",
+            "See a consolidated calendar of all upcoming revisions.",
+            "Notify your tenants directly by email from Tunnela.",
+            "Get priority support.",
+          ],
+        },
+        fonciere: {
+          title: "Foncière",
+          steps: [
+            "Everything in Portefeuille, up to 500 leases (more on request).",
+            "A dedicated contact helps you get set up.",
+            "ILC/ILAT/ICC indices are fetched and updated automatically.",
+          ],
+        },
+      },
     },
     baux: {
       title: "Lease portfolio",

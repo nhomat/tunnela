@@ -466,6 +466,40 @@ h4 {
   }
 }
 
+.tunnel-visual-frame {
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--color-laiton) 10%, var(--surface)),
+    var(--surface) 70%
+  );
+}
+
+.tutoriel-play-badge {
+  display: flex;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-laiton) 20%, transparent);
+  color: var(--color-laiton);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-laiton) 40%, transparent);
+}
+
+.tutoriel-step-index {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-laiton) 18%, transparent);
+  color: var(--color-laiton);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 .tilt-card {
   perspective: 1000px;
 }
