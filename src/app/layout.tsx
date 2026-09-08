@@ -15,6 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://tunnela.fr"),
   title: "Tunnela — L'outil indispensable pour vos révisions de baux commerciaux",
   description:
     "Calculez les révisions de loyer ILC/ILAT, sécurisez vos clauses tunnel et générez vos avenants ICC → ILC, conformément à l'article L.145-38-1 du Code de commerce.",
