@@ -6,7 +6,7 @@ import { useApp } from "@/components/providers";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Reveal } from "@/components/reveal";
-import { PLANS } from "@/lib/stripe";
+import { PLANS, formatPrixMensuel } from "@/lib/stripe";
 import type { Plan } from "@/lib/types";
 
 function isPlan(value: string): value is Plan {
@@ -14,7 +14,7 @@ function isPlan(value: string): value is Plan {
 }
 
 export function OffreDetailClient() {
-  const { t } = useApp();
+  const { t, locale } = useApp();
   const params = useParams<{ plan: string }>();
   const planId = params.plan;
 
@@ -38,6 +38,8 @@ export function OffreDetailClient() {
   const features = t.pricing.planFeatures[planId];
   const otherPlans = PLANS.filter((p) => p.id !== planId);
   const limiteValue = plan.limiteBaux === null ? "∞" : String(plan.limiteBaux);
+  const planIndex = PLANS.findIndex((p) => p.id === planId);
+  const compareTarget = PLANS[planIndex + 1]?.id ?? PLANS[planIndex - 1]?.id ?? planId;
 
   return (
     <>
@@ -70,12 +72,26 @@ export function OffreDetailClient() {
 
             <div className="card card-hover mx-auto mt-10 flex max-w-md flex-col items-center gap-4">
               <div className="flex items-baseline gap-2">
-                <span className="font-serif text-5xl text-[var(--accent)]">{limiteValue}</span>
+                <span className="font-serif text-5xl text-[var(--accent)]">
+                  {plan.prixMensuel === 0 ? t.pricing.free : `${formatPrixMensuel(plan.prixMensuel!, locale)} €`}
+                </span>
+                {plan.prixMensuel !== 0 && (
+                  <span className="text-sm text-[var(--foreground)]/70">{t.pricing.perMonth}</span>
+                )}
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-serif text-2xl">{limiteValue}</span>
                 <span className="text-sm text-[var(--foreground)]/70">{t.pricing.leases}</span>
               </div>
               <p className="text-sm text-[var(--foreground)]/60">{t.pricing.subtitle}</p>
               <Link href="/signup" className="btn-primary transition-base w-full">
                 {t.planDetail.tryCta}
+              </Link>
+              <Link
+                href={`/comparateur?a=${planId}&b=${compareTarget}`}
+                className="btn-secondary transition-base w-full"
+              >
+                {t.planDetail.compareCta}
               </Link>
             </div>
           </div>

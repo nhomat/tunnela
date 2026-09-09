@@ -217,6 +217,7 @@ export const dictionary = {
       featuresTitle: "Ce qui est inclus",
       otherPlans: "Voir les autres plans",
       tryCta: "Créer un compte pour l'essayer",
+      compareCta: "Comparer avec un autre plan",
       decouverte: {
         tagline: "Pour découvrir Tunnela sans engagement",
         idealFor:
@@ -237,6 +238,22 @@ export const dictionary = {
         idealFor:
           "Un portefeuille sans limite, avec récupération automatique des indices ILC/ILAT/ICC et un interlocuteur Tunnela dédié.",
       },
+    },
+    comparateur: {
+      back: "← Retour",
+      title: "Comparez deux plans",
+      subtitle: "Choisissez deux plans pour voir précisément ce qui les distingue.",
+      planALabel: "Premier plan",
+      planBLabel: "Deuxième plan",
+      priceRow: "Tarif mensuel",
+      leasesRow: "Baux inclus",
+      priceDifference: "de différence par mois",
+      leasesDifference: "baux de plus",
+      differencesTitle: "Ce qui change entre ces deux plans",
+      onlyIn: "Disponible uniquement avec {plan}",
+      noDifference: "Ces deux plans se valent sur les fonctionnalités listées ci-dessous.",
+      samePlanWarning: "Choisissez deux plans différents pour voir la comparaison.",
+      viewPlan: "Voir le détail",
     },
     howItWorks: {
       title: "Comment ça marche",
@@ -895,6 +912,7 @@ export const dictionary = {
     planDetail: {
       backToComparator: "← Back to the comparator",
       idealForLabel: "Ideal for",
+      compareCta: "Compare with another plan",
       featuresTitle: "What's included",
       otherPlans: "See the other plans",
       tryCta: "Create an account to try it",
@@ -918,6 +936,22 @@ export const dictionary = {
         idealFor:
           "An unlimited portfolio, with automatic ILC/ILAT/ICC index retrieval and a dedicated Tunnela contact.",
       },
+    },
+    comparateur: {
+      back: "← Back",
+      title: "Compare two plans",
+      subtitle: "Pick two plans to see precisely what sets them apart.",
+      planALabel: "First plan",
+      planBLabel: "Second plan",
+      priceRow: "Monthly price",
+      leasesRow: "Leases included",
+      priceDifference: "difference per month",
+      leasesDifference: "more leases",
+      differencesTitle: "What changes between these two plans",
+      onlyIn: "Only available with {plan}",
+      noDifference: "These two plans are equal on the features listed below.",
+      samePlanWarning: "Choose two different plans to see the comparison.",
+      viewPlan: "View details",
     },
     howItWorks: {
       title: "How it works",
