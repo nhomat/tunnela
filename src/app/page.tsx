@@ -170,13 +170,13 @@ function PageSummary() {
   return (
     <nav
       aria-label={t.nav.summary}
-      className="sticky top-0 z-10 flex gap-2 overflow-x-auto border-b border-[var(--border-color)] bg-[var(--background)]/95 px-4 py-2 backdrop-blur md:hidden"
+      className="sticky top-0 z-10 flex gap-2.5 overflow-x-auto border-b border-[var(--border-color)] bg-[var(--background)]/95 px-4 py-3 backdrop-blur md:hidden"
     >
       {items.map((item) => (
         <a
           key={item.href}
           href={item.href}
-          className="transition-base shrink-0 rounded-full border border-[var(--border-color)] px-3 py-1.5 text-xs hover:border-[var(--accent)]"
+          className="transition-base shrink-0 rounded-full border border-[var(--border-color)] px-4 py-2.5 text-sm font-medium hover:border-[var(--accent)]"
         >
           {item.label}
         </a>
