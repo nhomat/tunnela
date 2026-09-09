@@ -58,6 +58,9 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
         <Link href="/dashboard/baux" className="transition-base float-idle shrink-0">
           <LogoMark />
         </Link>
+        {typeof conformityRatio === "number" && (
+          <ConformityBadge ratio={conformityRatio} label={t.dashboard.conformity} className="shrink-0 md:hidden" />
+        )}
         <nav className="flex flex-1 gap-1 overflow-x-auto md:hidden">{navLinks}</nav>
         <button
           type="button"
@@ -97,7 +100,7 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
       >
         {isAdmin && plan && <AdminPlanSwitcher currentPlan={plan} />}
         {typeof conformityRatio === "number" && (
-          <div className="mb-6">
+          <div className="mb-6 hidden md:block">
             <p className="mb-2 text-xs uppercase tracking-wide text-[var(--foreground)]/60">
               {t.dashboard.conformity}
             </p>
@@ -116,6 +119,30 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
         </button>
       </div>
     </aside>
+  );
+}
+
+function ConformityBadge({
+  ratio,
+  label,
+  className = "",
+}: {
+  ratio: number;
+  label: string;
+  className?: string;
+}) {
+  const pct = Math.round(Math.max(0, Math.min(1, ratio)) * 100);
+  const color = pct >= 80 ? "var(--success)" : pct >= 40 ? "var(--accent)" : "var(--danger)";
+
+  return (
+    <span
+      title={label}
+      aria-label={`${label} : ${pct} %`}
+      className={`flex items-center gap-1.5 rounded-full border border-[var(--border-color)] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap ${className}`}
+    >
+      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} aria-hidden="true" />
+      {pct}% conformes
+    </span>
   );
 }
 
