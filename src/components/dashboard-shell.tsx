@@ -8,6 +8,10 @@ import { DashboardSidebar, type DashboardLink } from "./dashboard-sidebar";
 
 const TABS_REVEAL_MS = 10_000;
 const SWIPE_MIN_DISTANCE = 50;
+// Doit rester aligné avec le breakpoint `md` de Tailwind : au-delà, la
+// sidebar desktop (toujours visible) prend le relais et le swipe est
+// désactivé, même sur un écran tactile (laptop/tablette en mode bureau).
+const MOBILE_BREAKPOINT = 768;
 
 export function DashboardShell({
   conformityRatio,
@@ -48,6 +52,10 @@ export function DashboardShell({
   }
 
   function handleTouchStart(e: TouchEvent<HTMLElement>) {
+    if (typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAKPOINT) {
+      touchStart.current = null;
+      return;
+    }
     // Un tableau qui défile horizontalement (baux, équipe, indices) gère son
     // propre glissement : on n'intercepte pas les swipes qui démarrent dedans.
     const scrollable = (e.target as HTMLElement).closest<HTMLElement>("[data-hscroll]");
