@@ -337,7 +337,7 @@ function Equipe() {
               {t.equipe.roleOwner} : <span className="font-medium">{ownerEmail}</span>
             </p>
           )}
-          <div className="card overflow-x-auto p-0">
+          <div data-hscroll="true" className="card overflow-x-auto p-0">
             <table className="w-full min-w-[480px] text-left text-sm">
               <thead>
                 <tr className="border-b border-[var(--border-color)] text-xs uppercase tracking-wide text-[var(--foreground)]/60">

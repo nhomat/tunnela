@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { DashboardShell } from "@/components/dashboard-shell";
 import { calculerStatutConformite } from "@/lib/types";
 import type { Bail } from "@/lib/types";
 
@@ -43,8 +43,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <span className="dot-grid-2d page-dot-grid" aria-hidden="true" />
         <span className="tunnel-ring-3d page-ring-3d" aria-hidden="true" />
       </div>
-      <DashboardSidebar conformityRatio={conformityRatio} />
-      <main className="relative flex-1 px-6 py-8 md:px-10 md:py-10">{children}</main>
+      <DashboardShell conformityRatio={conformityRatio}>{children}</DashboardShell>
     </div>
   );
 }

@@ -316,7 +316,7 @@ export default function BauxPage() {
       ) : visibleBaux.length === 0 ? (
         <p className="text-sm text-[var(--foreground)]/60">{t.baux.noResults}</p>
       ) : (
-        <div className="card overflow-x-auto p-0">
+        <div data-hscroll="true" className="card overflow-x-auto p-0">
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead>
               <tr className="border-b border-[var(--border-color)] text-xs uppercase tracking-wide text-[var(--foreground)]/60">
@@ -383,7 +383,7 @@ export default function BauxPage() {
       {canShareTeam && sharedBaux.length > 0 && (
         <div className="mt-10">
           <h2 className="mb-3 font-serif text-lg">{t.baux.sharedByTeamTitle}</h2>
-          <div className="card overflow-x-auto p-0">
+          <div data-hscroll="true" className="card overflow-x-auto p-0">
             <table className="w-full min-w-[560px] text-left text-sm">
               <thead>
                 <tr className="border-b border-[var(--border-color)] text-xs uppercase tracking-wide text-[var(--foreground)]/60">

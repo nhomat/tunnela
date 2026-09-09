@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "./providers";
@@ -10,66 +10,24 @@ import { AdminPlanSwitcher } from "./admin-plan-switcher";
 import { useCurrentPlan } from "./feature-gate";
 import { createClient } from "@/lib/supabase/client";
 
-const TABS_REVEAL_MS = 10_000;
-const SWIPE_MIN_DISTANCE = 48;
+export type DashboardLink = { href: string; label: string };
 
-export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number }) {
+export function DashboardSidebar({
+  links,
+  conformityRatio,
+  tabsVisible,
+  onRevealTabs,
+}: {
+  links: DashboardLink[];
+  conformityRatio?: number;
+  tabsVisible: boolean;
+  onRevealTabs: () => void;
+}) {
   const { t } = useApp();
   const pathname = usePathname();
   const router = useRouter();
   const { plan, isAdmin } = useCurrentPlan();
   const [open, setOpen] = useState(false);
-  const [tabsVisible, setTabsVisible] = useState(false);
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const touchStart = useRef<{ x: number; y: number } | null>(null);
-
-  const links = [
-    { href: "/dashboard/baux", label: t.dashboard.nav.baux },
-    { href: "/dashboard/calculateur", label: t.dashboard.nav.calculateur },
-    { href: "/dashboard/clause", label: t.dashboard.nav.clause },
-    { href: "/dashboard/echeancier", label: t.dashboard.nav.echeancier },
-    { href: "/dashboard/equipe", label: t.dashboard.nav.equipe },
-    { href: "/dashboard/tutoriel", label: t.dashboard.nav.tutoriel },
-    { href: "/dashboard/parametres", label: t.dashboard.nav.parametres },
-    ...(isAdmin ? [{ href: "/dashboard/admin/indices", label: t.dashboard.nav.indices }] : []),
-  ];
-
-  useEffect(() => {
-    return () => {
-      if (hideTimer.current) clearTimeout(hideTimer.current);
-    };
-  }, []);
-
-  function revealTabs() {
-    setTabsVisible(true);
-    if (hideTimer.current) clearTimeout(hideTimer.current);
-    hideTimer.current = setTimeout(() => setTabsVisible(false), TABS_REVEAL_MS);
-  }
-
-  function handleEdgeTouchStart(e: React.TouchEvent) {
-    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  }
-
-  function handleEdgeTouchEnd(e: React.TouchEvent) {
-    const start = touchStart.current;
-    touchStart.current = null;
-    if (!start) return;
-
-    const deltaX = e.changedTouches[0].clientX - start.x;
-    const deltaY = e.changedTouches[0].clientY - start.y;
-    if (Math.abs(deltaX) < SWIPE_MIN_DISTANCE || Math.abs(deltaX) < Math.abs(deltaY)) {
-      return;
-    }
-
-    const currentIndex = links.findIndex((link) => link.href === pathname);
-    if (currentIndex === -1) return;
-
-    const targetIndex = deltaX < 0 ? currentIndex + 1 : currentIndex - 1;
-    if (targetIndex >= 0 && targetIndex < links.length) {
-      router.push(links[targetIndex].href);
-    }
-    revealTabs();
-  }
 
   async function handleLogout() {
     const supabase = createClient();
@@ -93,28 +51,13 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
     </Link>
   ));
   const mobileNavLinks = links.map((link) => (
-    <Link key={link.href} href={link.href} onClick={revealTabs} className={linkClassName(link.href)}>
+    <Link key={link.href} href={link.href} onClick={onRevealTabs} className={linkClassName(link.href)}>
       {link.label}
     </Link>
   ));
 
   return (
     <aside className="border-b border-[var(--border-color)] md:sticky md:top-0 md:flex md:h-screen md:w-64 md:shrink-0 md:flex-col md:border-b-0 md:border-r">
-      <div
-        aria-hidden="true"
-        onTouchStart={handleEdgeTouchStart}
-        onTouchEnd={handleEdgeTouchEnd}
-        style={{ touchAction: "pan-y" }}
-        className="fixed top-16 bottom-0 left-0 z-20 w-6 md:hidden"
-      />
-      <div
-        aria-hidden="true"
-        onTouchStart={handleEdgeTouchStart}
-        onTouchEnd={handleEdgeTouchEnd}
-        style={{ touchAction: "pan-y" }}
-        className="fixed top-16 bottom-0 right-0 z-20 w-6 md:hidden"
-      />
-
       <div className="flex items-center justify-between px-4 py-3 md:block md:px-6 md:py-4">
         <div className="flex items-center gap-3">
           <Link href="/dashboard/baux" className="transition-base float-idle shrink-0">
