@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "./providers";
@@ -24,6 +24,17 @@ export function DashboardSidebar({
   const router = useRouter();
   const { plan, isAdmin } = useCurrentPlan();
   const [open, setOpen] = useState(false);
+  const activeMobileLinkRef = useRef<HTMLAnchorElement | null>(null);
+
+  // Garde l'outil actif centré dans la barre d'onglets mobile, notamment
+  // quand on y arrive par swipe et qu'il n'est pas dans la portion visible.
+  useEffect(() => {
+    activeMobileLinkRef.current?.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  }, [pathname]);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -46,6 +57,19 @@ export function DashboardSidebar({
       {link.label}
     </Link>
   ));
+  const mobileNavLinks = links.map((link) => {
+    const active = pathname === link.href;
+    return (
+      <Link
+        key={link.href}
+        href={link.href}
+        ref={active ? activeMobileLinkRef : undefined}
+        className={linkClassName(link.href)}
+      >
+        {link.label}
+      </Link>
+    );
+  });
 
   return (
     <aside className="border-b border-[var(--border-color)] md:sticky md:top-0 md:flex md:h-screen md:w-64 md:shrink-0 md:flex-col md:border-b-0 md:border-r">
@@ -76,7 +100,7 @@ export function DashboardSidebar({
         </button>
       </div>
 
-      <nav className="flex gap-1 overflow-x-auto px-4 pb-3 md:hidden">{navLinks}</nav>
+      <nav className="flex gap-1 overflow-x-auto px-4 pb-3 md:hidden">{mobileNavLinks}</nav>
 
       <nav className="hidden gap-1 px-3 pb-3 md:flex md:flex-1 md:flex-col md:overflow-visible md:px-3 md:pb-0">
         {navLinks}
