@@ -340,7 +340,11 @@ export default function BauxPage() {
                   <td className="px-4 py-3">{bail.clause_tunnel ? "✓" : "—"}</td>
                   <td className="px-4 py-3">{bail.date_prochaine_revision ?? "—"}</td>
                   <td className="px-4 py-3">
-                    <StatutBadge statut={bail.statut} label={t.baux.statuts[bail.statut]} />
+                    <StatutBadge
+                      statut={bail.statut}
+                      label={t.baux.statuts[bail.statut]}
+                      onClick={canRevise ? () => setRevisingId(bail.id) : undefined}
+                    />
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
@@ -533,19 +537,42 @@ function CsvImportPanel({
   );
 }
 
-function StatutBadge({ statut, label }: { statut: Bail["statut"]; label: string }) {
+function StatutBadge({
+  statut,
+  label,
+  onClick,
+}: {
+  statut: Bail["statut"];
+  label: string;
+  onClick?: () => void;
+}) {
   const colors: Record<Bail["statut"], string> = {
     conforme: "var(--success)",
     a_verifier: "var(--accent)",
     non_conforme: "var(--danger)",
   };
+  const style = {
+    color: colors[statut],
+    backgroundColor: `color-mix(in srgb, ${colors[statut]} 14%, transparent)`,
+  };
+
+  if (!onClick) {
+    return (
+      <span className="rounded-full px-2 py-1 text-xs font-medium" style={style}>
+        {label}
+      </span>
+    );
+  }
+
   return (
-    <span
-      className="rounded-full px-2 py-1 text-xs font-medium"
-      style={{ color: colors[statut], backgroundColor: `color-mix(in srgb, ${colors[statut]} 14%, transparent)` }}
+    <button
+      type="button"
+      onClick={onClick}
+      className="transition-base rounded-full px-2 py-1 text-xs font-medium hover:opacity-75"
+      style={style}
     >
       {label}
-    </span>
+    </button>
   );
 }
 
