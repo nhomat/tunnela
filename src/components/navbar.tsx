@@ -29,13 +29,15 @@ export function Navbar() {
           </Link>
         </nav>
         <div className="flex items-center gap-2 sm:gap-3">
-          <ThemeLangToggle />
+          <div className="hidden md:block">
+            <ThemeLangToggle />
+          </div>
           <Link href="/login" className="hidden text-sm sm:inline transition-base hover:text-[var(--accent)]">
             {t.nav.login}
           </Link>
           <Link
             href="/signup"
-            className="btn-primary transition-base !px-3 !py-2 text-xs sm:!px-5 sm:!py-2.5 sm:text-sm"
+            className="btn-primary transition-base !px-4 !py-2 text-sm sm:!px-5 sm:!py-2.5"
           >
             {t.nav.signup}
           </Link>
@@ -96,6 +98,9 @@ export function Navbar() {
           >
             {t.nav.login}
           </Link>
+          <div className="mt-2 border-t border-[var(--border-color)] px-2 pt-3">
+            <ThemeLangToggle />
+          </div>
         </nav>
       )}
     </header>
