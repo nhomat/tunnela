@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode, type TouchEvent } from "react";
+import { useRef, type ReactNode, type TouchEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import { useCurrentPlan } from "./feature-gate";
 import { DashboardSidebar, type DashboardLink } from "./dashboard-sidebar";
 
-const TABS_REVEAL_MS = 10_000;
 const SWIPE_MIN_DISTANCE = 50;
 // Doit rester aligné avec le breakpoint `md` de Tailwind : au-delà, la
 // sidebar desktop (toujours visible) prend le relais et le swipe est
@@ -24,8 +23,6 @@ export function DashboardShell({
   const pathname = usePathname();
   const router = useRouter();
   const { isAdmin } = useCurrentPlan();
-  const [tabsVisible, setTabsVisible] = useState(false);
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const links: DashboardLink[] = [
@@ -38,18 +35,6 @@ export function DashboardShell({
     { href: "/dashboard/parametres", label: t.dashboard.nav.parametres },
     ...(isAdmin ? [{ href: "/dashboard/admin/indices", label: t.dashboard.nav.indices }] : []),
   ];
-
-  useEffect(() => {
-    return () => {
-      if (hideTimer.current) clearTimeout(hideTimer.current);
-    };
-  }, []);
-
-  function revealTabs() {
-    setTabsVisible(true);
-    if (hideTimer.current) clearTimeout(hideTimer.current);
-    hideTimer.current = setTimeout(() => setTabsVisible(false), TABS_REVEAL_MS);
-  }
 
   function handleTouchStart(e: TouchEvent<HTMLElement>) {
     if (typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAKPOINT) {
@@ -84,17 +69,11 @@ export function DashboardShell({
     if (targetIndex >= 0 && targetIndex < links.length) {
       router.push(links[targetIndex].href);
     }
-    revealTabs();
   }
 
   return (
     <>
-      <DashboardSidebar
-        links={links}
-        conformityRatio={conformityRatio}
-        tabsVisible={tabsVisible}
-        onRevealTabs={revealTabs}
-      />
+      <DashboardSidebar links={links} conformityRatio={conformityRatio} />
       <main
         className="relative flex-1 px-6 py-8 md:px-10 md:py-10"
         onTouchStart={handleTouchStart}

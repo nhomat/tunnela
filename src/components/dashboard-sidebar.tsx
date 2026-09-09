@@ -15,13 +15,9 @@ export type DashboardLink = { href: string; label: string };
 export function DashboardSidebar({
   links,
   conformityRatio,
-  tabsVisible,
-  onRevealTabs,
 }: {
   links: DashboardLink[];
   conformityRatio?: number;
-  tabsVisible: boolean;
-  onRevealTabs: () => void;
 }) {
   const { t } = useApp();
   const pathname = usePathname();
@@ -47,11 +43,6 @@ export function DashboardSidebar({
 
   const navLinks = links.map((link) => (
     <Link key={link.href} href={link.href} className={linkClassName(link.href)}>
-      {link.label}
-    </Link>
-  ));
-  const mobileNavLinks = links.map((link) => (
-    <Link key={link.href} href={link.href} onClick={onRevealTabs} className={linkClassName(link.href)}>
       {link.label}
     </Link>
   ));
@@ -94,14 +85,7 @@ export function DashboardSidebar({
         </button>
       </div>
 
-      <div
-        className="grid transition-[grid-template-rows] duration-300 ease-out md:hidden"
-        style={{ gridTemplateRows: tabsVisible ? "1fr" : "0fr" }}
-      >
-        <div className="overflow-hidden">
-          <nav className="flex gap-1 overflow-x-auto px-4 pb-3">{mobileNavLinks}</nav>
-        </div>
-      </div>
+      <nav className="flex gap-1 overflow-x-auto px-4 pb-3 md:hidden">{navLinks}</nav>
 
       <nav className="hidden gap-1 px-3 pb-3 md:flex md:flex-1 md:flex-col md:overflow-visible md:px-3 md:pb-0">
         {navLinks}
