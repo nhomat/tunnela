@@ -11,6 +11,7 @@ export function PasswordInput({
   autoComplete,
   minLength,
   showLabel,
+  blockPaste,
 }: {
   id?: string;
   name?: string;
@@ -20,6 +21,7 @@ export function PasswordInput({
   autoComplete?: string;
   minLength?: number;
   showLabel: string;
+  blockPaste?: boolean;
 }) {
   const [visible, setVisible] = useState(false);
   const checkboxId = useId();
@@ -34,6 +36,9 @@ export function PasswordInput({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onPaste={blockPaste ? (e) => e.preventDefault() : undefined}
+        onCopy={blockPaste ? (e) => e.preventDefault() : undefined}
+        onDrop={blockPaste ? (e) => e.preventDefault() : undefined}
         autoComplete={autoComplete}
         minLength={minLength}
       />

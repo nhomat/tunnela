@@ -99,6 +99,11 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
             <span className="btn-primary transition-base pointer-events-none text-sm">{t.pricing.cta}</span>
           </button>
         </div>
+        <div className="mt-4 text-center">
+          <Link href="/comparateur" className="btn-secondary transition-base inline-block text-sm">
+            {t.pricing.compareOpenFull}
+          </Link>
+        </div>
       </div>
 
       <h3 className="mb-6 mt-16 text-center font-serif text-2xl">{t.pricing.compareTableTitle}</h3>

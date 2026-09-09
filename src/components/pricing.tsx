@@ -96,11 +96,10 @@ export function Pricing({
   );
 }
 
-// Version publique de la landing page : pas de prix ni de bouton d'achat
-// direct — les tarifs détaillés ne s'affichent qu'une fois le compte créé,
-// dans /dashboard/abonnement.
+// Version publique de la landing page : les tarifs sont visibles sans compte.
+// Le CTA du bas ouvre le comparateur détaillé plutôt que d'exiger une inscription.
 export function PricingTeaser() {
-  const { t } = useApp();
+  const { t, locale } = useApp();
 
   return (
     <section id="tarifs" className="mx-auto max-w-6xl px-6 py-20">
@@ -123,6 +122,12 @@ export function PricingTeaser() {
               style={{ animationDelay: `${i * 80}ms` }}
             >
               <h3 className="font-serif text-xl">{plan.nom}</h3>
+              <p className="font-serif text-2xl text-[var(--accent)]">
+                {!plan.prixMensuel ? t.pricing.free : `${formatPrixMensuel(plan.prixMensuel, locale)} €`}
+                {plan.prixMensuel !== 0 && (
+                  <span className="text-sm font-sans text-[var(--foreground)]/60"> {t.pricing.perMonth}</span>
+                )}
+              </p>
               <p className="text-sm text-[var(--foreground)]/70">{limiteLabel}</p>
               <span className="mt-2 text-sm text-[var(--accent)]">{t.pricing.teaserSeeDetails} →</span>
             </Link>
@@ -130,7 +135,7 @@ export function PricingTeaser() {
         })}
       </div>
       <div className="mt-10 text-center">
-        <Link href="/signup" className="btn-primary transition-base">
+        <Link href="/comparateur" className="btn-primary transition-base">
           {t.pricing.teaserCta}
         </Link>
       </div>

@@ -65,23 +65,58 @@ function CoopAddonPromo() {
     }
   }
 
+  const benefits = [t.equipe.addonBenefit1, t.equipe.addonBenefit2, t.equipe.addonBenefit3];
+
   return (
-    <div className="card card-hover tunnel-enter max-w-lg text-center">
-      <p className="font-serif text-lg">{t.equipe.addonTitle}</p>
-      <p className="mt-2 text-sm text-[var(--foreground)]/70">{t.equipe.addonSubtitle}</p>
-      <p className="mt-4 font-serif text-3xl">
-        +{COOP_ADDON_PRIX_PAR_PERSONNE} €
-        <span className="text-sm text-[var(--foreground)]/60"> {t.pricing.perMonthPerPerson}</span>
-      </p>
-      <button
-        type="button"
-        onClick={handleSubscribe}
-        disabled={pending}
-        className="btn-primary transition-base mt-4 disabled:opacity-60"
-      >
-        {t.equipe.addonSubscribe}
-      </button>
-      {error && <p className="mt-2 text-sm text-[var(--danger)]">{t.equipe.addonError}</p>}
+    <div className="relative mx-auto max-w-lg overflow-hidden">
+      <div className="page-blobs">
+        <span className="blob blob-laiton" />
+        <span className="blob blob-cobalt dashboard-blob-b" />
+        <span className="dot-grid-2d page-dot-grid" aria-hidden="true" />
+        <span className="tunnel-ring-3d page-ring-3d" aria-hidden="true" />
+      </div>
+      <div className="card card-hover tunnel-enter relative flex flex-col items-center gap-4 text-center">
+        <PageIcon3D>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="7" cy="6.5" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+            <circle cx="14" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.5" />
+            <path
+              d="M2.5 16c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+            <path d="M12.5 12c1.9 0 3.5 1.8 3.5 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </PageIcon3D>
+        <div>
+          <p className="font-serif text-xl">{t.equipe.addonTitle}</p>
+          <p className="mt-2 text-sm text-[var(--foreground)]/70">{t.equipe.addonSubtitle}</p>
+        </div>
+        <ul className="flex w-full flex-col gap-2 text-left text-sm">
+          {benefits.map((benefit) => (
+            <li key={benefit} className="flex items-start gap-2">
+              <span aria-hidden="true" className="mt-0.5 text-[var(--success)]">
+                ✓
+              </span>
+              <span className="text-[var(--foreground)]/80">{benefit}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="font-serif text-3xl text-[var(--accent)]">
+          +{COOP_ADDON_PRIX_PAR_PERSONNE} €
+          <span className="text-sm font-sans text-[var(--foreground)]/60"> {t.pricing.perMonthPerPerson}</span>
+        </p>
+        <button
+          type="button"
+          onClick={handleSubscribe}
+          disabled={pending}
+          className="btn-primary transition-base w-full disabled:opacity-60"
+        >
+          {t.equipe.addonSubscribe}
+        </button>
+        {error && <p className="text-sm text-[var(--danger)]">{t.equipe.addonError}</p>}
+      </div>
     </div>
   );
 }

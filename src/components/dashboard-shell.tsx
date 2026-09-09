@@ -62,6 +62,10 @@ export function DashboardShell({
   }
 
   function handleTouchStart(e: TouchEvent<HTMLElement>) {
+    if (!swipeTransitionEnabled) {
+      touchStart.current = null;
+      return;
+    }
     if (typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAKPOINT) {
       touchStart.current = null;
       return;

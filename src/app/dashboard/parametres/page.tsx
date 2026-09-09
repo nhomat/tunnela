@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { useCurrentPlan } from "@/components/feature-gate";
@@ -27,21 +27,19 @@ export default function ParametresPage() {
   const [savingProfil, setSavingProfil] = useState(false);
   const [profilSaved, setProfilSaved] = useState(false);
 
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [passwordStatus, setPasswordStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordStatus, setPasswordStatus] = useState<
+    "idle" | "saving" | "saved" | "error" | "mismatch" | "wrongCurrent"
+  >("idle");
 
   const [exporting, setExporting] = useState(false);
 
   const [deleteConfirm, setDeleteConfirm] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
-
-  const searchParams = useSearchParams();
-  const [connectAccountId, setConnectAccountId] = useState<string | null>(null);
-  const [connectDetailsSubmitted, setConnectDetailsSubmitted] = useState(false);
-  const [connectChargesEnabled, setConnectChargesEnabled] = useState(false);
-  const [connectPending, setConnectPending] = useState(false);
-  const [connectError, setConnectError] = useState(false);
 
   useEffect(() => {
     void (async () => {
@@ -52,68 +50,19 @@ export default function ParametresPage() {
         setLoading(false);
         return;
       }
+      setUserEmail(user.email ?? null);
       const { data } = await supabase
         .from("abonnements")
-        .select(
-          "nom_bailleur_defaut, alert_delai_jours, stripe_connect_account_id, stripe_connect_details_submitted, stripe_connect_charges_enabled"
-        )
+        .select("nom_bailleur_defaut, alert_delai_jours")
         .eq("user_id", user.id)
         .maybeSingle();
       if (data) {
         setNomBailleur(data.nom_bailleur_defaut ?? "");
         setAlertDelai(data.alert_delai_jours ?? 30);
-        setConnectAccountId(data.stripe_connect_account_id);
-        setConnectDetailsSubmitted(Boolean(data.stripe_connect_details_submitted));
-        setConnectChargesEnabled(Boolean(data.stripe_connect_charges_enabled));
       }
       setLoading(false);
     })();
   }, [supabase]);
-
-  async function handleConnectStripe() {
-    setConnectPending(true);
-    setConnectError(false);
-    try {
-      const res = await fetch("/api/stripe/connect/onboard", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok || !data.url) throw new Error();
-      window.location.href = data.url;
-    } catch {
-      setConnectError(true);
-      setConnectPending(false);
-    }
-  }
-
-  async function refreshConnectStatus() {
-    setConnectPending(true);
-    try {
-      const res = await fetch("/api/stripe/connect/status");
-      const data = await res.json();
-      if (data.connected) {
-        setConnectDetailsSubmitted(Boolean(data.details_submitted));
-        setConnectChargesEnabled(Boolean(data.charges_enabled));
-      }
-    } finally {
-      setConnectPending(false);
-    }
-  }
-
-  // Retour depuis l'onboarding Stripe hébergé : "success" revérifie le
-  // statut réel (avant même que le webhook n'arrive), "refresh" relance
-  // directement une nouvelle inscription si le lien précédent a expiré ou
-  // a été abandonné en cours de route.
-  useEffect(() => {
-    const stripeConnect = searchParams.get("stripe_connect");
-    if (stripeConnect === "success") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      void refreshConnectStatus();
-      router.replace("/dashboard/parametres");
-    } else if (stripeConnect === "refresh") {
-      router.replace("/dashboard/parametres");
-      void handleConnectStripe();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
 
   async function handleSaveProfil(e: React.FormEvent) {
     e.preventDefault();
@@ -131,13 +80,32 @@ export default function ParametresPage() {
 
   async function handleChangePassword(e: React.FormEvent) {
     e.preventDefault();
-    if (newPassword.length < 8) return;
+    if (newPassword.length < 8 || !currentPassword || !userEmail) return;
+    if (newPassword !== confirmPassword) {
+      setPasswordStatus("mismatch");
+      return;
+    }
     setPasswordStatus("saving");
+
+    // On exige le mot de passe actuel avant tout changement : ré-authentifier
+    // l'utilisateur confirme que c'est bien le titulaire du compte qui agit,
+    // et pas quelqu'un profitant d'une session déjà ouverte.
+    const { error: reauthError } = await supabase.auth.signInWithPassword({
+      email: userEmail,
+      password: currentPassword,
+    });
+    if (reauthError) {
+      setPasswordStatus("wrongCurrent");
+      return;
+    }
+
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) {
       setPasswordStatus("error");
     } else {
+      setCurrentPassword("");
       setNewPassword("");
+      setConfirmPassword("");
       setPasswordStatus("saved");
       setTimeout(() => setPasswordStatus("idle"), 2500);
     }
@@ -234,30 +202,66 @@ export default function ParametresPage() {
       <section className="card">
         <h2 className="mb-1 font-serif text-lg">{t.parametres.securityTitle}</h2>
         <p className="mb-4 text-sm text-[var(--foreground)]/70">{t.parametres.securitySubtitle}</p>
-        <form onSubmit={handleChangePassword} className="flex flex-col gap-4 sm:flex-row sm:items-end">
-          <label className="flex-1 text-sm">
-            <span className="mb-1 block font-medium">{t.parametres.newPasswordLabel}</span>
+        <form onSubmit={handleChangePassword} className="flex flex-col gap-4">
+          <label className="text-sm">
+            <span className="mb-1 block font-medium">{t.parametres.currentPasswordLabel}</span>
             <PasswordInput
-              value={newPassword}
-              onChange={setNewPassword}
-              autoComplete="new-password"
-              minLength={8}
+              value={currentPassword}
+              onChange={setCurrentPassword}
+              autoComplete="current-password"
               showLabel={t.auth.showPassword}
             />
           </label>
-          <button
-            type="submit"
-            disabled={passwordStatus === "saving" || newPassword.length < 8}
-            className="btn-primary transition-base disabled:opacity-60"
-          >
-            {t.parametres.changePassword}
-          </button>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="text-sm">
+              <span className="mb-1 block font-medium">{t.parametres.newPasswordLabel}</span>
+              <PasswordInput
+                value={newPassword}
+                onChange={setNewPassword}
+                autoComplete="new-password"
+                minLength={8}
+                showLabel={t.auth.showPassword}
+                blockPaste
+              />
+            </label>
+            <label className="text-sm">
+              <span className="mb-1 block font-medium">{t.parametres.confirmPasswordLabel}</span>
+              <PasswordInput
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                autoComplete="new-password"
+                minLength={8}
+                showLabel={t.auth.showPassword}
+                blockPaste
+              />
+            </label>
+          </div>
+          <div>
+            <button
+              type="submit"
+              disabled={
+                passwordStatus === "saving" ||
+                newPassword.length < 8 ||
+                !currentPassword ||
+                !confirmPassword
+              }
+              className="btn-primary transition-base disabled:opacity-60"
+            >
+              {t.parametres.changePassword}
+            </button>
+          </div>
         </form>
         {passwordStatus === "saved" && (
           <p className="mt-2 text-sm text-[var(--success)]">{t.parametres.passwordSaved}</p>
         )}
         {passwordStatus === "error" && (
           <p className="mt-2 text-sm text-[var(--danger)]">{t.parametres.passwordError}</p>
+        )}
+        {passwordStatus === "mismatch" && (
+          <p className="mt-2 text-sm text-[var(--danger)]">{t.parametres.passwordMismatch}</p>
+        )}
+        {passwordStatus === "wrongCurrent" && (
+          <p className="mt-2 text-sm text-[var(--danger)]">{t.parametres.passwordWrongCurrent}</p>
         )}
       </section>
 
@@ -281,58 +285,6 @@ export default function ParametresPage() {
         <button type="button" onClick={handleExport} disabled={exporting} className="btn-secondary transition-base disabled:opacity-60">
           {t.parametres.exportCsv}
         </button>
-      </section>
-
-      <section className="card">
-        <h2 className="mb-1 font-serif text-lg">{t.parametres.connectTitle}</h2>
-        <p className="mb-4 text-sm text-[var(--foreground)]/70">{t.parametres.connectSubtitle}</p>
-
-        {!connectAccountId && (
-          <button
-            type="button"
-            onClick={handleConnectStripe}
-            disabled={connectPending}
-            className="btn-primary transition-base disabled:opacity-60"
-          >
-            {connectPending ? "…" : t.parametres.connectButton}
-          </button>
-        )}
-
-        {connectAccountId && !connectChargesEnabled && (
-          <>
-            <p className="mb-3 text-sm text-[var(--accent)]">
-              {connectDetailsSubmitted ? t.parametres.connectReviewing : t.parametres.connectIncomplete}
-            </p>
-            <button
-              type="button"
-              onClick={handleConnectStripe}
-              disabled={connectPending}
-              className="btn-primary transition-base disabled:opacity-60"
-            >
-              {connectPending ? "…" : t.parametres.connectResume}
-            </button>
-          </>
-        )}
-
-        {connectAccountId && connectChargesEnabled && (
-          <div className="flex items-center gap-2 text-sm text-[var(--success)]">
-            <span aria-hidden="true">✓</span>
-            <span>{t.parametres.connectActive}</span>
-          </div>
-        )}
-
-        {connectAccountId && (
-          <button
-            type="button"
-            onClick={refreshConnectStatus}
-            disabled={connectPending}
-            className="transition-base mt-3 block text-xs text-[var(--foreground)]/60 hover:underline disabled:opacity-60"
-          >
-            {t.parametres.connectRefresh}
-          </button>
-        )}
-
-        {connectError && <p className="mt-2 text-sm text-[var(--danger)]">{t.parametres.connectError}</p>}
       </section>
 
       <section className="card border-[var(--danger)]/40">
