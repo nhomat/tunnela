@@ -149,12 +149,31 @@ export function RevisionPanel({
   return (
     <div className="card tunnel-enter mb-8">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-serif text-lg">
-          {t.revision.title} — {bail.preneur}
-        </h2>
+        <h2 className="font-serif text-lg">{t.revision.title}</h2>
         <button type="button" onClick={onClose} className="text-sm text-[var(--foreground)]/60 hover:underline">
           {t.revision.close}
         </button>
+      </div>
+
+      <div className="mb-6 flex items-center gap-3 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent)]/[0.08] px-4 py-3">
+        <span
+          aria-hidden="true"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/15 text-[var(--accent)]"
+        >
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+            <rect x="4" y="3" width="12" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </span>
+        <div className="min-w-0">
+          <p className="text-xs uppercase tracking-wide text-[var(--foreground)]/60">
+            {t.revision.revisingLease}
+          </p>
+          <p className="truncate font-serif text-lg text-[var(--accent)]">{bail.preneur}</p>
+          {bail.adresse && (
+            <p className="truncate text-sm text-[var(--foreground)]/70">{bail.adresse}</p>
+          )}
+        </div>
       </div>
 
       {bail.indice_reference === null ? (

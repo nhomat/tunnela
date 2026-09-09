@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { calculerStatutConformite, hasFeature, limiteBaux } from "@/lib/types";
@@ -48,6 +49,7 @@ const emptyForm: FormState = {
 
 export default function BauxPage() {
   const { t } = useApp();
+  const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const { plan: effectivePlan, team } = useCurrentPlan();
   const plan = effectivePlan ?? "decouverte";
@@ -332,21 +334,25 @@ export default function BauxPage() {
             </thead>
             <tbody>
               {visibleBaux.map((bail) => (
-                <tr key={bail.id} className="border-b border-[var(--border-color)] last:border-0">
+                <tr
+                  key={bail.id}
+                  onClick={() => router.push(`/dashboard/baux/${bail.id}`)}
+                  className="cursor-pointer border-b border-[var(--border-color)] transition-base last:border-0 hover:bg-[var(--foreground)]/[0.03]"
+                >
                   <td className="px-4 py-3 font-medium">{bail.preneur}</td>
                   <td className="px-4 py-3 text-[var(--foreground)]/70">{bail.adresse ?? "—"}</td>
                   <td className="px-4 py-3">{bail.loyer_annuel.toLocaleString("fr-FR")} €</td>
                   <td className="px-4 py-3">{bail.indice}</td>
                   <td className="px-4 py-3">{bail.clause_tunnel ? "✓" : "—"}</td>
                   <td className="px-4 py-3">{bail.date_prochaine_revision ?? "—"}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <StatutBadge
                       statut={bail.statut}
                       label={t.baux.statuts[bail.statut]}
                       onClick={canRevise ? () => setRevisingId(bail.id) : undefined}
                     />
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <div className="flex gap-2">
                       {canRevise && (
                         <button

@@ -531,9 +531,14 @@ export const dictionary = {
       reviser: "Réviser",
       visibleEquipe: "Partager avec mon équipe",
       sharedByTeamTitle: "Baux partagés par mon équipe",
+      focusChangeLease: "Bail affiché",
+      focusBackToList: "Retour au portefeuille",
+      focusNotFound: "Ce bail est introuvable.",
+      focusDetailsTitle: "Détails du bail",
     },
     revision: {
       title: "Réviser ce bail",
+      revisingLease: "Bail en cours de révision",
       indiceReferenceMissing:
         "Renseigne d'abord l'indice de référence actuel de ce bail (dans le formulaire de modification) pour pouvoir calculer sa révision.",
       indiceNouveau: "Nouvel indice publié",
@@ -1235,9 +1240,14 @@ export const dictionary = {
       reviser: "Review",
       visibleEquipe: "Share with my team",
       sharedByTeamTitle: "Leases shared by my team",
+      focusChangeLease: "Lease shown",
+      focusBackToList: "Back to portfolio",
+      focusNotFound: "This lease could not be found.",
+      focusDetailsTitle: "Lease details",
     },
     revision: {
       title: "Review this lease",
+      revisingLease: "Lease being reviewed",
       indiceReferenceMissing:
         "First set this lease's current reference index (in the edit form) to compute its review.",
       indiceNouveau: "New published index",
