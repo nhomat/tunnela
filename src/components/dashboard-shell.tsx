@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import { useCurrentPlan } from "./feature-gate";
 import { DashboardSidebar, type DashboardLink } from "./dashboard-sidebar";
+import { Logo } from "./logo";
 
 const SWIPE_MIN_DISTANCE = 50;
 // Doit rester aligné avec le breakpoint `md` de Tailwind : au-delà, la
@@ -113,14 +114,20 @@ export function DashboardShell({
       {transitionLabel && (
         <div
           aria-hidden="true"
-          className={`fixed inset-0 z-[70] flex items-center justify-center bg-[var(--background)] transition-opacity ease-out md:hidden ${
+          className={`fixed inset-0 z-[70] overflow-hidden bg-[var(--background)] transition-opacity ease-out md:hidden ${
             transitionShown ? "opacity-100" : "opacity-0"
           }`}
           style={{ transitionDuration: `${TRANSITION_FADE_MS}ms` }}
         >
-          <span className="tunnel-enter font-serif text-2xl text-[var(--accent)]">
-            {transitionLabel}
-          </span>
+          <div className="page-blobs">
+            <span className="blob blob-laiton" />
+            <span className="dot-grid-2d page-dot-grid" />
+            <span className="tunnel-ring-3d page-ring-3d" />
+          </div>
+          <div className="tunnel-enter flex h-full flex-col items-center justify-center gap-4">
+            <Logo className="float-idle h-12 w-12" />
+            <span className="font-serif text-2xl text-[var(--accent)]">{transitionLabel}</span>
+          </div>
         </div>
       )}
     </>
