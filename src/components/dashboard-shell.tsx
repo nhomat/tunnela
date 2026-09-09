@@ -32,16 +32,21 @@ export function DashboardShell({
   const showTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const links: DashboardLink[] = [
+  const toolLinks: DashboardLink[] = [
     { href: "/dashboard/baux", label: t.dashboard.nav.baux },
     { href: "/dashboard/calculateur", label: t.dashboard.nav.calculateur },
     { href: "/dashboard/clause", label: t.dashboard.nav.clause },
     { href: "/dashboard/echeancier", label: t.dashboard.nav.echeancier },
     { href: "/dashboard/equipe", label: t.dashboard.nav.equipe },
     { href: "/dashboard/tutoriel", label: t.dashboard.nav.tutoriel },
-    { href: "/dashboard/parametres", label: t.dashboard.nav.parametres },
     ...(isAdmin ? [{ href: "/dashboard/admin/indices", label: t.dashboard.nav.indices }] : []),
   ];
+  const parametresLink: DashboardLink = { href: "/dashboard/parametres", label: t.dashboard.nav.parametres };
+  // La liste desktop garde Paramètres dans sa navigation verticale classique.
+  // La barre d'onglets mobile et le swipe entre outils, eux, excluent
+  // volontairement Paramètres : cette page ne reste accessible sur mobile
+  // que depuis le menu tiroir, sans swipe possible vers/depuis elle.
+  const desktopLinks: DashboardLink[] = [...toolLinks, parametresLink];
 
   useEffect(() => {
     return () => {
@@ -91,11 +96,11 @@ export function DashboardShell({
       return;
     }
 
-    const currentIndex = links.findIndex((link) => link.href === pathname);
+    const currentIndex = toolLinks.findIndex((link) => link.href === pathname);
     if (currentIndex === -1) return;
 
     const targetIndex = deltaX < 0 ? currentIndex + 1 : currentIndex - 1;
-    const target = links[targetIndex];
+    const target = toolLinks[targetIndex];
     if (!target) return;
 
     router.push(target.href);
@@ -106,7 +111,7 @@ export function DashboardShell({
 
   return (
     <>
-      <DashboardSidebar links={links} conformityRatio={conformityRatio} />
+      <DashboardSidebar links={desktopLinks} mobileLinks={toolLinks} conformityRatio={conformityRatio} />
       <main
         className="relative flex-1 px-6 py-8 md:px-10 md:py-10"
         style={{ touchAction: "pan-y" }}

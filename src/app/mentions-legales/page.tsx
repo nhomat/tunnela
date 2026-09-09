@@ -3,7 +3,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 
 export const metadata = {
-  title: "Mentions légales — Tunnela",
+  title: "Mentions légales & CGU — Tunnela",
 };
 
 export default function MentionsLegalesPage() {
@@ -11,7 +11,45 @@ export default function MentionsLegalesPage() {
     <>
       <Navbar />
       <main className="mx-auto max-w-3xl flex-1 px-6 py-16">
-        <h1 className="mb-8 font-serif text-3xl">Mentions légales</h1>
+        <h1 className="mb-8 font-serif text-3xl">Mentions légales & CGU</h1>
+
+        <Section title="Conditions générales d'utilisation (CGU)">
+          <p>
+            <strong>1. Objet.</strong> Les présentes CGU régissent l&apos;accès et
+            l&apos;utilisation du service Tunnela, un outil de gestion et de révision de baux
+            commerciaux, accessible en ligne sur abonnement.
+          </p>
+          <p className="mt-2">
+            <strong>2. Compte utilisateur.</strong> L&apos;utilisation du service nécessite la
+            création d&apos;un compte. L&apos;utilisateur est responsable de la confidentialité de
+            ses identifiants et de toute activité effectuée depuis son compte.
+          </p>
+          <p className="mt-2">
+            <strong>3. Abonnement et tarifs.</strong> Les plans, tarifs et limites (nombre de
+            baux, fonctionnalités incluses) sont détaillés sur la page{" "}
+            <Link href="/#tarifs" className="text-[var(--accent)] underline">
+              Tarifs
+            </Link>
+            . L&apos;abonnement est sans engagement et résiliable à tout moment depuis les
+            Paramètres du compte ; la résiliation prend effet à la fin de la période déjà payée.
+          </p>
+          <p className="mt-2">
+            <strong>4. Contenu généré.</strong> Les clauses, avenants et notifications générés
+            par Tunnela restent la propriété de l&apos;utilisateur, qui en reste seul responsable
+            de l&apos;usage et de la validité juridique dans son cas particulier (voir la
+            limitation de responsabilité ci-dessous).
+          </p>
+          <p className="mt-2">
+            <strong>5. Disponibilité.</strong> Tunnela met en œuvre des moyens raisonnables pour
+            assurer un accès continu au service, sans garantie de disponibilité absolue
+            (maintenance, incidents techniques indépendants de notre volonté).
+          </p>
+          <p className="mt-2">
+            <strong>6. Modification des CGU.</strong> Ces conditions peuvent être mises à jour ;
+            les utilisateurs en seront informés par email ou via l&apos;application en cas de
+            changement substantiel.
+          </p>
+        </Section>
 
         <Section title="Éditeur du site">
           <p>
@@ -96,7 +134,13 @@ export default function MentionsLegalesPage() {
         </Section>
 
         <Section title="Droit applicable">
-          <p>Les présentes mentions légales sont soumises au droit français.</p>
+          <p>Les présentes mentions légales et CGU sont soumises au droit français.</p>
+        </Section>
+
+        <Section title="Contact">
+          <p>Email : <a href="mailto:tunnela.team@gmail.com" className="text-[var(--accent)] underline">tunnela.team@gmail.com</a></p>
+          <p className="mt-2">Téléphone : [numéro de téléphone à compléter]</p>
+          <p className="mt-2">Horaires : [horaires à compléter — en dehors des heures de cours]</p>
         </Section>
       </main>
       <Footer />

@@ -14,9 +14,11 @@ export type DashboardLink = { href: string; label: string };
 
 export function DashboardSidebar({
   links,
+  mobileLinks,
   conformityRatio,
 }: {
   links: DashboardLink[];
+  mobileLinks?: DashboardLink[];
   conformityRatio?: number;
 }) {
   const { t } = useApp();
@@ -57,7 +59,7 @@ export function DashboardSidebar({
       {link.label}
     </Link>
   ));
-  const mobileNavLinks = links.map((link) => {
+  const mobileNavLinks = (mobileLinks ?? links).map((link) => {
     const active = pathname === link.href;
     return (
       <Link
@@ -70,6 +72,16 @@ export function DashboardSidebar({
       </Link>
     );
   });
+  const drawerNavLinks = links.map((link) => (
+    <Link
+      key={link.href}
+      href={link.href}
+      onClick={() => setOpen(false)}
+      className={linkClassName(link.href)}
+    >
+      {link.label}
+    </Link>
+  ));
 
   return (
     <aside className="border-b border-[var(--border-color)] md:sticky md:top-0 md:flex md:h-screen md:w-64 md:shrink-0 md:flex-col md:border-b-0 md:border-r">
@@ -164,6 +176,8 @@ export function DashboardSidebar({
             </svg>
           </button>
         </div>
+        <nav className="mb-6 flex flex-col gap-1">{drawerNavLinks}</nav>
+
         {isAdmin && plan && <AdminPlanSwitcher currentPlan={plan} />}
         <div className="mb-4 flex justify-center">
           <ThemeLangToggle compact />
@@ -175,6 +189,17 @@ export function DashboardSidebar({
         >
           {t.dashboard.logout}
         </button>
+
+        <div className="mt-8 flex flex-col gap-2 border-t border-[var(--border-color)] pt-4 text-xs text-[var(--foreground)]/60">
+          <a
+            href="/mentions-legales"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-base hover:text-[var(--accent)] hover:underline"
+          >
+            {t.nav.legal}
+          </a>
+        </div>
       </div>
     </aside>
   );
