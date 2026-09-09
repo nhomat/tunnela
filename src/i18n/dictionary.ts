@@ -174,30 +174,82 @@ export const dictionary = {
     },
     faq: {
       title: "Questions fréquentes",
+      subtitle:
+        "Tout ce qu'il faut savoir avant de se lancer — et si votre question n'y est pas, on répond en direct.",
+      seeAll: "Voir toutes les questions",
+      contactTitle: "Une autre question ?",
+      contactBody: "Écrivez-nous, on répond personnellement — pas de bot, pas de ticket perdu.",
+      contactCta: "Nous écrire",
       items: [
         {
+          category: "Général",
           q: "Qu'est-ce qu'une clause tunnel ?",
           a: "C'est une clause de variation encadrée du loyer, introduite par l'article L.145-38-1 du Code de commerce, qui fixe un plancher et un plafond à la révision du loyer d'un bail commercial.",
         },
         {
+          category: "Général",
+          q: "Qui peut utiliser Tunnela ?",
+          a: "Cabinets d'avocats, gestionnaires de patrimoine, foncières et bailleurs directs : toute structure qui gère des baux commerciaux et doit produire des révisions ou des clauses tunnel conformes.",
+        },
+        {
+          category: "Général",
+          q: "Combien de temps faut-il pour commencer ?",
+          a: "Quelques minutes : créez un compte, ajoutez votre premier bail, et le calculateur et le générateur de clause sont immédiatement utilisables.",
+        },
+        {
+          category: "Tarifs & facturation",
           q: "Puis-je changer de plan à tout moment ?",
           a: "Oui, sans engagement. Vous pouvez passer à un plan supérieur ou inférieur depuis votre tableau de bord à tout moment.",
         },
         {
-          q: "Les textes générés sont-ils juridiquement valables ?",
-          a: "Les clauses et avenants générés citent explicitement l'article L.145-38-1 et suivent une structure juridique standard. Nous recommandons une relecture par votre conseil habituel avant signature pour les situations complexes.",
-        },
-        {
+          category: "Tarifs & facturation",
           q: "Que se passe-t-il si je dépasse la limite de baux de mon plan ?",
           a: "Vous ne pouvez plus ajouter de nouveau bail tant que vous n'avez pas supprimé un bail existant ou changé de plan — vos baux existants restent accessibles.",
         },
         {
+          category: "Tarifs & facturation",
+          q: "Puis-je annuler mon abonnement à tout moment ?",
+          a: "Oui, sans préavis ni frais cachés. L'annulation prend effet à la fin de la période en cours, depuis votre tableau de bord.",
+        },
+        {
+          category: "Tarifs & facturation",
+          q: "Qu'est-ce que l'add-on Coop ?",
+          a: "C'est un supplément qui s'ajoute à un abonnement Cabinet, Portefeuille ou Foncière existant : il permet à plusieurs collègues de travailler sous le même abonnement, chacun avec son propre compte, avec partage sélectif de dossiers et une messagerie d'équipe.",
+        },
+        {
+          category: "Juridique & conformité",
+          q: "Les textes générés sont-ils juridiquement valables ?",
+          a: "Les clauses et avenants générés citent explicitement l'article L.145-38-1 et suivent une structure juridique standard. Nous recommandons une relecture par votre conseil habituel avant signature pour les situations complexes.",
+        },
+        {
+          category: "Juridique & conformité",
+          q: "Quelle est la différence entre ICC, ILC et ILAT ?",
+          a: "L'ICC (indice du coût de la construction) est l'ancien indice, aujourd'hui mal adapté aux locaux commerciaux. L'ILC (activités commerciales et artisanales) et l'ILAT (activités tertiaires) sont les indices de référence actuels — Tunnela vous aide à identifier lequel s'applique à votre bail.",
+        },
+        {
+          category: "Juridique & conformité",
+          q: "Tunnela peut-il générer une clause asymétrique ?",
+          a: "Oui, le générateur propose aussi bien une clause symétrique (encadrement à la hausse et à la baisse) qu'une clause asymétrique protégeant le preneur d'une baisse du loyer en dessous du loyer en cours.",
+        },
+        {
+          category: "Sécurité & données",
+          q: "Mes données sont-elles sécurisées ?",
+          a: "Oui : hébergement chiffré, accès protégé par authentification, et isolation stricte des données entre chaque compte grâce à des règles de sécurité au niveau de la base de données.",
+        },
+        {
+          category: "Sécurité & données",
+          q: "Puis-je exporter mes données si je pars ?",
+          a: "Oui, vos baux et documents générés restent exportables en PDF à tout moment, sans engagement de durée ni pénalité de sortie.",
+        },
+        {
+          category: "Fonctionnement",
           q: "L'interface est-elle disponible en anglais ?",
           a: "Oui, un sélecteur FR/EN traduit toute l'interface. Les textes juridiques générés (clause tunnel, avenant) restent toujours en français, quelle que soit la langue choisie.",
         },
         {
-          q: "Qu'est-ce que l'add-on Coop ?",
-          a: "C'est un supplément qui s'ajoute à un abonnement Cabinet, Portefeuille ou Foncière existant : il permet à plusieurs collègues de travailler sous le même abonnement, chacun avec son propre compte, avec partage sélectif de dossiers et une messagerie d'équipe.",
+          category: "Fonctionnement",
+          q: "Puis-je inviter des collègues sur mon compte ?",
+          a: "Oui, via l'add-on Coop : chaque collègue invité dispose de son propre compte et accès, avec partage sélectif des dossiers.",
         },
       ],
     },
@@ -702,30 +754,82 @@ export const dictionary = {
     },
     faq: {
       title: "Frequently asked questions",
+      subtitle:
+        "Everything you need to know before getting started — and if your question isn't here, we answer directly.",
+      seeAll: "See all questions",
+      contactTitle: "Another question?",
+      contactBody: "Write to us, we answer personally — no bot, no lost ticket.",
+      contactCta: "Write to us",
       items: [
         {
+          category: "General",
           q: "What is a tunnel clause?",
           a: "It's a rent-collar clause, introduced by Article L.145-38-1 of the French Commercial Code, that sets a floor and a cap on a commercial lease's rent review.",
         },
         {
+          category: "General",
+          q: "Who can use Tunnela?",
+          a: "Law firms, asset managers, property companies and direct landlords: any organization that manages commercial leases and needs to produce compliant rent reviews or tunnel clauses.",
+        },
+        {
+          category: "General",
+          q: "How long does it take to get started?",
+          a: "A few minutes: create an account, add your first lease, and the calculator and clause generator are immediately usable.",
+        },
+        {
+          category: "Pricing & billing",
           q: "Can I change plans at any time?",
           a: "Yes, with no commitment. You can upgrade or downgrade from your dashboard at any time.",
         },
         {
-          q: "Are the generated documents legally valid?",
-          a: "Generated clauses and amendments explicitly cite Article L.145-38-1 and follow a standard legal structure. We recommend a review by your usual counsel before signing for complex situations.",
-        },
-        {
+          category: "Pricing & billing",
           q: "What happens if I exceed my plan's lease limit?",
           a: "You won't be able to add a new lease until you remove one or upgrade — your existing leases stay accessible.",
         },
         {
+          category: "Pricing & billing",
+          q: "Can I cancel my subscription at any time?",
+          a: "Yes, with no notice period or hidden fees. Cancellation takes effect at the end of the current billing period, from your dashboard.",
+        },
+        {
+          category: "Pricing & billing",
+          q: "What is the Coop add-on?",
+          a: "It's a supplement that attaches to an existing Cabinet, Portefeuille, or Foncière subscription: it lets several colleagues work under the same subscription, each with their own account, with selective file sharing and team messaging.",
+        },
+        {
+          category: "Legal & compliance",
+          q: "Are the generated documents legally valid?",
+          a: "Generated clauses and amendments explicitly cite Article L.145-38-1 and follow a standard legal structure. We recommend a review by your usual counsel before signing for complex situations.",
+        },
+        {
+          category: "Legal & compliance",
+          q: "What's the difference between ICC, ILC and ILAT?",
+          a: "ICC (construction cost index) is the old index, now poorly suited to commercial premises. ILC (commercial and craft activities) and ILAT (tertiary activities) are the current reference indices — Tunnela helps you identify which one applies to your lease.",
+        },
+        {
+          category: "Legal & compliance",
+          q: "Can Tunnela generate an asymmetric clause?",
+          a: "Yes, the generator offers both a symmetric clause (capped both up and down) and an asymmetric clause protecting the tenant from a drop below the current rent.",
+        },
+        {
+          category: "Security & data",
+          q: "Is my data secure?",
+          a: "Yes: encrypted hosting, authentication-protected access, and strict data isolation between each account through database-level security rules.",
+        },
+        {
+          category: "Security & data",
+          q: "Can I export my data if I leave?",
+          a: "Yes, your leases and generated documents remain exportable as PDF at any time, with no commitment period or exit penalty.",
+        },
+        {
+          category: "How it works",
           q: "Is the interface available in English?",
           a: "Yes, an FR/EN switch translates the whole interface. Generated legal texts (tunnel clause, amendment) always stay in French, whatever language you choose.",
         },
         {
-          q: "What is the Coop add-on?",
-          a: "It's a supplement that attaches to an existing Cabinet, Portefeuille, or Foncière subscription: it lets several colleagues work under the same subscription, each with their own account, with selective file sharing and team messaging.",
+          category: "How it works",
+          q: "Can I invite colleagues to my account?",
+          a: "Yes, via the Coop add-on: each invited colleague gets their own account and access, with selective file sharing.",
         },
       ],
     },

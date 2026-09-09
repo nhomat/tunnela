@@ -164,7 +164,7 @@ function PageSummary() {
     { href: "#comment-ca-marche", label: t.nav.howItWorks },
     { href: "#tarifs", label: t.nav.pricing },
     { href: "#comparateur", label: t.nav.comparator },
-    { href: "#faq", label: t.nav.faq },
+    { href: "/faq", label: t.nav.faq },
   ];
 
   return (
@@ -172,15 +172,25 @@ function PageSummary() {
       aria-label={t.nav.summary}
       className="sticky top-0 z-10 flex gap-2.5 overflow-x-auto border-b border-[var(--border-color)] bg-[var(--background)]/95 px-4 py-3 backdrop-blur md:hidden"
     >
-      {items.map((item) => (
-        <a
-          key={item.href}
-          href={item.href}
-          className="transition-base shrink-0 rounded-full border border-[var(--border-color)] px-4 py-2.5 text-sm font-medium hover:border-[var(--accent)]"
-        >
-          {item.label}
-        </a>
-      ))}
+      {items.map((item) =>
+        item.href.startsWith("#") ? (
+          <a
+            key={item.href}
+            href={item.href}
+            className="transition-base shrink-0 rounded-full border border-[var(--border-color)] px-4 py-2.5 text-sm font-medium hover:border-[var(--accent)]"
+          >
+            {item.label}
+          </a>
+        ) : (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="transition-base shrink-0 rounded-full border border-[var(--border-color)] px-4 py-2.5 text-sm font-medium hover:border-[var(--accent)]"
+          >
+            {item.label}
+          </Link>
+        )
+      )}
     </nav>
   );
 }
@@ -188,12 +198,13 @@ function PageSummary() {
 function Faq() {
   const { t } = useApp();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const preview = t.faq.items.slice(0, 4);
 
   return (
     <section id="faq" className="mx-auto max-w-3xl px-6 py-20">
       <h2 className="mb-10 text-center font-serif text-3xl font-medium">{t.faq.title}</h2>
       <div className="flex flex-col gap-3">
-        {t.faq.items.map((item, i) => {
+        {preview.map((item, i) => {
           const open = openIndex === i;
           return (
             <TiltCard key={item.q}>
@@ -226,6 +237,11 @@ function Faq() {
             </TiltCard>
           );
         })}
+      </div>
+      <div className="mt-8 text-center">
+        <Link href="/faq" className="btn-secondary transition-base">
+          {t.faq.seeAll} →
+        </Link>
       </div>
     </section>
   );

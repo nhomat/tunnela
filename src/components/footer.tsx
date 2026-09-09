@@ -27,7 +27,7 @@ export function Footer() {
 
         <FooterColumn title={t.footer.resourcesHeading}>
           <FooterLink href="/article-clause-tunnel">{t.footer.linkArticle}</FooterLink>
-          <FooterLink href="/#faq">{t.footer.linkFaq}</FooterLink>
+          <FooterLink href="/faq">{t.footer.linkFaq}</FooterLink>
           <FooterLink href="/reserver-un-call">{t.footer.linkBookCall}</FooterLink>
           <FooterLink href="/mentions-legales">{t.footer.linkMentionsLegales}</FooterLink>
         </FooterColumn>
