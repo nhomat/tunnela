@@ -62,25 +62,16 @@ export function DashboardSidebar({
           type="button"
           aria-label={t.nav.menu}
           aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => setOpen(true)}
           className="transition-base flex h-9 w-9 shrink-0 items-center justify-center rounded-md hover:bg-[var(--foreground)]/[0.06] md:hidden"
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            {open ? (
-              <path
-                d="M5 5l10 10M15 5L5 15"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            ) : (
-              <path
-                d="M3 5h14M3 10h14M3 15h14"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            )}
+            <path
+              d="M3 5h14M3 10h14M3 15h14"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
           </svg>
         </button>
       </div>
@@ -91,20 +82,63 @@ export function DashboardSidebar({
         {navLinks}
       </nav>
 
-      <div
-        className={`border-t border-[var(--border-color)] px-6 py-4 md:mt-auto md:border-t-0 md:py-6 ${
-          open ? "block" : "hidden"
-        } md:block`}
-      >
+      {/* Desktop : bloc fixe en bas de la sidebar, toujours visible. */}
+      <div className="hidden px-6 py-6 md:mt-auto md:block">
         {isAdmin && plan && <AdminPlanSwitcher currentPlan={plan} />}
         {typeof conformityRatio === "number" && (
-          <div className="mb-6 hidden md:block">
+          <div className="mb-6">
             <p className="mb-2 text-xs uppercase tracking-wide text-[var(--foreground)]/60">
               {t.dashboard.conformity}
             </p>
             <ConformityRing ratio={conformityRatio} />
           </div>
         )}
+        <div className="mb-4 flex justify-center">
+          <ThemeLangToggle compact />
+        </div>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="btn-secondary transition-base w-full px-3.5 py-1.5 text-xs"
+        >
+          {t.dashboard.logout}
+        </button>
+      </div>
+
+      {/* Mobile : tiroir qui glisse depuis la droite. */}
+      <div
+        aria-hidden="true"
+        onClick={() => setOpen(false)}
+        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ease-out md:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        className={`fixed inset-y-0 right-0 z-50 w-72 max-w-[85vw] overflow-y-auto border-l border-[var(--border-color)] bg-[var(--background)] px-6 py-6 shadow-xl transition-transform duration-300 ease-out md:hidden ${
+          open ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="mb-6 flex items-center justify-between">
+          <span className="font-serif text-lg">{t.nav.menu}</span>
+          <button
+            type="button"
+            aria-label={t.revision.close}
+            onClick={() => setOpen(false)}
+            className="transition-base flex h-9 w-9 items-center justify-center rounded-md hover:bg-[var(--foreground)]/[0.06]"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="M5 5l10 10M15 5L5 15"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+        {isAdmin && plan && <AdminPlanSwitcher currentPlan={plan} />}
         <div className="mb-4 flex justify-center">
           <ThemeLangToggle compact />
         </div>

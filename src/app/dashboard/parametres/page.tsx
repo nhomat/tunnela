@@ -16,7 +16,7 @@ import type { Bail } from "@/lib/types";
 const SPINNER_CYCLE_MS = 900;
 
 export default function ParametresPage() {
-  const { t } = useApp();
+  const { t, swipeTransitionEnabled, setSwipeTransitionEnabled } = useApp();
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const { plan } = useCurrentPlan();
@@ -259,6 +259,20 @@ export default function ParametresPage() {
         {passwordStatus === "error" && (
           <p className="mt-2 text-sm text-[var(--danger)]">{t.parametres.passwordError}</p>
         )}
+      </section>
+
+      <section className="card">
+        <h2 className="mb-1 font-serif text-lg">{t.parametres.interfaceTitle}</h2>
+        <p className="mb-4 text-sm text-[var(--foreground)]/70">{t.parametres.interfaceSubtitle}</p>
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={swipeTransitionEnabled}
+            onChange={(e) => setSwipeTransitionEnabled(e.target.checked)}
+          />
+          {t.parametres.swipeTransitionLabel}
+        </label>
+        <p className="mt-1 text-xs text-[var(--foreground)]/60">{t.parametres.swipeTransitionHint}</p>
       </section>
 
       <section className="card">
