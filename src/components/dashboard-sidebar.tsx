@@ -35,18 +35,36 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
     router.refresh();
   }
 
+  const navLinks = links.map((link) => {
+    const active = pathname === link.href;
+    return (
+      <Link
+        key={link.href}
+        href={link.href}
+        className={`transition-base whitespace-nowrap rounded-md px-3 py-2 text-sm ${
+          active
+            ? "bg-[var(--foreground)]/[0.06] font-medium text-[var(--accent)]"
+            : "hover:bg-[var(--foreground)]/[0.04]"
+        }`}
+      >
+        {link.label}
+      </Link>
+    );
+  });
+
   return (
     <aside className="border-b border-[var(--border-color)] md:sticky md:top-0 md:flex md:h-screen md:w-64 md:shrink-0 md:flex-col md:border-b-0 md:border-r">
-      <div className="flex items-center justify-between px-6 py-4 md:block">
-        <Link href="/dashboard/baux" className="transition-base float-idle inline-block">
+      <div className="flex items-center gap-3 px-4 py-3 md:block md:px-6 md:py-4">
+        <Link href="/dashboard/baux" className="transition-base float-idle shrink-0">
           <LogoMark />
         </Link>
+        <nav className="flex flex-1 gap-1 overflow-x-auto md:hidden">{navLinks}</nav>
         <button
           type="button"
           aria-label={t.nav.menu}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="transition-base flex h-9 w-9 items-center justify-center rounded-md hover:bg-[var(--foreground)]/[0.06] md:hidden"
+          className="transition-base flex h-9 w-9 shrink-0 items-center justify-center rounded-md hover:bg-[var(--foreground)]/[0.06] md:hidden"
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             {open ? (
@@ -68,23 +86,8 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
         </button>
       </div>
 
-      <nav className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-1 md:flex-col md:overflow-visible md:px-3 md:pb-0">
-        {links.map((link) => {
-          const active = pathname === link.href;
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`transition-base whitespace-nowrap rounded-md px-3 py-2 text-sm ${
-                active
-                  ? "bg-[var(--foreground)]/[0.06] font-medium text-[var(--accent)]"
-                  : "hover:bg-[var(--foreground)]/[0.04]"
-              }`}
-            >
-              {link.label}
-            </Link>
-          );
-        })}
+      <nav className="hidden gap-1 px-3 pb-3 md:flex md:flex-1 md:flex-col md:overflow-visible md:px-3 md:pb-0">
+        {navLinks}
       </nav>
 
       <div

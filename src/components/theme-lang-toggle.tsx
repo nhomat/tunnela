@@ -6,14 +6,14 @@ export function ThemeLangToggle({ compact = false }: { compact?: boolean }) {
   const { theme, toggleTheme, locale, setLocale } = useApp();
   // Par défaut, les boutons sont petits sur mobile (en-tête serré) et
   // reprennent leur taille normale à partir du breakpoint sm. `compact`
-  // force la petite taille partout (utilisé dans la sidebar du dashboard,
-  // toujours étroite).
+  // garde une taille fixe, un peu plus généreuse que le minimum mobile
+  // (utilisé dans la sidebar du dashboard, toujours étroite).
   const sizeClasses = compact
-    ? "h-7 w-7 text-[10px]"
+    ? "h-8 w-8 text-xs"
     : "h-7 w-7 text-[10px] sm:h-9 sm:w-9 sm:text-xs";
 
   return (
-    <div className={`flex items-center gap-1.5 ${compact ? "" : "sm:gap-2"}`}>
+    <div className={`flex items-center gap-2 ${compact ? "" : "sm:gap-2"}`}>
       <button
         type="button"
         onClick={() => setLocale(locale === "fr" ? "en" : "fr")}
