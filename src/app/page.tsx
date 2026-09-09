@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useApp } from "@/components/providers";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { Pricing } from "@/components/pricing";
+import { PricingTeaser } from "@/components/pricing";
 import { PlanComparator } from "@/components/plan-comparator";
 import { Reveal } from "@/components/reveal";
 import { TiltCard } from "@/components/tilt-card";
@@ -24,6 +24,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
+      <PageSummary />
       <main className="flex-1">
         <section className="relative overflow-hidden">
           <div className="page-blobs">
@@ -80,7 +81,7 @@ export default function Home() {
         <HowItWorks />
 
         <Reveal>
-          <Pricing />
+          <PricingTeaser />
         </Reveal>
 
         <Reveal>
@@ -98,9 +99,10 @@ export default function Home() {
 
 function HowItWorks() {
   const { t } = useApp();
+  const [openStep, setOpenStep] = useState<number | null>(null);
 
   return (
-    <section className="border-y border-[var(--border-color)] bg-[var(--foreground)]/[0.02] py-20">
+    <section id="comment-ca-marche" className="border-y border-[var(--border-color)] bg-[var(--foreground)]/[0.02] py-20">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
           <div className="mb-12 text-center">
@@ -109,21 +111,77 @@ function HowItWorks() {
           </div>
         </Reveal>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {t.howItWorks.steps.map((step, i) => (
-            <Reveal key={step.title} delay={i * 110}>
-              <div
-                className="btn-primary float-idle mb-3 flex h-9 w-9 items-center justify-center !rounded-full p-0 font-serif text-sm"
-                style={{ animationDelay: `${i * 0.3}s` }}
-              >
-                {i + 1}
-              </div>
-              <h3 className="font-serif text-lg">{step.title}</h3>
-              <p className="mt-2 text-sm text-[var(--foreground)]/70">{step.body}</p>
-            </Reveal>
-          ))}
+          {t.howItWorks.steps.map((step, i) => {
+            const open = openStep === i;
+            return (
+              <Reveal key={step.title} delay={i * 110}>
+                <button
+                  type="button"
+                  onClick={() => setOpenStep(open ? null : i)}
+                  aria-expanded={open}
+                  className="transition-base w-full text-left"
+                >
+                  <div
+                    className="btn-primary float-idle mb-3 flex h-9 w-9 items-center justify-center !rounded-full p-0 font-serif text-sm"
+                    style={{ animationDelay: `${i * 0.3}s` }}
+                  >
+                    {i + 1}
+                  </div>
+                  <h3 className="flex items-center gap-2 font-serif text-lg">
+                    {step.title}
+                    <span
+                      aria-hidden="true"
+                      className={`transition-base flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/10 text-xs text-[var(--accent)] ${
+                        open ? "rotate-45" : ""
+                      }`}
+                    >
+                      +
+                    </span>
+                  </h3>
+                  <p className="mt-2 text-sm text-[var(--foreground)]/70">{step.body}</p>
+                  <div
+                    className="grid transition-[grid-template-rows] duration-300 ease-out"
+                    style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+                  >
+                    <div className="overflow-hidden">
+                      <p className="mt-2 text-sm text-[var(--foreground)]/60">{step.detail}</p>
+                    </div>
+                  </div>
+                </button>
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>
+  );
+}
+
+function PageSummary() {
+  const { t } = useApp();
+  const items = [
+    { href: "#fonctionnalites", label: t.nav.features },
+    { href: "#comment-ca-marche", label: t.nav.howItWorks },
+    { href: "#tarifs", label: t.nav.pricing },
+    { href: "#comparateur", label: t.nav.comparator },
+    { href: "#faq", label: t.nav.faq },
+  ];
+
+  return (
+    <nav
+      aria-label={t.nav.summary}
+      className="sticky top-0 z-10 flex gap-2 overflow-x-auto border-b border-[var(--border-color)] bg-[var(--background)]/95 px-4 py-2 backdrop-blur md:hidden"
+    >
+      {items.map((item) => (
+        <a
+          key={item.href}
+          href={item.href}
+          className="transition-base shrink-0 rounded-full border border-[var(--border-color)] px-3 py-1.5 text-xs hover:border-[var(--accent)]"
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
   );
 }
 

@@ -95,3 +95,43 @@ export function Pricing({
     </section>
   );
 }
+
+// Version publique de la landing page : pas de prix ni de bouton d'achat
+// direct — les tarifs détaillés ne s'affichent qu'une fois le compte créé,
+// dans /dashboard/abonnement.
+export function PricingTeaser() {
+  const { t } = useApp();
+
+  return (
+    <section id="tarifs" className="mx-auto max-w-6xl px-6 py-20">
+      <div className="mb-12 text-center">
+        <h2 className="font-serif text-3xl font-medium">{t.pricing.title}</h2>
+        <p className="mt-2 text-[var(--foreground)]/70">{t.pricing.teaserSubtitle}</p>
+      </div>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {PLANS.map((plan) => {
+          const limiteLabel =
+            plan.limiteBaux === null
+              ? `${t.pricing.beyond} 100 ${t.pricing.leases}`
+              : `${t.pricing.upTo} ${plan.limiteBaux} ${t.pricing.leases}`;
+
+          return (
+            <Link
+              key={plan.id}
+              href="/signup"
+              className="card card-hover tunnel-enter flex flex-col gap-2"
+            >
+              <h3 className="font-serif text-xl">{plan.nom}</h3>
+              <p className="text-sm text-[var(--foreground)]/70">{limiteLabel}</p>
+            </Link>
+          );
+        })}
+      </div>
+      <div className="mt-10 text-center">
+        <Link href="/signup" className="btn-primary transition-base">
+          {t.pricing.teaserCta}
+        </Link>
+      </div>
+    </section>
+  );
+}

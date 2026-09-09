@@ -6,7 +6,11 @@ export const dictionary = {
   fr: {
     nav: {
       features: "Fonctionnalités",
+      howItWorks: "Comment ça marche",
       pricing: "Tarifs",
+      comparator: "Comparateur",
+      faq: "FAQ",
+      summary: "Sommaire",
       article: "L'article L.145-38-1",
       login: "Connexion",
       signup: "Essayer gratuitement",
@@ -42,6 +46,8 @@ export const dictionary = {
     pricing: {
       title: "Tarifs",
       subtitle: "Sans engagement, annulable à tout moment.",
+      teaserSubtitle: "Créez un compte gratuit pour découvrir le détail des tarifs.",
+      teaserCta: "Créer un compte pour voir les tarifs",
       perMonth: "/ mois",
       perMonthPerPerson: "/ mois par personne",
       free: "Gratuit",
@@ -141,18 +147,26 @@ export const dictionary = {
         {
           title: "Ajoutez vos baux",
           body: "Renseignez preneur, loyer, indice et date de révision — ou importez votre portefeuille existant.",
+          detail:
+            "Un bail complet en moins d'une minute : type de bail, indice de référence (ILC, ILAT ou ICC), périodicité et notes libres. L'import CSV reprend automatiquement les colonnes de votre tableur existant.",
         },
         {
           title: "Calculez la révision",
           body: "Le calculateur applique l'indice ILC/ILAT et la clause tunnel, et affiche le nouveau loyer exact.",
+          detail:
+            "Le calcul s'appuie sur le dernier indice publié par l'INSEE, contrôle les bornes plancher/plafond de la clause tunnel, et affiche l'écart en euros et en pourcentage avant validation.",
         },
         {
           title: "Générez le document",
           body: "Clause tunnel ou avenant ICC → ILC : un texte juridique complet, prêt à signer.",
+          detail:
+            "Le texte reprend automatiquement les données du bail (parties, adresse, loyer, indice) et respecte la structure attendue — à relire et personnaliser avant envoi ou signature.",
         },
         {
           title: "Restez à jour",
           body: "Une alerte vous prévient avant chaque échéance de révision, portefeuille entier compris.",
+          detail:
+            "Choisissez le délai d'alerte (7 à 90 jours avant échéance) et recevez un email récapitulatif ; toutes les échéances du portefeuille sont visibles en un coup d'œil dans l'échéancier.",
         },
       ],
     },
@@ -519,7 +533,11 @@ export const dictionary = {
   en: {
     nav: {
       features: "Features",
+      howItWorks: "How it works",
       pricing: "Pricing",
+      comparator: "Compare plans",
+      faq: "FAQ",
+      summary: "Contents",
       article: "Article L.145-38-1",
       login: "Log in",
       signup: "Try for free",
@@ -555,6 +573,8 @@ export const dictionary = {
     pricing: {
       title: "Pricing",
       subtitle: "No commitment, cancel anytime.",
+      teaserSubtitle: "Create a free account to see the full pricing details.",
+      teaserCta: "Create an account to see pricing",
       perMonth: "/ month",
       perMonthPerPerson: "/ month per person",
       free: "Free",
@@ -653,18 +673,26 @@ export const dictionary = {
         {
           title: "Add your leases",
           body: "Enter tenant, rent, index and review date — or import your existing portfolio.",
+          detail:
+            "A complete lease in under a minute: lease type, reference index (ILC, ILAT or ICC), frequency and free-form notes. CSV import automatically maps the columns from your existing spreadsheet.",
         },
         {
           title: "Calculate the review",
           body: "The calculator applies the ILC/ILAT index and the tunnel clause, and shows the exact new rent.",
+          detail:
+            "The calculation uses the latest index published by INSEE, checks the tunnel clause's floor/ceiling bounds, and shows the change in euros and percent before you confirm.",
         },
         {
           title: "Generate the document",
           body: "Tunnel clause or ICC → ILC amendment: a complete, signature-ready legal text.",
+          detail:
+            "The text automatically pulls in the lease's data (parties, address, rent, index) and follows the expected structure — review and personalize before sending or signing.",
         },
         {
           title: "Stay on schedule",
           body: "An alert warns you before every review date, across your whole portfolio.",
+          detail:
+            "Choose the alert lead time (7 to 90 days before the deadline) and get a summary email; every review date across your portfolio is visible at a glance in the calendar.",
         },
       ],
     },

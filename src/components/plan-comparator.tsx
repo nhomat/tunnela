@@ -226,12 +226,6 @@ export function PlanComparator({ onSelect }: { onSelect?: (plan: Plan) => void }
       </div>
 
       <div className="card card-hover mx-auto mt-10 flex max-w-2xl flex-col items-center gap-3 border-[var(--accent)]/40 bg-[var(--accent)]/[0.06] text-center">
-        <span
-          aria-hidden="true"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent)]/15 text-lg text-[var(--accent)]"
-        >
-          👥
-        </span>
         <p className="text-base text-[var(--foreground)]/85">
           {t.pricing.addonNote.replace("{nom}", COOP_ADDON_NOM).replace("{prix}", String(COOP_ADDON_PRIX_PAR_PERSONNE))}
         </p>

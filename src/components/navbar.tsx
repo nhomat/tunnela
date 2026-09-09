@@ -29,9 +29,7 @@ export function Navbar() {
           </Link>
         </nav>
         <div className="flex items-center gap-3">
-          <div className="hidden sm:block">
-            <ThemeLangToggle />
-          </div>
+          <ThemeLangToggle compact />
           <Link href="/login" className="hidden text-sm sm:inline transition-base hover:text-[var(--accent)]">
             {t.nav.login}
           </Link>
@@ -95,9 +93,6 @@ export function Navbar() {
           >
             {t.nav.login}
           </Link>
-          <div className="px-2 py-2">
-            <ThemeLangToggle />
-          </div>
         </nav>
       )}
     </header>
