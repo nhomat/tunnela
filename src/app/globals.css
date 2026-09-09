@@ -65,6 +65,7 @@
 html {
   color-scheme: light;
   overflow-x: hidden;
+  overscroll-behavior-x: none;
 }
 
 html[data-theme="dark"] {
@@ -911,6 +912,14 @@ h4 {
   background: var(--surface);
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(13, 22, 32, 0.04);
+}
+
+/* Le contenu du dashboard mobile est en touch-action: pan-y (pour la
+   navigation par swipe) : un tableau qui défile horizontalement doit
+   explicitement se réautoriser dans les deux sens pour rester utilisable
+   au doigt. */
+[data-hscroll] {
+  touch-action: pan-x pan-y;
 }
 
 .card-hover {

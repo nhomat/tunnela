@@ -104,6 +104,7 @@ export function DashboardShell({
       <DashboardSidebar links={links} conformityRatio={conformityRatio} />
       <main
         className="relative flex-1 px-6 py-8 md:px-10 md:py-10"
+        style={{ touchAction: "pan-y" }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
