@@ -6,7 +6,6 @@ import { useApp } from "@/components/providers";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Reveal } from "@/components/reveal";
-import { PageIcon3D } from "@/components/page-icon-3d";
 import { PLANS } from "@/lib/stripe";
 import type { Plan } from "@/lib/types";
 
@@ -58,18 +57,6 @@ export function OffreDetailClient() {
             >
               {t.planDetail.backToComparator}
             </Link>
-            <div className="mb-4 flex justify-center">
-              <PageIcon3D>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                  <path
-                    d="M10 2.5l1.8 4.4 4.7 0.4-3.6 3 1.1 4.6L10 12.6l-4 2.3 1.1-4.6-3.6-3 4.7-.4L10 2.5Z"
-                    stroke="currentColor"
-                    strokeWidth="1.3"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </PageIcon3D>
-            </div>
             <p className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--accent)]">
               {plan.nom}
             </p>
