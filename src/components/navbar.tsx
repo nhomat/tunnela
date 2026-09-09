@@ -28,12 +28,15 @@ export function Navbar() {
             {t.nav.article}
           </Link>
         </nav>
-        <div className="flex items-center gap-3">
-          <ThemeLangToggle compact />
+        <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeLangToggle />
           <Link href="/login" className="hidden text-sm sm:inline transition-base hover:text-[var(--accent)]">
             {t.nav.login}
           </Link>
-          <Link href="/signup" className="btn-primary transition-base text-sm">
+          <Link
+            href="/signup"
+            className="btn-primary transition-base !px-3 !py-2 text-xs sm:!px-5 sm:!py-2.5 sm:text-sm"
+          >
             {t.nav.signup}
           </Link>
           <button

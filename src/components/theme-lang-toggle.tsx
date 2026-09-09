@@ -4,14 +4,20 @@ import { useApp } from "./providers";
 
 export function ThemeLangToggle({ compact = false }: { compact?: boolean }) {
   const { theme, toggleTheme, locale, setLocale } = useApp();
-  const sizeClasses = compact ? "px-2.5 py-1 text-[11px]" : "px-3 py-1.5 text-xs";
+  // Par défaut, les boutons sont petits sur mobile (en-tête serré) et
+  // reprennent leur taille normale à partir du breakpoint sm. `compact`
+  // force la petite taille partout (utilisé dans la sidebar du dashboard,
+  // toujours étroite).
+  const sizeClasses = compact
+    ? "h-7 w-7 text-[10px]"
+    : "h-7 w-7 text-[10px] sm:h-9 sm:w-9 sm:text-xs";
 
   return (
-    <div className="flex items-center gap-2">
+    <div className={`flex items-center gap-1.5 ${compact ? "" : "sm:gap-2"}`}>
       <button
         type="button"
         onClick={() => setLocale(locale === "fr" ? "en" : "fr")}
-        className={`btn-secondary transition-base uppercase tracking-wide ${sizeClasses}`}
+        className={`btn-secondary transition-base flex items-center justify-center !rounded-full !p-0 font-medium uppercase tracking-wide ${sizeClasses}`}
         aria-label="Changer de langue"
       >
         {locale === "fr" ? "EN" : "FR"}
@@ -19,7 +25,7 @@ export function ThemeLangToggle({ compact = false }: { compact?: boolean }) {
       <button
         type="button"
         onClick={toggleTheme}
-        className={`btn-secondary transition-base ${sizeClasses}`}
+        className={`btn-secondary transition-base flex items-center justify-center !rounded-full !p-0 ${sizeClasses}`}
         aria-label={theme === "light" ? "Activer le mode sombre" : "Activer le mode clair"}
       >
         {theme === "light" ? "🌙" : "☀️"}
