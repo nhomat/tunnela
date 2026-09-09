@@ -15,10 +15,10 @@ export default function Home() {
   const { t } = useApp();
 
   const features = [
-    t.features.portfolio,
-    t.features.calculator,
-    t.features.generator,
-    t.features.alerts,
+    { key: "portfolio", ...t.features.portfolio },
+    { key: "calculator", ...t.features.calculator },
+    { key: "generator", ...t.features.generator },
+    { key: "alerts", ...t.features.alerts },
   ];
 
   return (
@@ -67,12 +67,14 @@ export default function Home() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((f, i) => (
               <Reveal key={f.title} delay={i * 90}>
-                <TiltCard>
-                  <div className="card card-hover tilt-target">
-                    <h3 className="font-serif text-lg">{f.title}</h3>
-                    <p className="mt-2 text-sm text-[var(--foreground)]/70">{f.body}</p>
-                  </div>
-                </TiltCard>
+                <Link href={`/fonctionnalites/${f.key}`} className="block">
+                  <TiltCard>
+                    <div className="card card-hover tilt-target">
+                      <h3 className="font-serif text-lg">{f.title}</h3>
+                      <p className="mt-2 text-sm text-[var(--foreground)]/70">{f.body}</p>
+                    </div>
+                  </TiltCard>
+                </Link>
               </Reveal>
             ))}
           </div>

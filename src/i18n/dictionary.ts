@@ -43,6 +43,102 @@ export const dictionary = {
         body: "Un email avant chaque date de révision : plus aucune échéance manquée.",
       },
     },
+    featureDetail: {
+      back: "Retour aux fonctionnalités",
+      howItWorksTitle: "Comment ça marche",
+      portfolio: {
+        tagline: "Tout votre portefeuille, sous contrôle",
+        intro:
+          "Chaque bail que vous ajoutez est immédiatement classé selon son état de conformité à la réforme, avec sa prochaine date de révision et l'indice qui s'applique.",
+        steps: [
+          {
+            title: "Ajoutez un bail",
+            body: "Renseignez preneur, loyer, indice et date de révision — ou importez tout votre portefeuille en un clic via un fichier CSV.",
+          },
+          {
+            title: "Suivez la conformité",
+            body: "Chaque bail affiche son statut (conforme, à vérifier, non conforme) calculé automatiquement à partir de son indice et de sa clause tunnel.",
+          },
+          {
+            title: "Filtrez et recherchez",
+            body: "Retrouvez un bail par preneur ou adresse, filtrez par statut pour prioriser les baux à mettre à jour.",
+          },
+          {
+            title: "Partagez avec votre équipe",
+            body: "Avec l'add-on Coop, rendez certains baux visibles par vos collègues pour un suivi collectif.",
+          },
+        ],
+      },
+      calculator: {
+        tagline: "Le calcul exact, sans tableur",
+        intro:
+          "Entrez l'indice de référence actuel et le nouvel indice publié : le calculateur applique la formule légale et vous montre immédiatement le nouveau loyer.",
+        steps: [
+          {
+            title: "Choisissez l'indice",
+            body: "ILC (commerces), ILAT (activités tertiaires) ou ICC pour les anciens baux — chacun avec sa propre formule de révision.",
+          },
+          {
+            title: "Renseignez les deux indices",
+            body: "L'indice de référence à la signature ou à la dernière révision, et le nouvel indice publié par l'INSEE.",
+          },
+          {
+            title: "Obtenez le résultat instantanément",
+            body: "Nouveau loyer, variation en pourcentage et en euros, et écrêtage appliqué si une clause tunnel limite la hausse.",
+          },
+          {
+            title: "Appliquez-le au bail",
+            body: "Le résultat peut être injecté directement dans la fiche du bail concerné, sans ressaisie.",
+          },
+        ],
+      },
+      generator: {
+        tagline: "Un document juridique prêt à signer",
+        intro:
+          "Générez en quelques clics une clause tunnel conforme à l'article L.145-38-1, ou un avenant qui fait basculer un bail de l'ICC vers l'ILC/ILAT.",
+        steps: [
+          {
+            title: "Renseignez bailleur, preneur et bien",
+            body: "Les informations du bail sont reprises automatiquement si le bail existe déjà dans votre portefeuille.",
+          },
+          {
+            title: "Choisissez le type de clause",
+            body: "Symétrique (encadrement à la hausse et à la baisse) ou asymétrique (protection du preneur contre une baisse).",
+          },
+          {
+            title: "Fixez le plancher et le plafond",
+            body: "Les pourcentages qui définissent les bornes de variation du loyer à chaque révision.",
+          },
+          {
+            title: "Générez et téléchargez",
+            body: "Un texte juridique complet, citant l'article de loi, prêt à intégrer à votre bail ou à envoyer pour signature.",
+          },
+        ],
+      },
+      alerts: {
+        tagline: "Aucune échéance manquée",
+        intro:
+          "Tunnela surveille les dates de révision de chaque bail et vous prévient par email avant qu'elles n'arrivent, avec le délai que vous choisissez.",
+        steps: [
+          {
+            title: "Définissez votre délai de prévenance",
+            body: "Entre 7 et 90 jours avant chaque échéance, réglable dans les paramètres.",
+          },
+          {
+            title: "Recevez l'alerte automatiquement",
+            body: "Un email récapitulatif est envoyé dès qu'une révision approche, sans action de votre part.",
+          },
+          {
+            title: "Traitez la révision en un clic",
+            body: "L'email renvoie directement vers le calculateur pré-rempli pour ce bail.",
+          },
+          {
+            title: "Ne perdez plus le fil",
+            body: "Utile en particulier pour les portefeuilles de plusieurs dizaines de baux, où une échéance oubliée peut coûter cher.",
+          },
+        ],
+      },
+    },
     pricing: {
       title: "Tarifs",
       subtitle: "Sans engagement, annulable à tout moment.",
@@ -627,6 +723,102 @@ export const dictionary = {
       alerts: {
         title: "Deadline alerts",
         body: "An email before every review date — never miss a deadline again.",
+      },
+    },
+    featureDetail: {
+      back: "Back to features",
+      howItWorksTitle: "How it works",
+      portfolio: {
+        tagline: "Your whole portfolio, under control",
+        intro:
+          "Every lease you add is immediately classified by its compliance with the reform, with its next review date and the applicable index.",
+        steps: [
+          {
+            title: "Add a lease",
+            body: "Enter the tenant, rent, index and review date — or import your entire portfolio in one click via a CSV file.",
+          },
+          {
+            title: "Track compliance",
+            body: "Every lease shows its status (compliant, to check, non-compliant) computed automatically from its index and tunnel clause.",
+          },
+          {
+            title: "Filter and search",
+            body: "Find a lease by tenant or address, filter by status to prioritize the leases that need updating.",
+          },
+          {
+            title: "Share with your team",
+            body: "With the Coop add-on, make selected leases visible to your colleagues for collective tracking.",
+          },
+        ],
+      },
+      calculator: {
+        tagline: "The exact calculation, no spreadsheet",
+        intro:
+          "Enter the current reference index and the newly published index: the calculator applies the legal formula and shows you the new rent instantly.",
+        steps: [
+          {
+            title: "Choose the index",
+            body: "ILC (retail), ILAT (tertiary activities) or ICC for older leases — each with its own review formula.",
+          },
+          {
+            title: "Enter both indices",
+            body: "The reference index at signing or last review, and the newly published index from INSEE.",
+          },
+          {
+            title: "Get the result instantly",
+            body: "New rent, percentage and euro variation, and any cap applied if a tunnel clause limits the increase.",
+          },
+          {
+            title: "Apply it to the lease",
+            body: "The result can be pushed directly into the relevant lease record, no re-entry needed.",
+          },
+        ],
+      },
+      generator: {
+        tagline: "A signature-ready legal document",
+        intro:
+          "Generate a tunnel clause compliant with Article L.145-38-1 in a few clicks, or an amendment that switches a lease from ICC to ILC/ILAT.",
+        steps: [
+          {
+            title: "Enter landlord, tenant and property",
+            body: "Lease details are pulled in automatically if the lease already exists in your portfolio.",
+          },
+          {
+            title: "Choose the clause type",
+            body: "Symmetric (capped both up and down) or asymmetric (protects the tenant from a drop).",
+          },
+          {
+            title: "Set the floor and cap",
+            body: "The percentages that define how much the rent can vary at each review.",
+          },
+          {
+            title: "Generate and download",
+            body: "A complete legal text, citing the law, ready to attach to your lease or send for signature.",
+          },
+        ],
+      },
+      alerts: {
+        tagline: "Never miss a deadline",
+        intro:
+          "Tunnela watches every lease's review date and emails you before it arrives, with the lead time you choose.",
+        steps: [
+          {
+            title: "Set your lead time",
+            body: "Between 7 and 90 days before each deadline, adjustable in settings.",
+          },
+          {
+            title: "Get the alert automatically",
+            body: "A summary email is sent as soon as a review is approaching, with no action needed from you.",
+          },
+          {
+            title: "Handle the review in one click",
+            body: "The email links straight to the pre-filled calculator for that lease.",
+          },
+          {
+            title: "Never lose track",
+            body: "Especially useful for portfolios of dozens of leases, where a missed deadline can be costly.",
+          },
+        ],
       },
     },
     pricing: {
