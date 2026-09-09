@@ -109,7 +109,7 @@ export function PricingTeaser() {
         <p className="mt-2 text-[var(--foreground)]/70">{t.pricing.teaserSubtitle}</p>
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {PLANS.map((plan) => {
+        {PLANS.map((plan, i) => {
           const limiteLabel =
             plan.limiteBaux === null
               ? `${t.pricing.beyond} 100 ${t.pricing.leases}`
@@ -118,11 +118,13 @@ export function PricingTeaser() {
           return (
             <Link
               key={plan.id}
-              href="/signup"
+              href={`/offres/${plan.id}`}
               className="card card-hover tunnel-enter flex flex-col gap-2"
+              style={{ animationDelay: `${i * 80}ms` }}
             >
               <h3 className="font-serif text-xl">{plan.nom}</h3>
               <p className="text-sm text-[var(--foreground)]/70">{limiteLabel}</p>
+              <span className="mt-2 text-sm text-[var(--accent)]">{t.pricing.teaserSeeDetails} →</span>
             </Link>
           );
         })}

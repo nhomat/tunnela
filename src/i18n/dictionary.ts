@@ -48,6 +48,7 @@ export const dictionary = {
       subtitle: "Sans engagement, annulable à tout moment.",
       teaserSubtitle: "Créez un compte gratuit pour découvrir le détail des tarifs.",
       teaserCta: "Créer un compte pour voir les tarifs",
+      teaserSeeDetails: "Voir le détail",
       perMonth: "/ mois",
       perMonthPerPerson: "/ mois par personne",
       free: "Gratuit",
@@ -119,6 +120,7 @@ export const dictionary = {
       idealForLabel: "Idéal pour",
       featuresTitle: "Ce qui est inclus",
       otherPlans: "Voir les autres plans",
+      tryCta: "Créer un compte pour l'essayer",
       decouverte: {
         tagline: "Pour découvrir Tunnela sans engagement",
         idealFor:
@@ -575,6 +577,7 @@ export const dictionary = {
       subtitle: "No commitment, cancel anytime.",
       teaserSubtitle: "Create a free account to see the full pricing details.",
       teaserCta: "Create an account to see pricing",
+      teaserSeeDetails: "See details",
       perMonth: "/ month",
       perMonthPerPerson: "/ month per person",
       free: "Free",
@@ -645,6 +648,7 @@ export const dictionary = {
       idealForLabel: "Ideal for",
       featuresTitle: "What's included",
       otherPlans: "See the other plans",
+      tryCta: "Create an account to try it",
       decouverte: {
         tagline: "Discover Tunnela with no commitment",
         idealFor:
