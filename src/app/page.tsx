@@ -121,7 +121,7 @@ function HowItWorks() {
                   type="button"
                   onClick={() => setOpenStep(open ? null : i)}
                   aria-expanded={open}
-                  className="transition-base w-full text-left"
+                  className="card card-hover transition-base w-full cursor-pointer text-left"
                 >
                   <div
                     className="btn-primary float-idle mb-3 flex h-9 w-9 items-center justify-center !rounded-full p-0 font-serif text-sm"
