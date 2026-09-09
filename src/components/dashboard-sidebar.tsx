@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "./providers";
@@ -10,12 +10,18 @@ import { AdminPlanSwitcher } from "./admin-plan-switcher";
 import { useCurrentPlan } from "./feature-gate";
 import { createClient } from "@/lib/supabase/client";
 
+const TABS_REVEAL_MS = 10_000;
+const SWIPE_MIN_DISTANCE = 48;
+
 export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number }) {
   const { t } = useApp();
   const pathname = usePathname();
   const router = useRouter();
   const { plan, isAdmin } = useCurrentPlan();
   const [open, setOpen] = useState(false);
+  const [tabsVisible, setTabsVisible] = useState(false);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const links = [
     { href: "/dashboard/baux", label: t.dashboard.nav.baux },
@@ -28,6 +34,43 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
     ...(isAdmin ? [{ href: "/dashboard/admin/indices", label: t.dashboard.nav.indices }] : []),
   ];
 
+  useEffect(() => {
+    return () => {
+      if (hideTimer.current) clearTimeout(hideTimer.current);
+    };
+  }, []);
+
+  function revealTabs() {
+    setTabsVisible(true);
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+    hideTimer.current = setTimeout(() => setTabsVisible(false), TABS_REVEAL_MS);
+  }
+
+  function handleEdgeTouchStart(e: React.TouchEvent) {
+    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }
+
+  function handleEdgeTouchEnd(e: React.TouchEvent) {
+    const start = touchStart.current;
+    touchStart.current = null;
+    if (!start) return;
+
+    const deltaX = e.changedTouches[0].clientX - start.x;
+    const deltaY = e.changedTouches[0].clientY - start.y;
+    if (Math.abs(deltaX) < SWIPE_MIN_DISTANCE || Math.abs(deltaX) < Math.abs(deltaY)) {
+      return;
+    }
+
+    const currentIndex = links.findIndex((link) => link.href === pathname);
+    if (currentIndex === -1) return;
+
+    const targetIndex = deltaX < 0 ? currentIndex + 1 : currentIndex - 1;
+    if (targetIndex >= 0 && targetIndex < links.length) {
+      router.push(links[targetIndex].href);
+    }
+    revealTabs();
+  }
+
   async function handleLogout() {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -35,33 +78,52 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
     router.refresh();
   }
 
-  const navLinks = links.map((link) => {
-    const active = pathname === link.href;
-    return (
-      <Link
-        key={link.href}
-        href={link.href}
-        className={`transition-base whitespace-nowrap rounded-md px-3 py-2 text-sm ${
-          active
-            ? "bg-[var(--foreground)]/[0.06] font-medium text-[var(--accent)]"
-            : "hover:bg-[var(--foreground)]/[0.04]"
-        }`}
-      >
-        {link.label}
-      </Link>
-    );
-  });
+  function linkClassName(href: string) {
+    const active = pathname === href;
+    return `transition-base whitespace-nowrap rounded-md px-3 py-2 text-sm ${
+      active
+        ? "bg-[var(--foreground)]/[0.06] font-medium text-[var(--accent)]"
+        : "hover:bg-[var(--foreground)]/[0.04]"
+    }`;
+  }
+
+  const navLinks = links.map((link) => (
+    <Link key={link.href} href={link.href} className={linkClassName(link.href)}>
+      {link.label}
+    </Link>
+  ));
+  const mobileNavLinks = links.map((link) => (
+    <Link key={link.href} href={link.href} onClick={revealTabs} className={linkClassName(link.href)}>
+      {link.label}
+    </Link>
+  ));
 
   return (
     <aside className="border-b border-[var(--border-color)] md:sticky md:top-0 md:flex md:h-screen md:w-64 md:shrink-0 md:flex-col md:border-b-0 md:border-r">
-      <div className="flex items-center gap-3 px-4 py-3 md:block md:px-6 md:py-4">
-        <Link href="/dashboard/baux" className="transition-base float-idle shrink-0">
-          <LogoMark />
-        </Link>
-        {typeof conformityRatio === "number" && (
-          <ConformityBadge ratio={conformityRatio} label={t.dashboard.conformity} className="shrink-0 md:hidden" />
-        )}
-        <nav className="flex flex-1 gap-1 overflow-x-auto md:hidden">{navLinks}</nav>
+      <div
+        aria-hidden="true"
+        onTouchStart={handleEdgeTouchStart}
+        onTouchEnd={handleEdgeTouchEnd}
+        style={{ touchAction: "pan-y" }}
+        className="fixed top-16 bottom-0 left-0 z-20 w-6 md:hidden"
+      />
+      <div
+        aria-hidden="true"
+        onTouchStart={handleEdgeTouchStart}
+        onTouchEnd={handleEdgeTouchEnd}
+        style={{ touchAction: "pan-y" }}
+        className="fixed top-16 bottom-0 right-0 z-20 w-6 md:hidden"
+      />
+
+      <div className="flex items-center justify-between px-4 py-3 md:block md:px-6 md:py-4">
+        <div className="flex items-center gap-3">
+          <Link href="/dashboard/baux" className="transition-base float-idle shrink-0">
+            <LogoMark />
+          </Link>
+          {typeof conformityRatio === "number" && (
+            <ConformityBadge ratio={conformityRatio} label={t.dashboard.conformity} className="shrink-0 md:hidden" />
+          )}
+        </div>
         <button
           type="button"
           aria-label={t.nav.menu}
@@ -87,6 +149,15 @@ export function DashboardSidebar({ conformityRatio }: { conformityRatio?: number
             )}
           </svg>
         </button>
+      </div>
+
+      <div
+        className="grid transition-[grid-template-rows] duration-300 ease-out md:hidden"
+        style={{ gridTemplateRows: tabsVisible ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          <nav className="flex gap-1 overflow-x-auto px-4 pb-3">{mobileNavLinks}</nav>
+        </div>
       </div>
 
       <nav className="hidden gap-1 px-3 pb-3 md:flex md:flex-1 md:flex-col md:overflow-visible md:px-3 md:pb-0">
