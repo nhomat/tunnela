@@ -690,8 +690,8 @@ export const dictionary = {
       swipeTransitionHint:
         "Permet de changer d'outil en balayant l'écran sur mobile, avec une brève animation de transition. Désactivez pour supprimer complètement le swipe.",
       dataTitle: "Mes données",
-      dataSubtitle: "Téléchargez une copie de votre portefeuille de baux au format CSV.",
-      exportCsv: "Exporter en CSV",
+      dataSubtitle: "Téléchargez une copie de votre portefeuille de baux, dans le ou les formats de votre choix.",
+      exportCsv: "Exporter",
       connectTitle: "Recevoir des paiements (Stripe Connect)",
       connectSubtitle:
         "Connectez votre propre compte Stripe pour recevoir directement les paiements qui vous sont destinés.",
@@ -1393,8 +1393,8 @@ export const dictionary = {
       swipeTransitionHint:
         "Lets you switch tools by swiping on mobile, with a brief animated transition. Turn off to disable swiping entirely.",
       dataTitle: "My data",
-      dataSubtitle: "Download a copy of your lease portfolio as a CSV file.",
-      exportCsv: "Export as CSV",
+      dataSubtitle: "Download a copy of your lease portfolio, in the format(s) of your choice.",
+      exportCsv: "Export",
       connectTitle: "Receive payments (Stripe Connect)",
       connectSubtitle:
         "Connect your own Stripe account to receive payments intended for you directly.",

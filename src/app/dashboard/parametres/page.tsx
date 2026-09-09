@@ -6,7 +6,7 @@ import { useApp } from "@/components/providers";
 import { createClient } from "@/lib/supabase/client";
 import { useCurrentPlan } from "@/components/feature-gate";
 import { hasFeature } from "@/lib/types";
-import { exportBauxAsCsv } from "@/lib/csv-import";
+import { exportBaux, type ExportFormat } from "@/lib/bail-export";
 import { PageLoading } from "@/components/table-skeleton";
 import { PasswordInput } from "@/components/password-input";
 import { useHoldLoadingAnimation } from "@/lib/use-hold-loading-animation";
@@ -14,6 +14,7 @@ import { PageIcon3D } from "@/components/page-icon-3d";
 import type { Bail } from "@/lib/types";
 
 const SPINNER_CYCLE_MS = 900;
+const EXPORT_FORMAT_OPTIONS: ExportFormat[] = ["csv", "xlsx", "pdf", "json"];
 
 export default function ParametresPage() {
   const { t, swipeTransitionEnabled, setSwipeTransitionEnabled } = useApp();
@@ -36,6 +37,7 @@ export default function ParametresPage() {
   >("idle");
 
   const [exporting, setExporting] = useState(false);
+  const [exportFormats, setExportFormats] = useState<ExportFormat[]>(["csv"]);
 
   const [deleteConfirm, setDeleteConfirm] = useState("");
   const [deleting, setDeleting] = useState(false);
@@ -111,17 +113,17 @@ export default function ParametresPage() {
     }
   }
 
+  function toggleExportFormat(format: ExportFormat) {
+    setExportFormats((prev) =>
+      prev.includes(format) ? prev.filter((f) => f !== format) : [...prev, format]
+    );
+  }
+
   async function handleExport() {
+    if (exportFormats.length === 0) return;
     setExporting(true);
     const { data } = await supabase.from("baux").select("*");
-    const csv = exportBauxAsCsv((data as Bail[]) ?? []);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "tunnela-portefeuille.csv";
-    a.click();
-    URL.revokeObjectURL(url);
+    exportBaux((data as Bail[]) ?? [], exportFormats);
     setExporting(false);
   }
 
@@ -282,8 +284,25 @@ export default function ParametresPage() {
       <section className="card">
         <h2 className="mb-1 font-serif text-lg">{t.parametres.dataTitle}</h2>
         <p className="mb-4 text-sm text-[var(--foreground)]/70">{t.parametres.dataSubtitle}</p>
-        <button type="button" onClick={handleExport} disabled={exporting} className="btn-secondary transition-base disabled:opacity-60">
-          {t.parametres.exportCsv}
+        <div className="mb-4 flex flex-wrap gap-4">
+          {EXPORT_FORMAT_OPTIONS.map((format) => (
+            <label key={format} className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={exportFormats.includes(format)}
+                onChange={() => toggleExportFormat(format)}
+              />
+              {format.toUpperCase()}
+            </label>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={handleExport}
+          disabled={exporting || exportFormats.length === 0}
+          className="btn-secondary transition-base disabled:opacity-60"
+        >
+          {exporting ? "…" : t.parametres.exportCsv}
         </button>
       </section>
 
