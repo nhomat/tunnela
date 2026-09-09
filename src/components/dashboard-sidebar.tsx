@@ -79,7 +79,9 @@ export function DashboardSidebar({
             <LogoMark />
           </Link>
           {typeof conformityRatio === "number" && (
-            <ConformityBadge ratio={conformityRatio} label={t.dashboard.conformity} className="shrink-0 md:hidden" />
+            <Link href="/dashboard/conformite" className="shrink-0 md:hidden">
+              <ConformityBadge ratio={conformityRatio} label={t.dashboard.conformity} />
+            </Link>
           )}
         </div>
         <button
@@ -110,12 +112,12 @@ export function DashboardSidebar({
       <div className="hidden px-6 py-6 md:mt-auto md:block">
         {isAdmin && plan && <AdminPlanSwitcher currentPlan={plan} />}
         {typeof conformityRatio === "number" && (
-          <div className="mb-6">
+          <Link href="/dashboard/conformite" className="transition-base mb-6 block hover:opacity-80">
             <p className="mb-2 text-xs uppercase tracking-wide text-[var(--foreground)]/60">
               {t.dashboard.conformity}
             </p>
             <ConformityRing ratio={conformityRatio} />
-          </div>
+          </Link>
         )}
         <div className="mb-4 flex justify-center">
           <ThemeLangToggle compact />
