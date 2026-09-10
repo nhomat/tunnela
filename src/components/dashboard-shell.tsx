@@ -6,6 +6,7 @@ import { useApp } from "./providers";
 import { useCurrentPlan } from "./feature-gate";
 import { DashboardSidebar, type DashboardLink } from "./dashboard-sidebar";
 import { Logo } from "./logo";
+import { WelcomePopup } from "./welcome-popup";
 
 const SWIPE_MIN_DISTANCE = 50;
 // Doit rester aligné avec le breakpoint `md` de Tailwind : au-delà, la
@@ -111,6 +112,7 @@ export function DashboardShell({
 
   return (
     <>
+      <WelcomePopup />
       <DashboardSidebar links={desktopLinks} mobileLinks={toolLinks} conformityRatio={conformityRatio} />
       <main
         className="relative flex-1 px-6 py-8 md:px-10 md:py-10"

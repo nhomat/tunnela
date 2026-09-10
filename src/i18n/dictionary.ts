@@ -444,6 +444,12 @@ export const dictionary = {
       adminSwitcherLabel: "Vue client (admin)",
       adminSwitcherHint: "Change ton plan sans passer par Stripe, pour tester chaque offre.",
     },
+    welcome: {
+      title: "Bienvenue sur Tunnela",
+      body: "Un petit tour guidé de l'outil pour prendre en main vos baux, calculs de révision et clauses en quelques minutes ?",
+      cta: "Voir le tutoriel",
+      dismiss: "Plus tard",
+    },
     conformite: {
       title: "Conformité à la réforme",
       subtitle: "D'où vient ce pourcentage, et comment le faire progresser.",
@@ -465,8 +471,24 @@ export const dictionary = {
     },
     tutoriel: {
       title: "Comment fonctionne Tunnela",
-      subtitle: "Une vidéo courte et un guide écrit, adaptés à votre abonnement.",
-      videoComingSoon: "Vidéo bientôt disponible",
+      subtitle: "Un guide écrit et illustré, adapté à votre abonnement — la vidéo arrive bientôt.",
+      guideTitle: "Guide illustré",
+      guideSubtitle: "Le fonctionnement de chaque outil, pas à pas.",
+      guidePortefeuilleTitle: "Portefeuille de baux",
+      guidePortefeuilleBody:
+        "Tous vos baux au même endroit : preneur, loyer, indice, clause tunnel, prochaine révision et statut de conformité. Ajoutez un bail à la main ou importez tout votre portefeuille en CSV.",
+      guideRevisionTitle: "Fiche bail et révision",
+      guideRevisionBody:
+        "Cliquez sur un bail pour ouvrir sa fiche détaillée : ses informations, un accès direct au calculateur et à la clause, et le bouton pour lancer sa révision — le bandeau rappelle toujours quel bail est concerné.",
+      guideCalculateurTitle: "Calculateur ILC / ILAT",
+      guideCalculateurBody:
+        "Entrez le loyer, l'indice de référence et le nouvel indice publié : le nouveau loyer, la variation appliquée et l'écart s'affichent instantanément, en tenant compte d'une éventuelle clause tunnel.",
+      guideClauseTitle: "Clause & avenant",
+      guideClauseBody:
+        "Générez en quelques clics une clause tunnel prête à insérer dans un bail, ou un avenant de passage ICC → ILC/ILAT — copiez le texte ou téléchargez-le en PDF.",
+      guideEcheancierTitle: "Échéancier consolidé",
+      guideEcheancierBody:
+        "Toutes les prochaines révisions de votre portefeuille, regroupées par urgence : dans les 30 jours, à venir, ou sans date — pour ne jamais rater une échéance.",
       plans: {
         decouverte: {
           title: "Découverte",
@@ -1179,6 +1201,12 @@ export const dictionary = {
       adminSwitcherLabel: "Client view (admin)",
       adminSwitcherHint: "Switch your plan without going through Stripe, to test each tier.",
     },
+    welcome: {
+      title: "Welcome to Tunnela",
+      body: "A quick guided tour to get you up to speed on your leases, review calculations and clauses in a few minutes?",
+      cta: "See the tutorial",
+      dismiss: "Later",
+    },
     conformite: {
       title: "Compliance with the reform",
       subtitle: "Where this percentage comes from, and how to improve it.",
@@ -1200,8 +1228,24 @@ export const dictionary = {
     },
     tutoriel: {
       title: "How Tunnela works",
-      subtitle: "A short video and a written guide, matched to your subscription.",
-      videoComingSoon: "Video coming soon",
+      subtitle: "A written, illustrated guide matched to your subscription — the video is coming soon.",
+      guideTitle: "Illustrated guide",
+      guideSubtitle: "How each tool works, step by step.",
+      guidePortefeuilleTitle: "Lease portfolio",
+      guidePortefeuilleBody:
+        "All your leases in one place: tenant, rent, index, tunnel clause, next review and compliance status. Add a lease by hand or import your whole portfolio as a CSV.",
+      guideRevisionTitle: "Lease record and review",
+      guideRevisionBody:
+        "Click a lease to open its detail page: its details, a direct link to the calculator and clause tools, and the button to start its review — a banner always reminds you which lease is concerned.",
+      guideCalculateurTitle: "ILC / ILAT calculator",
+      guideCalculateurBody:
+        "Enter the rent, the reference index and the newly published index: the new rent, the applied variation and the difference appear instantly, factoring in a tunnel clause if any.",
+      guideClauseTitle: "Clause & amendment",
+      guideClauseBody:
+        "Generate a ready-to-insert tunnel clause in a few clicks, or an ICC → ILC/ILAT amendment — copy the text or download it as a PDF.",
+      guideEcheancierTitle: "Consolidated review calendar",
+      guideEcheancierBody:
+        "Every upcoming review in your portfolio, grouped by urgency: within 30 days, upcoming, or with no date — so you never miss a deadline.",
       plans: {
         decouverte: {
           title: "Découverte",
