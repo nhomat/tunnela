@@ -556,6 +556,11 @@ export const dictionary = {
       focusNotFound: "Ce bail est introuvable.",
       focusDetailsTitle: "Détails du bail",
     },
+    bailSelector: {
+      label: "Bail sur lequel je travaille",
+      none: "— Aucun (saisie libre) —",
+      hint: "Sélectionnez un bail pour pré-remplir le formulaire avec ses informations.",
+    },
     revision: {
       title: "Réviser ce bail",
       revisingLease: "Bail en cours de révision",
@@ -1284,6 +1289,11 @@ export const dictionary = {
       focusBackToList: "Back to portfolio",
       focusNotFound: "This lease could not be found.",
       focusDetailsTitle: "Lease details",
+    },
+    bailSelector: {
+      label: "Lease I'm working on",
+      none: "— None (free entry) —",
+      hint: "Select a lease to pre-fill the form with its details.",
     },
     revision: {
       title: "Review this lease",

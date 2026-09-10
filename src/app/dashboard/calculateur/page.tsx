@@ -5,9 +5,11 @@ import { useApp } from "@/components/providers";
 import { calculerRevisionLoyer, type IndexationResult } from "@/lib/indexation";
 import { useCurrentPlan } from "@/components/feature-gate";
 import { hasFeature } from "@/lib/types";
+import type { Bail } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
 import { getLatestIndice } from "@/lib/indices";
 import { PageIcon3D } from "@/components/page-icon-3d";
+import { BailSelector } from "@/components/bail-selector";
 
 export default function CalculateurPage() {
   const { t } = useApp();
@@ -24,6 +26,20 @@ export default function CalculateurPage() {
   const [result, setResult] = useState<IndexationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [autoIndexMessage, setAutoIndexMessage] = useState<string | null>(null);
+
+  function handleSelectBail(bail: Bail | null) {
+    if (!bail) return;
+    setLoyerBase(String(bail.loyer_annuel));
+    if (bail.indice === "ILC" || bail.indice === "ILAT") {
+      setType(bail.indice);
+    }
+    if (bail.indice_reference !== null) {
+      setIndiceReference(String(bail.indice_reference));
+    }
+    setClauseActive(bail.clause_tunnel);
+    setPlancher(bail.plancher_pct !== null ? String(bail.plancher_pct) : "");
+    setPlafond(bail.plafond_pct !== null ? String(bail.plafond_pct) : "");
+  }
 
   async function handleAutoIndex() {
     const supabase = createClient();
@@ -79,6 +95,8 @@ export default function CalculateurPage() {
         </PageIcon3D>
         <h1 className="font-serif text-2xl">{t.calculateur.title}</h1>
       </div>
+
+      <BailSelector onSelect={handleSelectBail} />
 
       <div className="grid gap-8 lg:grid-cols-2">
         <form onSubmit={handleSubmit} className="card flex flex-col gap-4">

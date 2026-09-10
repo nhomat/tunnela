@@ -35,7 +35,7 @@ function StatutPill({ statut, label }: { statut: Bail["statut"]; label: string }
 }
 
 export default function BailFocusPage() {
-  const { t } = useApp();
+  const { t, setActiveBailId } = useApp();
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const supabase = useMemo(() => createClient(), []);
@@ -60,6 +60,13 @@ export default function BailFocusPage() {
   const bail = allBaux.find((b) => b.id === params.id) ?? null;
   const canRevise = hasFeature(plan, "revisionWorkflow");
   const showLoading = useHoldLoadingAnimation(loading, SPINNER_CYCLE_MS);
+
+  // Consulter un bail ici en fait le bail actif pour les autres outils
+  // (calculateur, clause), pour enchaîner sans ressaisir ses informations.
+  useEffect(() => {
+    if (bail) setActiveBailId(bail.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bail?.id]);
 
   if (showLoading) return <PageLoading />;
 
@@ -139,15 +146,23 @@ export default function BailFocusPage() {
             </dd>
           </div>
         </dl>
-        {canRevise && !revising && (
-          <button
-            type="button"
-            onClick={() => setRevising(true)}
-            className="btn-primary transition-base mt-2 w-fit"
-          >
-            {t.baux.reviser}
-          </button>
-        )}
+        <div className="mt-2 flex flex-wrap gap-3">
+          {canRevise && !revising && (
+            <button
+              type="button"
+              onClick={() => setRevising(true)}
+              className="btn-primary transition-base"
+            >
+              {t.baux.reviser}
+            </button>
+          )}
+          <Link href="/dashboard/calculateur" className="btn-secondary transition-base">
+            {t.calculateur.title}
+          </Link>
+          <Link href="/dashboard/clause" className="btn-secondary transition-base">
+            {t.clause.title}
+          </Link>
+        </div>
       </div>
 
       {revising && (

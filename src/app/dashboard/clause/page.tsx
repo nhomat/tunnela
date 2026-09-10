@@ -7,6 +7,8 @@ import { exportTextAsPdf } from "@/lib/pdf-export";
 import { FeatureGate, useCurrentPlan } from "@/components/feature-gate";
 import { createClient } from "@/lib/supabase/client";
 import { PageIcon3D } from "@/components/page-icon-3d";
+import { BailSelector } from "@/components/bail-selector";
+import type { Bail } from "@/lib/types";
 
 type Mode = "tunnel" | "avenant";
 
@@ -52,6 +54,18 @@ function ClauseGenerator() {
 
   const [texte, setTexte] = useState("");
   const [copied, setCopied] = useState(false);
+
+  function handleSelectBail(bail: Bail | null) {
+    if (!bail) return;
+    setPreneur(bail.preneur);
+    setAdresse(bail.adresse ?? "");
+    if (bail.indice === "ILC" || bail.indice === "ILAT") {
+      setIndice(bail.indice);
+    }
+    if (bail.plancher_pct !== null) setPlancher(String(bail.plancher_pct));
+    if (bail.plafond_pct !== null) setPlafond(String(bail.plafond_pct));
+    setPeriodicite(bail.periodicite);
+  }
 
   function handleGenerer(e: React.FormEvent) {
     e.preventDefault();
@@ -115,6 +129,8 @@ function ClauseGenerator() {
         </PageIcon3D>
         <h1 className="font-serif text-2xl">{t.clause.title}</h1>
       </div>
+
+      <BailSelector onSelect={handleSelectBail} />
 
       <div className="mb-8 inline-flex rounded-lg border border-[var(--border-color)] p-1">
         <ModeButton active={mode === "tunnel"} onClick={() => setMode("tunnel")}>
