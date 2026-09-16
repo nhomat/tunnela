@@ -40,7 +40,7 @@ export function DashboardShell({
     { href: "/dashboard/echeancier", label: t.dashboard.nav.echeancier },
     { href: "/dashboard/equipe", label: t.dashboard.nav.equipe },
     { href: "/dashboard/tutoriel", label: t.dashboard.nav.tutoriel },
-    ...(isAdmin ? [{ href: "/dashboard/admin/indices", label: t.dashboard.nav.indices }] : []),
+    ...(isAdmin ? [{ href: "/dashboard/admin", label: t.dashboard.nav.admin }] : []),
   ];
   const parametresLink: DashboardLink = { href: "/dashboard/parametres", label: t.dashboard.nav.parametres };
   // La liste desktop garde Paramètres dans sa navigation verticale classique.
