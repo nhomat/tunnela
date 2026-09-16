@@ -424,3 +424,39 @@ create index if not exists idx_rate_limit_hits_bucket_created
   on public.rate_limit_hits (bucket, created_at desc);
 
 alter table public.rate_limit_hits enable row level security;
+
+-- Codes de confirmation envoyés par email pour les actions admin sensibles
+-- (suppression / blocage temporaire d'un compte). Accessible uniquement via
+-- service_role : RLS activée sans aucune policy.
+create table if not exists public.admin_action_codes (
+  id uuid primary key default gen_random_uuid(),
+  admin_user_id uuid not null references auth.users(id) on delete cascade,
+  target_user_id uuid not null,
+  action text not null check (action in ('delete', 'suspend')),
+  code text not null,
+  used boolean not null default false,
+  expires_at timestamptz not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_admin_action_codes_lookup
+  on public.admin_action_codes (admin_user_id, target_user_id, action, used, created_at desc);
+
+alter table public.admin_action_codes enable row level security;
+
+-- Configuration globale de l'application (ligne unique, id fixé à 1).
+-- Le flag maintenance_mode doit être lisible publiquement (le proxy le
+-- vérifie pour chaque visiteur, authentifié ou non) mais uniquement
+-- modifiable via service_role (route admin).
+create table if not exists public.app_config (
+  id smallint primary key default 1 check (id = 1),
+  maintenance_mode boolean not null default false,
+  updated_at timestamptz not null default now()
+);
+
+insert into public.app_config (id) values (1) on conflict (id) do nothing;
+
+alter table public.app_config enable row level security;
+
+create policy "Tout le monde peut lire la config publique"
+  on public.app_config for select using (true);

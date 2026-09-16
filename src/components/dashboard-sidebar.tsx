@@ -11,15 +11,20 @@ import { useCurrentPlan } from "./feature-gate";
 import { createClient } from "@/lib/supabase/client";
 
 export type DashboardLink = { href: string; label: string };
+export type AdminView = "admin" | "client";
 
 export function DashboardSidebar({
   links,
   mobileLinks,
   conformityRatio,
+  adminView,
+  onToggleAdminView,
 }: {
   links: DashboardLink[];
   mobileLinks?: DashboardLink[];
   conformityRatio?: number;
+  adminView?: AdminView;
+  onToggleAdminView?: () => void;
 }) {
   const { t } = useApp();
   const pathname = usePathname();
@@ -122,7 +127,16 @@ export function DashboardSidebar({
 
       {/* Desktop : bloc fixe en bas de la sidebar, toujours visible. */}
       <div className="hidden px-6 py-6 md:mt-auto md:block">
-        {isAdmin && plan && <AdminPlanSwitcher currentPlan={plan} />}
+        {isAdmin && onToggleAdminView && (
+          <button
+            type="button"
+            onClick={onToggleAdminView}
+            className="btn-secondary transition-base mb-4 w-full px-3.5 py-1.5 text-xs"
+          >
+            {adminView === "client" ? t.dashboard.switchToAdminView : t.dashboard.switchToClientView}
+          </button>
+        )}
+        {isAdmin && plan && adminView === "client" && <AdminPlanSwitcher currentPlan={plan} />}
         {typeof conformityRatio === "number" && (
           <Link href="/dashboard/conformite" className="transition-base mb-6 block hover:opacity-80">
             <p className="mb-2 text-xs uppercase tracking-wide text-[var(--foreground)]/60">
@@ -178,7 +192,16 @@ export function DashboardSidebar({
         </div>
         <nav className="mb-6 flex flex-col gap-1">{drawerNavLinks}</nav>
 
-        {isAdmin && plan && <AdminPlanSwitcher currentPlan={plan} />}
+        {isAdmin && onToggleAdminView && (
+          <button
+            type="button"
+            onClick={onToggleAdminView}
+            className="btn-secondary transition-base mb-4 w-full px-3.5 py-1.5 text-xs"
+          >
+            {adminView === "client" ? t.dashboard.switchToAdminView : t.dashboard.switchToClientView}
+          </button>
+        )}
+        {isAdmin && plan && adminView === "client" && <AdminPlanSwitcher currentPlan={plan} />}
         <div className="mb-4 flex justify-center">
           <ThemeLangToggle compact />
         </div>

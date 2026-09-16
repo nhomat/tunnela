@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode, type TouchEvent } from "react";
+import type { AdminView } from "./dashboard-sidebar";
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import { useCurrentPlan } from "./feature-gate";
@@ -15,6 +16,7 @@ const SWIPE_MIN_DISTANCE = 50;
 const MOBILE_BREAKPOINT = 768;
 const TRANSITION_SHOW_MS = 420;
 const TRANSITION_FADE_MS = 200;
+const ADMIN_VIEW_STORAGE_KEY = "tunnela-admin-view";
 
 export function DashboardShell({
   conformityRatio,
@@ -32,16 +34,47 @@ export function DashboardShell({
   const [transitionShown, setTransitionShown] = useState(false);
   const showTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [adminView, setAdminView] = useState<AdminView>("admin");
 
-  const toolLinks: DashboardLink[] = [
-    { href: "/dashboard/baux", label: t.dashboard.nav.baux },
-    { href: "/dashboard/calculateur", label: t.dashboard.nav.calculateur },
-    { href: "/dashboard/clause", label: t.dashboard.nav.clause },
-    { href: "/dashboard/echeancier", label: t.dashboard.nav.echeancier },
-    { href: "/dashboard/equipe", label: t.dashboard.nav.equipe },
-    { href: "/dashboard/tutoriel", label: t.dashboard.nav.tutoriel },
-    ...(isAdmin ? [{ href: "/dashboard/admin", label: t.dashboard.nav.admin }] : []),
-  ];
+  useEffect(() => {
+    if (!isAdmin) return;
+    try {
+      const stored = window.localStorage.getItem(ADMIN_VIEW_STORAGE_KEY);
+      if (stored === "client" || stored === "admin") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setAdminView(stored);
+      }
+    } catch {
+      // localStorage indisponible (navigation privée, etc.) : on reste sur
+      // la vue admin par défaut, sans bloquer le rendu.
+    }
+  }, [isAdmin]);
+
+  function toggleAdminView() {
+    const next: AdminView = adminView === "admin" ? "client" : "admin";
+    setAdminView(next);
+    try {
+      window.localStorage.setItem(ADMIN_VIEW_STORAGE_KEY, next);
+    } catch {
+      // best-effort
+    }
+  }
+
+  // Un compte admin bascule entre une navigation 100% admin (uniquement les
+  // onglets d'administration) et une navigation 100% client (pour tester le
+  // produit en conditions réelles, avec le sélecteur de plan) : les deux
+  // jeux d'onglets ne sont jamais mélangés.
+  const showClientTabs = !isAdmin || adminView === "client";
+  const toolLinks: DashboardLink[] = showClientTabs
+    ? [
+        { href: "/dashboard/baux", label: t.dashboard.nav.baux },
+        { href: "/dashboard/calculateur", label: t.dashboard.nav.calculateur },
+        { href: "/dashboard/clause", label: t.dashboard.nav.clause },
+        { href: "/dashboard/echeancier", label: t.dashboard.nav.echeancier },
+        { href: "/dashboard/equipe", label: t.dashboard.nav.equipe },
+        { href: "/dashboard/tutoriel", label: t.dashboard.nav.tutoriel },
+      ]
+    : [{ href: "/dashboard/admin", label: t.dashboard.nav.admin }];
   const parametresLink: DashboardLink = { href: "/dashboard/parametres", label: t.dashboard.nav.parametres };
   // La liste desktop garde Paramètres dans sa navigation verticale classique.
   // La barre d'onglets mobile et le swipe entre outils, eux, excluent
@@ -113,7 +146,13 @@ export function DashboardShell({
   return (
     <>
       <WelcomePopup />
-      <DashboardSidebar links={desktopLinks} mobileLinks={toolLinks} conformityRatio={conformityRatio} />
+      <DashboardSidebar
+        links={desktopLinks}
+        mobileLinks={toolLinks}
+        conformityRatio={conformityRatio}
+        adminView={adminView}
+        onToggleAdminView={toggleAdminView}
+      />
       <main
         className="relative flex-1 px-6 py-8 md:px-10 md:py-10"
         style={{ touchAction: "pan-y" }}

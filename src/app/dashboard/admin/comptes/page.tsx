@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import Papa from "papaparse";
 import { useApp } from "@/components/providers";
 import { useCurrentPlan } from "@/components/feature-gate";
 import { PageLoading, TableSkeleton } from "@/components/table-skeleton";
@@ -43,6 +44,7 @@ function AdminComptesContent() {
 
   const [comptes, setComptes] = useState<Compte[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     if (!isAdmin) {
@@ -66,8 +68,35 @@ function AdminComptesContent() {
     else if ((PLAN_IDS as string[]).includes(filter)) list = list.filter((c) => c.plan === filter);
 
     if (sort === "baux") list = [...list].sort((a, b) => b.bauxCount - a.bauxCount);
+
+    const q = search.trim().toLowerCase();
+    if (q) list = list.filter((c) => c.email.toLowerCase().includes(q));
+
     return list;
-  }, [comptes, filter, sort]);
+  }, [comptes, filter, sort, search]);
+
+  function exportCsv() {
+    const rows = filtered.map((c) => [
+      c.email,
+      c.plan,
+      c.statut,
+      c.coopActif ? "oui" : "non",
+      c.isAdmin ? "oui" : "non",
+      String(c.bauxCount),
+      c.createdAt ?? "",
+    ]);
+    const csv = Papa.unparse([
+      ["Email", "Plan", "Statut", "Coop", "Admin", "Baux", "Créé le"],
+      ...rows,
+    ]);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "tunnela-comptes.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   const filterLabel = useMemo(() => {
     if (filter === "actifs") return t.admin.comptesFilterActifs;
@@ -104,9 +133,27 @@ function AdminComptesContent() {
         </PageIcon3D>
         <h1 className="font-serif text-2xl">{t.admin.comptesTitle}</h1>
       </div>
-      <p className="mb-8 text-[var(--foreground)]/70">
+      <p className="mb-4 text-[var(--foreground)]/70">
         {filtered.length} · {filterLabel}
       </p>
+
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={t.admin.comptesSearchPlaceholder}
+          className="field-input sm:max-w-xs"
+        />
+        <button
+          type="button"
+          onClick={exportCsv}
+          disabled={filtered.length === 0}
+          className="transition-base rounded-full border border-[var(--border-color)] px-4 py-2 text-sm font-medium hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50"
+        >
+          {t.admin.comptesExportCsv}
+        </button>
+      </div>
 
       {showDataLoading ? (
         <TableSkeleton rows={6} />
@@ -130,8 +177,18 @@ function AdminComptesContent() {
             </thead>
             <tbody>
               {filtered.map((compte) => (
-                <tr key={compte.userId} className="border-b border-[var(--border-color)] last:border-0">
-                  <td className="px-4 py-3">{compte.email}</td>
+                <tr
+                  key={compte.userId}
+                  className="border-b border-[var(--border-color)] last:border-0 hover:bg-[var(--accent)]/5"
+                >
+                  <td className="p-0">
+                    <Link
+                      href={`/dashboard/admin/comptes/${compte.userId}`}
+                      className="transition-base block px-4 py-3 hover:text-[var(--accent)]"
+                    >
+                      {compte.email}
+                    </Link>
+                  </td>
                   <td className="px-4 py-3 capitalize">{compte.plan}</td>
                   <td className="px-4 py-3">{compte.statut}</td>
                   <td className="px-4 py-3">{compte.coopActif ? t.admin.yes : t.admin.no}</td>

@@ -18,6 +18,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect("/login");
   }
 
+  const { data: abonnement } = await supabase
+    .from("abonnements")
+    .select("statut")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (abonnement?.statut === "suspendu") {
+    redirect("/compte-suspendu");
+  }
+
   let conformityRatio: number | undefined;
   try {
     const { data } = await supabase

@@ -21,6 +21,8 @@ type AdminStats = {
   mrrEstimate: number;
 };
 
+type MaintenanceState = "loading" | "on" | "off";
+
 const PLAN_ORDER: Plan[] = ["decouverte", "cabinet", "portefeuille", "fonciere"];
 
 export default function AdminPage() {
@@ -28,6 +30,8 @@ export default function AdminPage() {
   const { isAdmin, loading: planLoading } = useCurrentPlan();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [maintenance, setMaintenance] = useState<MaintenanceState>("loading");
+  const [maintenanceBusy, setMaintenanceBusy] = useState(false);
 
   useEffect(() => {
     if (!isAdmin) {
@@ -40,7 +44,30 @@ export default function AdminPage() {
       if (res.ok) setStats((await res.json()) as AdminStats);
       setLoading(false);
     })();
+    void (async () => {
+      const res = await fetch("/api/admin/maintenance");
+      if (res.ok) {
+        const data = (await res.json()) as { maintenanceMode: boolean };
+        setMaintenance(data.maintenanceMode ? "on" : "off");
+      }
+    })();
   }, [isAdmin]);
+
+  async function toggleMaintenance() {
+    if (maintenance === "loading" || maintenanceBusy) return;
+    const next = maintenance === "on" ? false : true;
+    const confirmMsg = next ? t.admin.maintenanceConfirmEnable : t.admin.maintenanceConfirmDisable;
+    if (!window.confirm(confirmMsg)) return;
+
+    setMaintenanceBusy(true);
+    const res = await fetch("/api/admin/maintenance", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ maintenanceMode: next }),
+    });
+    if (res.ok) setMaintenance(next ? "on" : "off");
+    setMaintenanceBusy(false);
+  }
 
   const showLoading = useHoldLoadingAnimation(planLoading || (isAdmin && loading), SPINNER_CYCLE_MS);
 
@@ -127,6 +154,32 @@ export default function AdminPage() {
           </div>
         </>
       )}
+
+      <div className="card mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="font-serif text-lg">{t.admin.maintenanceTitle}</h2>
+          <p className="text-sm text-[var(--foreground)]/70">{t.admin.maintenanceSubtitle}</p>
+          <p className="mt-1 text-xs text-[var(--foreground)]/60">
+            {maintenance === "loading"
+              ? "…"
+              : maintenance === "on"
+                ? t.admin.maintenanceActive
+                : t.admin.maintenanceInactive}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => void toggleMaintenance()}
+          disabled={maintenance === "loading" || maintenanceBusy}
+          className={`transition-base rounded-full px-4 py-2 text-sm font-medium disabled:opacity-50 ${
+            maintenance === "on"
+              ? "bg-[var(--danger)] text-white hover:opacity-90"
+              : "btn-primary"
+          }`}
+        >
+          {maintenance === "on" ? t.admin.maintenanceDisable : t.admin.maintenanceEnable}
+        </button>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Link
