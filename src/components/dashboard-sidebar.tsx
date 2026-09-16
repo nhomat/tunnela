@@ -18,13 +18,13 @@ export function DashboardSidebar({
   mobileLinks,
   conformityRatio,
   adminView,
-  onToggleAdminView,
+  onSetAdminView,
 }: {
   links: DashboardLink[];
   mobileLinks?: DashboardLink[];
   conformityRatio?: number;
   adminView?: AdminView;
-  onToggleAdminView?: () => void;
+  onSetAdminView?: (view: AdminView) => void;
 }) {
   const { t } = useApp();
   const pathname = usePathname();
@@ -119,6 +119,35 @@ export function DashboardSidebar({
         </button>
       </div>
 
+      {isAdmin && onSetAdminView && (
+        <div className="px-4 pb-3 md:px-6">
+          <div className="flex rounded-full border border-[var(--border-color)] p-1 text-xs font-medium">
+            <button
+              type="button"
+              onClick={() => onSetAdminView("client")}
+              className={`flex-1 rounded-full px-3 py-1.5 transition-base ${
+                adminView === "client"
+                  ? "bg-[var(--accent)] text-[var(--color-papier)]"
+                  : "text-[var(--foreground)]/60 hover:text-[var(--foreground)]"
+              }`}
+            >
+              {t.dashboard.viewTabClient}
+            </button>
+            <button
+              type="button"
+              onClick={() => onSetAdminView("admin")}
+              className={`flex-1 rounded-full px-3 py-1.5 transition-base ${
+                adminView === "admin"
+                  ? "bg-[var(--accent)] text-[var(--color-papier)]"
+                  : "text-[var(--foreground)]/60 hover:text-[var(--foreground)]"
+              }`}
+            >
+              {t.dashboard.viewTabAdmin}
+            </button>
+          </div>
+        </div>
+      )}
+
       <nav className="flex gap-1 overflow-x-auto px-4 pb-3 md:hidden">{mobileNavLinks}</nav>
 
       <nav className="hidden gap-1 px-3 pb-3 md:flex md:flex-1 md:flex-col md:overflow-visible md:px-3 md:pb-0">
@@ -127,15 +156,6 @@ export function DashboardSidebar({
 
       {/* Desktop : bloc fixe en bas de la sidebar, toujours visible. */}
       <div className="hidden px-6 py-6 md:mt-auto md:block">
-        {isAdmin && onToggleAdminView && (
-          <button
-            type="button"
-            onClick={onToggleAdminView}
-            className="btn-secondary transition-base mb-4 w-full px-3.5 py-1.5 text-xs"
-          >
-            {adminView === "client" ? t.dashboard.switchToAdminView : t.dashboard.switchToClientView}
-          </button>
-        )}
         {isAdmin && plan && adminView === "client" && <AdminPlanSwitcher currentPlan={plan} />}
         {typeof conformityRatio === "number" && (
           <Link href="/dashboard/conformite" className="transition-base mb-6 block hover:opacity-80">
@@ -192,15 +212,6 @@ export function DashboardSidebar({
         </div>
         <nav className="mb-6 flex flex-col gap-1">{drawerNavLinks}</nav>
 
-        {isAdmin && onToggleAdminView && (
-          <button
-            type="button"
-            onClick={onToggleAdminView}
-            className="btn-secondary transition-base mb-4 w-full px-3.5 py-1.5 text-xs"
-          >
-            {adminView === "client" ? t.dashboard.switchToAdminView : t.dashboard.switchToClientView}
-          </button>
-        )}
         {isAdmin && plan && adminView === "client" && <AdminPlanSwitcher currentPlan={plan} />}
         <div className="mb-4 flex justify-center">
           <ThemeLangToggle compact />

@@ -50,8 +50,7 @@ export function DashboardShell({
     }
   }, [isAdmin]);
 
-  function toggleAdminView() {
-    const next: AdminView = adminView === "admin" ? "client" : "admin";
+  function setAdminViewPersisted(next: AdminView) {
     setAdminView(next);
     try {
       window.localStorage.setItem(ADMIN_VIEW_STORAGE_KEY, next);
@@ -74,7 +73,14 @@ export function DashboardShell({
         { href: "/dashboard/equipe", label: t.dashboard.nav.equipe },
         { href: "/dashboard/tutoriel", label: t.dashboard.nav.tutoriel },
       ]
-    : [{ href: "/dashboard/admin", label: t.dashboard.nav.admin }];
+    : [
+        { href: "/dashboard/admin", label: t.dashboard.nav.adminOverview },
+        { href: "/dashboard/admin/comptes", label: t.dashboard.nav.adminComptes },
+        { href: "/dashboard/admin/prospection", label: t.dashboard.nav.adminProspection },
+        { href: "/dashboard/admin/indices", label: t.dashboard.nav.adminIndices },
+        { href: "/dashboard/admin/journal", label: t.dashboard.nav.adminJournal },
+        { href: "/dashboard/admin/maintenance", label: t.dashboard.nav.adminMaintenance },
+      ];
   const parametresLink: DashboardLink = { href: "/dashboard/parametres", label: t.dashboard.nav.parametres };
   // La liste desktop garde Paramètres dans sa navigation verticale classique.
   // La barre d'onglets mobile et le swipe entre outils, eux, excluent
@@ -151,7 +157,7 @@ export function DashboardShell({
         mobileLinks={toolLinks}
         conformityRatio={conformityRatio}
         adminView={adminView}
-        onToggleAdminView={toggleAdminView}
+        onSetAdminView={setAdminViewPersisted}
       />
       <main
         className="relative flex-1 px-6 py-8 md:px-10 md:py-10"
