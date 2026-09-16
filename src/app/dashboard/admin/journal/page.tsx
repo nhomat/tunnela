@@ -16,6 +16,7 @@ type JournalEntry = {
   targetEmail: string;
   action: "delete" | "suspend";
   status: "confirmed" | "pending" | "expired";
+  method: "email" | "master_code";
   createdAt: string;
 };
 
@@ -57,6 +58,10 @@ export default function AdminJournalPage() {
     return action === "delete" ? t.admin.deleteAccount : t.admin.suspendAccount;
   }
 
+  function methodLabel(method: JournalEntry["method"]) {
+    return method === "master_code" ? t.admin.journalMethodMasterCode : t.admin.journalMethodEmail;
+  }
+
   return (
     <div className="tunnel-enter max-w-3xl">
       <div className="mb-2 flex items-center gap-3">
@@ -85,6 +90,7 @@ export default function AdminJournalPage() {
                 <th className="px-4 py-3">{t.admin.journalAdmin}</th>
                 <th className="px-4 py-3">{t.admin.journalTarget}</th>
                 <th className="px-4 py-3">{t.admin.journalAction}</th>
+                <th className="px-4 py-3">{t.admin.journalMethod}</th>
                 <th className="px-4 py-3">{t.admin.journalStatus}</th>
               </tr>
             </thead>
@@ -97,6 +103,7 @@ export default function AdminJournalPage() {
                   <td className="px-4 py-3">{entry.adminEmail}</td>
                   <td className="px-4 py-3">{entry.targetEmail}</td>
                   <td className="px-4 py-3">{actionLabel(entry.action)}</td>
+                  <td className="px-4 py-3">{methodLabel(entry.method)}</td>
                   <td className="px-4 py-3">
                     <span
                       className={

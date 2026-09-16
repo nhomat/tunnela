@@ -436,7 +436,10 @@ create table if not exists public.admin_action_codes (
   code text not null,
   used boolean not null default false,
   expires_at timestamptz not null,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  -- 'master_code' : confirmé via le code secret prédéfini (ADMIN_ACTION_MASTER_CODE)
+  -- au lieu du code à usage unique envoyé par email — tracé pour l'audit.
+  method text not null default 'email' check (method in ('email', 'master_code'))
 );
 
 create index if not exists idx_admin_action_codes_lookup

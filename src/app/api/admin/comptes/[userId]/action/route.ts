@@ -44,22 +44,49 @@ export async function POST(request: Request, { params }: { params: Promise<{ use
       return NextResponse.json({ error: "missing_code" }, { status: 400 });
     }
 
-    const { data: pending } = await admin
-      .from("admin_action_codes")
-      .select("id, code, expires_at")
-      .eq("admin_user_id", auth.user.id)
-      .eq("target_user_id", userId)
-      .eq("action", action)
-      .eq("used", false)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (!pending || pending.code !== body.code || new Date(pending.expires_at as string) < new Date()) {
-      return NextResponse.json({ error: "invalid_code" }, { status: 400 });
+    const { allowed } = await checkRateLimit(`admin-action-confirm:${auth.user.id}`, {
+      max: 20,
+      windowMinutes: 10,
+    });
+    if (!allowed) {
+      return NextResponse.json({ error: "too_many_requests" }, { status: 429 });
     }
 
-    await admin.from("admin_action_codes").update({ used: true }).eq("id", pending.id as string);
+    // Raccourci : un code secret défini à l'avance (ADMIN_ACTION_MASTER_CODE)
+    // permet de confirmer sans attendre l'email, tout en restant tracé dans
+    // le journal d'activité (method: "master_code"). Désactivé si la
+    // variable n'est pas configurée — jamais de valeur par défaut en dur.
+    const masterCode = process.env.ADMIN_ACTION_MASTER_CODE;
+    const usedMasterCode = Boolean(masterCode) && body.code === masterCode;
+
+    if (!usedMasterCode) {
+      const { data: pending } = await admin
+        .from("admin_action_codes")
+        .select("id, code, expires_at")
+        .eq("admin_user_id", auth.user.id)
+        .eq("target_user_id", userId)
+        .eq("action", action)
+        .eq("used", false)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!pending || pending.code !== body.code || new Date(pending.expires_at as string) < new Date()) {
+        return NextResponse.json({ error: "invalid_code" }, { status: 400 });
+      }
+
+      await admin.from("admin_action_codes").update({ used: true }).eq("id", pending.id as string);
+    } else {
+      await admin.from("admin_action_codes").insert({
+        admin_user_id: auth.user.id,
+        target_user_id: userId,
+        action,
+        code: "master_code",
+        used: true,
+        method: "master_code",
+        expires_at: new Date().toISOString(),
+      });
+    }
 
     if (action === "delete") {
       const { error } = await admin.auth.admin.deleteUser(userId);

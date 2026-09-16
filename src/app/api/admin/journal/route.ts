@@ -14,7 +14,7 @@ export async function GET() {
   const [{ data: rows, error }, usersResult] = await Promise.all([
     admin
       .from("admin_action_codes")
-      .select("id, admin_user_id, target_user_id, action, used, expires_at, created_at")
+      .select("id, admin_user_id, target_user_id, action, used, method, expires_at, created_at")
       .order("created_at", { ascending: false })
       .limit(JOURNAL_LIMIT),
     admin.auth.admin.listUsers({ page: 1, perPage: USERS_PAGE_SIZE }),
@@ -41,6 +41,7 @@ export async function GET() {
       targetEmail: emailByUserId.get(row.target_user_id as string) ?? row.target_user_id,
       action: row.action as string,
       status,
+      method: (row.method as string) ?? "email",
       createdAt: row.created_at as string,
     };
   });

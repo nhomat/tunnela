@@ -295,10 +295,10 @@ export default function AdminCompteDetailPage() {
         {confirmStep ? (
           <div className="flex flex-col gap-3">
             <p className="text-sm text-[var(--foreground)]/70">{t.admin.enterCodeHint}</p>
+            <p className="text-xs text-[var(--foreground)]/50">{t.admin.enterCodeMasterHint}</p>
             <div className="flex gap-2">
               <input
                 type="text"
-                inputMode="numeric"
                 value={confirmStep.code}
                 onChange={(e) => setConfirmStep({ ...confirmStep, code: e.target.value })}
                 className="field-input flex-1"
