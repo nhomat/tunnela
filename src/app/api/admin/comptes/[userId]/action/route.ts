@@ -17,8 +17,9 @@ function generateCode(): string {
 }
 
 // Actions admin destructrices (suppression, blocage temporaire d'un compte) :
-// exigent un code à 6 chiffres envoyé par email à tunnela.team@gmail.com
-// avant exécution, en deux temps (step "request" puis "confirm").
+// exigent un code à 6 chiffres envoyé par email à tunnela.team@gmail.com et
+// noa972971@gmail.com avant exécution, en deux temps (step "request" puis
+// "confirm").
 export async function POST(request: Request, { params }: { params: Promise<{ userId: string }> }) {
   const auth = await requireAdmin();
   if (auth.error) return auth.error;
@@ -102,12 +103,19 @@ export async function POST(request: Request, { params }: { params: Promise<{ use
   if (process.env.RESEND_API_KEY) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const actionLabel = action === "delete" ? "suppression" : "blocage temporaire";
-    await resend.emails.send({
+    const recipients = [
+      process.env.ADMIN_ACTION_CONFIRM_EMAIL ?? "tunnela.team@gmail.com",
+      process.env.ADMIN_ACTION_CONFIRM_EMAIL_SECONDARY ?? "noa972971@gmail.com",
+    ];
+    const { error: sendError } = await resend.emails.send({
       from: process.env.ALERT_FROM_EMAIL ?? "Tunnela <alertes@tunnela.fr>",
-      to: process.env.ADMIN_ACTION_CONFIRM_EMAIL ?? "tunnela.team@gmail.com",
+      to: recipients,
       subject: `Code de confirmation — ${actionLabel} de compte sur Tunnela`,
       text: `Bonjour,\n\nUne demande de ${actionLabel} a été initiée pour le compte ${targetUser.user.email} par l'administrateur ${auth.user.email}.\n\nCode de confirmation : ${code}\n\nCe code expire dans ${CODE_TTL_MINUTES} minutes. Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.\n\nL'équipe Tunnela`,
     });
+    if (sendError) {
+      console.error("admin action code email failed", sendError);
+    }
   }
 
   return NextResponse.json({ sent: true });
