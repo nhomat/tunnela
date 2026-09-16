@@ -69,28 +69,43 @@ export default function AdminPage() {
       ) : (
         <>
           <div className="mb-8 grid gap-4 sm:grid-cols-3">
-            <div className="card flex flex-col items-center gap-1 text-center">
+            <Link
+              href="/dashboard/admin/comptes?filter=tous"
+              className="card card-hover transition-base flex flex-col items-center gap-1 text-center"
+            >
               <span className="font-serif text-3xl text-[var(--accent)]">{stats.totalUsers}</span>
               <span className="text-sm text-[var(--foreground)]/70">{t.admin.totalUsers}</span>
-            </div>
-            <div className="card flex flex-col items-center gap-1 text-center">
+            </Link>
+            <Link
+              href="/dashboard/admin/comptes?filter=actifs"
+              className="card card-hover transition-base flex flex-col items-center gap-1 text-center"
+            >
               <span className="font-serif text-3xl text-[var(--accent)]">{stats.actifCount}</span>
               <span className="text-sm text-[var(--foreground)]/70">{t.admin.activeUsers}</span>
-            </div>
-            <div className="card flex flex-col items-center gap-1 text-center">
+            </Link>
+            <Link
+              href="/dashboard/admin/comptes?filter=tous&sort=baux"
+              className="card card-hover transition-base flex flex-col items-center gap-1 text-center"
+            >
               <span className="font-serif text-3xl text-[var(--accent)]">{stats.bauxCount}</span>
               <span className="text-sm text-[var(--foreground)]/70">{t.admin.totalBaux}</span>
-            </div>
-            <div className="card flex flex-col items-center gap-1 text-center">
+            </Link>
+            <Link
+              href="/dashboard/admin/comptes?filter=payants"
+              className="card card-hover transition-base flex flex-col items-center gap-1 text-center"
+            >
               <span className="font-serif text-3xl text-[var(--accent)]">
                 {formatPrixMensuel(stats.mrrEstimate, locale)} €
               </span>
               <span className="text-sm text-[var(--foreground)]/70">{t.admin.mrrEstimate}</span>
-            </div>
-            <div className="card flex flex-col items-center gap-1 text-center">
+            </Link>
+            <Link
+              href="/dashboard/admin/comptes?filter=coop"
+              className="card card-hover transition-base flex flex-col items-center gap-1 text-center"
+            >
               <span className="font-serif text-3xl text-[var(--accent)]">{stats.coopActifCount}</span>
               <span className="text-sm text-[var(--foreground)]/70">{t.admin.coopActive}</span>
-            </div>
+            </Link>
           </div>
           <p className="mb-8 text-xs text-[var(--foreground)]/60">{t.admin.mrrEstimateHint}</p>
 
@@ -98,9 +113,14 @@ export default function AdminPage() {
             <h2 className="mb-4 font-serif text-lg">{t.admin.byPlan}</h2>
             <ul className="flex flex-col gap-2 text-sm">
               {PLAN_ORDER.map((plan) => (
-                <li key={plan} className="flex items-center justify-between border-b border-[var(--border-color)] pb-2 last:border-0 last:pb-0">
-                  <span className="capitalize text-[var(--foreground)]/80">{plan}</span>
-                  <span className="font-medium">{stats.byPlan[plan] ?? 0}</span>
+                <li key={plan} className="border-b border-[var(--border-color)] last:border-0">
+                  <Link
+                    href={`/dashboard/admin/comptes?filter=${plan}`}
+                    className="transition-base flex items-center justify-between py-2 hover:text-[var(--accent)]"
+                  >
+                    <span className="capitalize text-[var(--foreground)]/80">{plan}</span>
+                    <span className="font-medium">{stats.byPlan[plan] ?? 0}</span>
+                  </Link>
                 </li>
               ))}
             </ul>
